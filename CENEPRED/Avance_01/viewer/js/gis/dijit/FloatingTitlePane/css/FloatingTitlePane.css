@@ -1,0 +1,16 @@
+.dijitTitlePane .dijitTitlePaneTitle .titlePaneIcon {
+    margin: 0 0 0 8px;
+    padding-top: 2px;
+}
+
+.dijitTitlePane .dijitTitlePaneTitle .floatingWidgetDock:before {
+    content: "\f112";
+    float: right;
+    font-family: FontAwesome;
+}
+
+.dijitTitlePane .dijitTitlePaneTitle .floatingWidgetPopout:before {
+    content: "\f064";
+    float: right;
+    font-family: FontAwesome;
+}
