@@ -1,0 +1,182 @@
+<div class="${baseClass}">
+    <div>
+        <main>
+  
+            <input id="tab1" type="radio" name="tabs-2" checked>
+            <label for="tab1">Filtro</label>
+              
+            <input id="tab2" type="radio" name="tabs-2">
+            <label for="tab2">Resultado</label>
+              
+            <input id="tab3" type="radio" name="tabs-2">
+            <label for="tab3">Analizar</label>
+            
+            <section id="content1">
+                <div class="tab-content">
+                    <label class="subTitle">» Seleccionar Ámbito</label>
+                    <hr>                    
+                    <!-- Departamento -->
+                    <div data-dojo-attach-point="ID_HDRM">
+                    </div>
+
+                    <!--
+                    <div class="form-filter">
+                        <div>
+                            <label for="ID_Departamento" class="form-label">
+                                Departamento
+                            </label>
+                        </div>
+                        <select id="ID_Departamento">
+                            <option value="">Seleccione Departamento</option>
+                        </select>    
+                    </div>
+                    
+                    <div class="form-filter">
+                        <div>
+                            <label for="ID_Provincia" class="form-label">
+                                Provincia
+                            </label>
+                        </div>
+                        <select id="ID_Provincia">
+                            <option value="">Elija Departamento</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-filter">
+                        <div>
+                            <label for="ID_Distrito" class="form-label" style=" text-align: right">Distrito</label>
+                        </div>
+                        <select id="ID_Distrito">
+                            <option value="">Elija Provincia</option>
+                        </select>
+                    </div>
+                    
+                    <hr style="margin-top: 0;">
+                    -->
+
+                    <div class="form-alert" data-dojo-attach-point="ID_Alert">
+                        <strong>Advertencia! </strong> Seleccione Departamento
+                    </div>
+
+                    <div class="form-filter action-btn">
+                        <button type="button" class="form-btn" data-dojo-attach-point="ID_Clear" style="float: left;">
+                            <i class="fa fa-eraser" aria-hidden="true"></i>
+                            Limpiar
+                        </button>
+                        <button type="button" class="form-btn" data-dojo-attach-point="ID_Report">
+                            <i class="fa fa-file-text" aria-hidden="true"></i>
+                            Reporte
+                        </button>  
+                        <button type="button" class="form-btn" data-dojo-attach-point="ID_Diagnosis">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                            Diagnóstico
+                        </button>                        
+                    </div>
+                </div>
+            </section>
+              
+            <section id="content2">
+                <div class="tab-content">
+                    <!--<div class="form-result">
+                        <label class="subTitle">Lista de Resultado</label>
+                        <button type="button">
+                            <i class="fa fa-line-chart" aria-hidden="true"></i>
+                            Analizar
+                        </button>
+                        <select id="ID_Formato">
+                            <option value="">Formato</option>
+                        </select>                        
+                    </div>
+                    <hr>-->
+                    <div class="form-count">
+                        <div class="form-count-count" data-dojo-attach-point="ID_Count">0</div>
+                        <div class="form-count-count">
+                            <button type="button">
+                                <i class="fa fa-line-chart" aria-hidden="true"></i>
+                                Analizar
+                            </button>
+                            <select id="ID_Formato">
+                                <option value="">Formato</option>
+                            </select> 
+                            <div class="form-count-title">Coincidencias</div>
+                            <div class="form-count-resul" data-dojo-attach-point="ID_CountResult">0 - 0</div>
+                        </div>
+
+                        
+                        
+                        
+                    </div>
+                    <div class="lds-facebook" data-dojo-attach-point="ID_Load"><div></div><div></div><div></div></div>
+                    <!--   
+                    <div class="form-result form-scroll" data-dojo-attach-point="ID_Result_List">
+                        <div class="form-card">
+                            <span class="form-item">
+                                <label>1. Planes PPRRD</label>
+                                <span><i class="fa fa-map" aria-hidden="true"></i></span>
+                            </span>
+                            <div class="form-item">
+                                <div class="form-item-content">
+                                    <label>Campo 1</label>
+                                    <span><p> Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1</p></span>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                    -->
+                    <div data-dojo-attach-point="ID_Table_Count">
+                        <!--
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Capas</th>
+                                    <th>Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody id="Perro">
+                                <tr>
+                                    <td>Capas</td>
+                                    <td>4585665</td>
+                                </tr>
+                                <tr>
+                                    <td>Capas</td>
+                                    <td>4585665</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        -->
+                    </div>
+                </div>
+            </section>
+              
+            <section id="content3">
+                <div class="tab-content">
+                    
+                    <div class="form-content">
+                        <label class="subTitle">Rad. Influencia (m)</label>
+                        <input type="text" value="" placeholder="##">
+                        <button type="button">
+                            <i class="fa fa-refresh" aria-hidden="true"></i>
+                            Refrescar
+                        </button>
+                    </div>
+                
+
+                    <div class="form-content">
+                        <label class="subTitle">Lista de Análisis</label>
+                        
+                        <select id="ID_Formato_">
+                            <option value="">Formato</option>
+                        </select>                        
+                    </div>
+                    <hr>
+                    <div class="form-content form-scroll">
+                        
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        
+
+    </div>
+</div>
