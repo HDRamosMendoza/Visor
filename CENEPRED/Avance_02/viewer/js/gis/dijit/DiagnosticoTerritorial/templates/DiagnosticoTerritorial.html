@@ -90,7 +90,8 @@
                     <hr>-->
                     <div class="form-count">
                         <div class="form-count-count" data-dojo-attach-point="ID_Count">0</div>
-                        <div class="form-count-count">
+                        <!--<div class="form-count-count">-->
+                            <!--
                             <button type="button">
                                 <i class="fa fa-line-chart" aria-hidden="true"></i>
                                 Analizar
@@ -98,13 +99,10 @@
                             <select id="ID_Formato">
                                 <option value="">Formato</option>
                             </select> 
-                            <div class="form-count-title">Coincidencias</div>
+                            -->
+                            <div class="form-count-title" data-dojo-attach-point="ID_CountText">Coincidencias</div>
                             <div class="form-count-resul" data-dojo-attach-point="ID_CountResult">0 - 0</div>
-                        </div>
-
-                        
-                        
-                        
+                        <!--</div>-->
                     </div>
                     <div class="lds-facebook" data-dojo-attach-point="ID_Load"><div></div><div></div><div></div></div>
                     <!--   
@@ -123,28 +121,22 @@
                         </div> 
                     </div>
                     -->
-                    <div data-dojo-attach-point="ID_Table_Count">
-                        <!--
-                        <table class="tbl">
-                            <thead>
-                                <tr>
-                                    <th>Capas</th>
-                                    <th>Cantidad</th>
-                                </tr>
-                            </thead>
-                            <tbody id="Perro">
-                                <tr>
-                                    <td>Capas</td>
-                                    <td>4585665</td>
-                                </tr>
-                                <tr>
-                                    <td>Capas</td>
-                                    <td>4585665</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        -->
+                    <div data-dojo-attach-point="ID_Table_Count"></div>
+
+                    <div class="form-count">
+                        <div class="form-count-count">
+                            <button type="button">
+                                <i class="fa fa-line-chart" aria-hidden="true"></i>
+                                Analizar
+                            </button>
+                            <select id="ID_Formato">
+                                <option value="">
+                                    Formato
+                                </option>
+                            </select>
+                        </div>
                     </div>
+
                 </div>
             </section>
               

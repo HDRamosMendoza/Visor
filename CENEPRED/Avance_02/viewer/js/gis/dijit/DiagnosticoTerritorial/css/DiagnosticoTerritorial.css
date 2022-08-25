@@ -106,7 +106,7 @@
     width: 90px;
     border-radius: 0;
     border: 0;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0,0,0,0.5);
     margin-top: 7px;
     font-size: 12px !important;
   }
@@ -123,12 +123,13 @@
   }
   .hdrm_dt .form-count .form-count-count button,
   .hdrm_dt .form-count .form-count-count select {
-    -webkit-box-shadow: none;
+    background-color: rgba(0,0,0,0.5);
     border: 0;
     border-radius: 0;
     color: #FFFFFF;
-    background-color: rgba(0,0,0,0.5);
-    height: 27px;
+    height: 30px;
+    width: 90px;
+    -webkit-box-shadow: none;
   }
   /************************/
   .hdrm_dt .form-content {
@@ -213,14 +214,17 @@
     text-align: center;
   }
   /** CARD **/
+  
   .hdrm_dt .form-count .form-count-count:nth-child(1) {
-    width: 40%;
+    width: 100%;
     text-align: center;
     font-size: 50px;
   }
+  /*
   .hdrm_dt .form-count .form-count-count:nth-child(2) {
     width: 55%;
   }
+  */
   .hdrm_dt .form-count .form-count-count {
     box-sizing: border-box;
     display: inline-block;
@@ -287,6 +291,7 @@
   .hdrm_dt .form-result .form-card .form-item:nth-child(2) span p {
     margin: 0;
   }
+  /*
   .hdrm_dt .form-result .form-card .form-item:nth-child(2) label,
   .hdrm_dt .form-result .form-card .form-item:nth-child(2) span {
     display: inline-block;
@@ -300,6 +305,7 @@
   .hdrm_dt .form-result .form-card .form-item:nth-child(2) span {
     width: 50%;
   }
+  */
   
 
   /* Animación de carga */
@@ -344,15 +350,16 @@
 
   /* Tabla de resumen */
   .hdrm_dt .tab-content .tbl {
-    width: 100%;
-    font-size: 13px;
     border-collapse: collapse;
-    /*border: 1px solid #2f2f2f;*/
+    font-size: 13px;
+    margin-top: 10px;
+    width: 100%;
   }
   .hdrm_dt .tab-content .tbl, 
   .hdrm_dt .tab-content .tbl td, 
   .hdrm_dt .tab-content .tbl th {
-    border: 1px solid;
+    border: 1px solid #FFFFFF !important;
+    padding: 5px 10px;
   }
   .hdrm_dt .tab-content .tbl thead {
     background-color: rgba(0,0,0,0.4);
@@ -363,12 +370,19 @@
     font-size: 13px;
   }
   .hdrm_dt .tab-content .tbl tbody tr > td:nth-child(1) {
-    padding-left: 5px;
-    width: 70%;
     background-color: rgba(0,0,0,0.1);
+    color: #555555;
+    text-align: right;    
+    width: 5%;
   }
   .hdrm_dt .tab-content .tbl tbody tr > td:nth-child(2) {
-    text-align: right;
-    width: 30%;
     background-color: rgba(0,0,0,0.1);
+    color: #555555;
+    width: 650%;
+  }
+  .hdrm_dt .tab-content .tbl tbody tr > td:nth-child(3) {
+    background-color: rgba(0,0,0,0.1);
+    color: #555555;
+    text-align: right;    
+    width: 30%;
   }

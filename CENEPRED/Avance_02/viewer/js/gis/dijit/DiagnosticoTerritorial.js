@@ -68,12 +68,13 @@ define([
         templateString: drawTemplate,
         baseClass: 'hdrm_dt',
         lyrList: "",
-        countItem: 1,        
+        countItem: 1,
+        countResult: 0,
         postCreate: function () {
             this.inherited(arguments);
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
-            this._prueba_2();
+            this._htmlSummary();
 
             /* Setup DEPARTAMENTO */
             const lyrDep = config.lyrFilter[0];
@@ -179,6 +180,12 @@ define([
                     featureLayerDis.clearSelection();
                     this.map.setZoom(6);
                     this.map.centerAt(new Point(-75.015152, -9.189967));
+                    /* Limpiando pestaña RESULTADO */
+                    this.ID_Count.innerHTML  = 0;
+                    this.ID_CountText.innerHTML  = "Coincidencias";
+                    this.ID_CountResult.innerHTML  = "0 - 0";
+                    this.ID_Table_Count.innerHTML = '';
+                    this._htmlSummary();
                 } catch (error) {
                     console.error(`Error: button/ID_Filter_Clear (click) => ${error.name} - ${error.message}`);
                 }
@@ -197,9 +204,10 @@ define([
                 /* Button (click) - ID_Diagnosis */
                 try {
                     let disp = this.ID_Alert;
-                    let objectLiteral = false == this._validateSelect(selDis) ? [selDis.get('value'),srvDis.url] :
-                                        false == this._validateSelect(selPro) ? [selPro.get('value'),srvPro.url] :
-                                        false == this._validateSelect(selDep) ? [selDep.get('value'),srvDep.url] :
+                    console.log(selDis.get('value'));
+                    let objectLiteral = false == this._validateSelect(selDis) ? [selDis.get('value'),srvDis.url,selDis.get('displayedValue'),"Distrito"] :
+                                        false == this._validateSelect(selPro) ? [selPro.get('value'),srvPro.url,selPro.get('displayedValue'),"Provincia"] :
+                                        false == this._validateSelect(selDep) ? [selDep.get('value'),srvDep.url,selDep.get('displayedValue'),"Departamento"] :
                                         true;                    
                     if(objectLiteral == true) {
                         disp.style.display = "block";
@@ -207,13 +215,14 @@ define([
                         return false;
                     }
                     /* Reinicia contador */
-                    this.countItem = 1;                    
+                    this.countItem = 1;
+                    this.countResult = 0;
                     /* Mostrar la segunda pestaña */
                     document.getElementById("tab2").click();                    
-                    this.ID_Table_Count.display = "none";
-                    this.ID_Load.style.display = "block";
+                    this.ID_Table_Count.style.display = "none";
+                    this.ID_Load.style.display = "block";                    
                     /* Eliminar contenido del resultado */
-                    this._removeChild(this.ID_Result_List, this.ID_Count, this.ID_CountResult);
+                    this._removeChild(document.getElementById("ID_Table_Tbody"), this.ID_Count, this.ID_CountResult);
                     /* Intersect layer */
                     this._intersectLayer(objectLiteral);
                 } catch (error) {
@@ -395,7 +404,8 @@ define([
         _intersectLayer: function(GPL) {
             /* Intersección de las capas operativas */
             try {
-                let [id, srv] = GPL;
+                let [id, srv, selected, ambito] = GPL;
+                window.selected = selected; window.ambito = ambito;
                 let query = new Query(); query.objectIds = [id];
                 const lyr = new FeatureLayer(srv, { mode: FeatureLayer.MODE_SELECTION });
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
@@ -453,44 +463,27 @@ define([
                 queryTask.execute(query).then(
                     (response) => {
                         try {
-                            console.log(lyr.name);
-                            console.log(response.features.length);
-                            //let fragment = document.createDocumentFragment();
+                            let fragment = document.createDocumentFragment();
                             let row = document.createElement("tr");
-
+                            let cell_0 = document.createElement("td");
+                            let cellText_0 = document.createTextNode(this.countItem);
+                            cell_0.appendChild(cellText_0);
                             let cell_1 = document.createElement("td");
                             let cellText_1 = document.createTextNode(lyr.name);
                             cell_1.appendChild(cellText_1);
-
                             let cell_2 = document.createElement("td");
                             let cellText_2 = document.createTextNode(response.features.length);
                             cell_2.appendChild(cellText_2);
-
+                            row.appendChild(cell_0);
                             row.appendChild(cell_1);
                             row.appendChild(cell_2);
-                            //fragment.appendChild(row);
-                            //this.ID_Table_Tbody.appendChild(fragment);
-                            //this.ID_Table_Tbody.appendChild(row);
-                            document.getElementById("ID_Table_Tbody").appendChild(row);
-                            //ID_Table_Tbody
-
-                            /*
-                            var row = document.createElement("tr");
-
-                            var cell_1 = document.createElement("td");
-                            var cellText_1 = document.createTextNode("cell is row 1 ");
-                            cell_1.appendChild(cellText_1);
-
-                            var cell_2 = document.createElement("td");
-                            var cellText_2 = document.createTextNode("cell is row 2 ");
-                            cell_2.appendChild(cellText_2);
-
-                            row.appendChild(cell_1);
-                            row.appendChild(cell_2);
-
-                            this.ID_Table_Count.appendChild(row);
-                            */
-                            
+                            fragment.appendChild(row);
+                            document.getElementById("ID_Table_Tbody").appendChild(fragment);
+                            this.countResult = this.countResult + response.features.length;
+                            this.ID_CountText.innerText = `Coincidencias: ${window.ambito} - ${window.selected}`;
+                            this.ID_Count.innerText = this.countResult;
+                            this.ID_CountResult.innerText = `1 - ${this.countResult}`;
+                            this.countItem++;
                             /*
                             let fragment = document.createDocumentFragment(); 
                             response.features.map(function (cValue) {                                
@@ -554,52 +547,49 @@ define([
             ).always(lang.hitch(this, function() { console.log("Always"); }));
             */
         },
-        _prueba_2: function() {
-            
-            // create elements <table> and a <tbody>
-            var tbl = document.createElement("table");
-            tbl.className = "tbl";
-            var tblHead = document.createElement("thead");
+        _htmlSummary: function() {
+            try {
+                let tbl = document.createElement("table");
+                tbl.className = "tbl";
+                let tblHead = document.createElement("thead");
 
-            var rowHead = document.createElement("tr");
+                let rowHead = document.createElement("tr");
 
-            var rowHeadTH_Name = document.createElement("th");
-            var rowHeadTH_NameNode = document.createTextNode("Capas");
-            rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
+                let rowHeadTH_Item = document.createElement("th");
+                let rowHeadTH_ItemNode = document.createTextNode("#");
+                rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
 
-            var rowHeadTH_Count = document.createElement("th");
-            var rowHeadTH_CountSize = document.createTextNode("Cantidad");
-            rowHeadTH_Count.appendChild(rowHeadTH_CountSize);
+                let rowHeadTH_Name = document.createElement("th");
+                let rowHeadTH_NameNode = document.createTextNode("Capas");
+                rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
 
-            rowHead.appendChild(rowHeadTH_Name);
-            rowHead.appendChild(rowHeadTH_Count);
+                let rowHeadTH_Count = document.createElement("th");
+                let rowHeadTH_CountSize = document.createTextNode("Cantidad");
+                rowHeadTH_Count.appendChild(rowHeadTH_CountSize);
 
-            tblHead.appendChild(rowHead);
+                rowHead.appendChild(rowHeadTH_Item);
+                rowHead.appendChild(rowHeadTH_Name);
+                rowHead.appendChild(rowHeadTH_Count);
+                tblHead.appendChild(rowHead);
 
-            var tblBody = document.createElement("tbody");
-            tblBody.id = "ID_Table_Tbody";
-            
-            /*
-            var row = document.createElement("tr");
+                let tblBody = document.createElement("tbody");
+                tblBody.id = "ID_Table_Tbody";
+                let row = document.createElement("tr");
+                let rowTD = document.createElement("td");
+                rowTD.colSpan = "3";
+                rowTD.style.textAlign = "center";
+                let rowTD_Node = document.createTextNode("Sin Coincidencias");
 
-            var cell_1 = document.createElement("td");
-            var cellText_1 = document.createTextNode("cell is row 1 ");
-            cell_1.appendChild(cellText_1);
+                rowTD.appendChild(rowTD_Node);
+                row.appendChild(rowTD);
+                tblBody.appendChild(row);
+                tbl.appendChild(tblHead);
+                tbl.appendChild(tblBody);
 
-            var cell_2 = document.createElement("td");
-            var cellText_2 = document.createTextNode("cell is row 2 ");
-            cell_2.appendChild(cellText_2);
-
-            row.appendChild(cell_1);
-            row.appendChild(cell_2);
-
-            this.ID_Table_Count.appendChild(row);
-            */
-
-            tbl.appendChild(tblHead);
-            tbl.appendChild(tblBody);
-            this.ID_Table_Count.appendChild(tbl);
-
+                this.ID_Table_Count.appendChild(tbl);
+            } catch (error) {
+                console.error(`Error: _htmlSummary => ${error.name} - ${error.message}`);
+            }
         },
         _removeChild: function(listDiv, divCount, divCountResult) {
             try {
