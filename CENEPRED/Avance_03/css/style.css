@@ -1,0 +1,94 @@
+html, body { font-family: "Helvetica","Arial",sans-serif; }
+html, body, header { margin: 0; padding: 0; }
+.map {
+  box-sizing: border-box;
+  position: relative;
+  height: 150px;
+  width: 100%;
+}
+
+body { background-color: #f6f6f6; }
+
+.report-main {
+  background-color: #FFFFFF;
+  margin: 0 auto;
+  padding: 10px;
+  width: 1200px;
+}
+.report-main .report-title{
+  background-color: #4999b0;
+  color: #FFFFFF;
+  padding: 7px 15px;
+  margin-bottom: 10px;
+}
+
+.report-main .report-title h2 {
+  font-size: 16px;
+}
+
+.report-main .report-subtitle {
+  font-size: 13px;
+  font-weight: bold;
+  text-align: left;
+  padding-bottom: 5px;
+  color: rgba(0,0,0,0.4);
+}
+
+
+.report-content {
+  display: -ms-flex;
+  display: -webkit-flex;
+  display: flex;
+  margin-bottom: 10px;
+}
+
+/* CONTENT */
+.report-content > .report-aside {
+  box-sizing: border-box;
+  width: 50%;
+}
+
+/* SUMMARY */
+.tbl {
+  border-collapse: collapse;
+  font-size: 13px;
+  width: 100%;
+}
+.tbl, 
+.tbl td, 
+.tbl th {
+  border: 1px solid #FFFFFF !important;
+  padding: 5px 10px;
+}
+.tbl thead {
+  background-color: rgba(0,0,0,0.4);
+  color: #FFFFFF;
+}
+.tbl thead tr > th {
+  padding: 5px;
+  font-size: 13px;
+}
+.tbl tbody tr > td:nth-child(1) {
+  background-color: rgba(0,0,0,0.1);
+  color: #555555;
+  text-align: right;    
+  width: 5%;
+}
+.tbl tbody tr > td:nth-child(2) {
+  background-color: rgba(0,0,0,0.1);
+  color: #555555;
+  width: 650%;
+}
+.tbl tbody tr > td:nth-child(3) {
+  background-color: rgba(0,0,0,0.1);
+  color: #555555;
+  text-align: right;    
+  width: 30%;
+}
+/* Feature Table - SHOW */
+.esri-feature-table {
+  font-family: verdana;
+  font-size: 12px;
+  height: 450px;
+  width: 100%;
+}
