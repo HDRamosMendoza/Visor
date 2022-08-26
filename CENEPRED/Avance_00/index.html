@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <!-- ICON -->
+    <link rel="icon" type="images/png" href="./img/heber-daniel-ramos-mendoza-tab.ico"/>
+
+    <!-- TITLE -->
+    <title>SIGRID - Sistema de Información para la Gestión del Riesgo de Desastres</title>
+    
+    <!-- META -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport"           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="application-name"   content="SIGRID - Sistema de Información para la Gestión del Riesgo de Desastres">
+    <meta name="author"             content="Ing. Heber Daniel Ramos Mendoza - GIS DEVELOPERS SAC">
+    <meta name="description"        content="Prototipo: Visor de SIGRID. Diseñado e desarrollado por el Ing. Daniel Ramos Mendoza. Página web: https://HDRamosMendoza.github.io/Perfil-Profesional">
+    <meta name="keywords"           content="Catastro Acuícola, ArcGis Server, ArcGis Desktop">
+
+    <!-- CSS -->
+    <!--
+    <link rel="stylesheet" href="https://js.arcgis.com/3.41/dijit/themes/claro/claro.css" />
+    <link rel="stylesheet" href="https://js.arcgis.com/3.41/esri/css/esri.css" />
+    -->
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.24/esri/themes/light/main.css">
+    
+<!--
+    <link rel="stylesheet" type="text/css" href="./lib/calcite-web-1.2.5/dist/css/calcite-web.min.css">
+  -->
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+  </head>
+
+  <body class="claro">
+  <section class="panel-container">
+    <!-- MAP -->
+      <section class="aside-left">
+
+        <section id="map" class="map">
+
+          <!-- LOGO -->
+          <section class="main-logo">
+            <p>SIGRID</p>
+            <p>Sistema de Información para la Gestión del Riesgo de Desastres</p>
+            <!--<span></span>
+            <span></span>-->
+            <img src="./images/logo.png">
+         </section>
+
+          <!-- ListLayer -->
+          <div class="icon-widget listLayer">
+            <img src="./images/layer-30.png">
+            <span class="tooltiptext">Lista de Capas</span>
+          </div>
+
+          <!-- ListLayer Interoperable -->
+          <div class="icon-widget listLayerInteroperable">
+            <img src="./images/layer-30.png">
+            <span class="tooltiptext">Capas Interoperables</span>
+          </div>
+            
+          <!-- Impresion -->
+          <div class="icon-widget print">
+            <img src="./images/print-50.png">
+            <span class="tooltiptext">Imprimir</span>
+          </div>
+
+          <!-- BaseMap -->
+          <div class="icon-widget baseMap">
+            <img src="./images/basemap-50.png">
+            <span class="tooltiptext">Mapas Bases</span>
+          </div>
+
+          <!-- StreetView -->
+          <div class="icon-widget streetView">
+            <img src="./images/streetview-50.png">
+            <span class="tooltiptext">Street View</span>
+          </div>
+
+        </section>
+      </section>
+
+      <section class="aside-right all-scroll">
+
+        <div class="scroll-menu">
+          <input id="Tab-1" type="radio" name="tabs">
+          <label for="Tab-1">
+            Diagnostico
+          </label>
+
+          <input id="Tab-2" type="radio" name="tabs">
+          <label for="Tab-2">
+            Reporte
+          </label>
+
+          <input id="Tab-3" type="radio" name="tabs">
+          <label for="Tab-3" name="Presas">
+            Perfil de Elevación
+          </label>
+
+          <input id="Tab-4" type="radio" name="tabs">
+          <label for="Tab-4">
+            Envianos un Mensaje
+          </label>
+
+
+
+
+
+
+
+
+
+
+          <input id="Tab-5" type="radio" name="tabs">
+          <label for="Tab-5">
+            Unidades Hidrográficas
+          </label>
+
+          <input id="Tab-6" type="radio" name="tabs">
+          <label for="Tab-6">
+            Consejo de Recursos Hidrícos de Cuenca
+          </label>
+
+          <input id="Tab-7" type="radio" name="tabs">
+          <label for="Tab-7">
+            Fajas Marginales
+          </label>
+
+          <input id="Tab-8" type="radio" name="tabs">
+          <label for="Tab-8">
+            Puntos Criticos
+          </label>
+
+          <input id="Tab-9" type="radio" name="tabs">
+          <label for="Tab-9">
+            Pozos
+          </label>
+
+          <input id="Tab-10" type="radio" name="tabs">
+          <label for="Tab-10">
+            Acuiferos
+          </label>
+
+          <input id="Tab-11" type="radio" name="tabs">
+          <label for="Tab-11">
+            Cuerpos de Agua Codificadas
+          </label>    
+          
+      </div>
+
+      <!--<div class="ST_panelClose" data-dojo-attach-event="onclick:_close" title="Cerrar"></div>-->
+
+      <section id="Tab-1_TAB" class="tab-content">
+        <div>
+          
+          
+
+
+          
+
+          <main>
+  
+            <input id="tab1" type="radio" name="tabs-2" checked>
+            <label for="tab1">Filtro</label>
+              
+            <input id="tab2" type="radio" name="tabs-2">
+            <label for="tab2">Resultado</label>
+              
+            <input id="tab3" type="radio" name="tabs-2">
+            <label for="tab3">Analizar</label>
+            
+              
+            <section id="content1">
+              <div>				
+                There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+				<p>Diseñado e implementado por Ing. H. Daniel Ramos Mendoza</p>
+				<p>Página web: https://HDRamosMendoza.github.io/Perfil-Profesional</p>
+				<p>Contacto: 999130638</p>
+				<p>Correo: heber.daniel.ramos.mendoza@gmail.com</p>
+              </div>
+            </section>
+              
+            <section id="content2">
+              <div>
+                It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+              </div>
+            </section>
+              
+            <section id="content3">
+              <div>
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+              </div>
+            </section>
+             
+              
+          </main>
+        
+
+
+
+
+
+
+
+
+        </div>
+      </section>
+
+      <section id="Tab-2_TAB" class="tab-content" style="background-color: blue">
+        <div>
+          TAB 2
+        </div>
+      </section>
+
+      <section id="Tab-3_TAB" class="tab-content" style="background-color: green">
+        <div>
+          TAB 3
+        </div>
+      </section>
+
+      <section id="Tab-4_TAB" class="tab-content" style="background-color: yellow">
+        <div>
+          TAB 4
+        </div>
+      </section>
+      
+
+
+
+
+
+
+
+      <section id="Tab-5_TAB" class="tab-content" style="background-color: black">
+        <div>
+          TAB 5
+        </div>
+      </section>
+
+      <section id="Tab-6_TAB" class="tab-content" style="background-color: orange">
+        <div>
+          TAB 6
+        </div>
+      </section>
+
+      <section id="Tab-7_TAB" class="tab-content" style="background-color: brown">
+        <div>
+          TAB 7
+        </div>
+      </section>
+
+      <section id="Tab-8_TAB" class="tab-content" style="background-color: pink">
+        <div>
+          TAB 8
+        </div>
+      </section>
+
+      <section id="Tab-9_TAB" class="tab-content" style="background-color: purple">
+        <div>
+          TAB 9
+        </div>
+      </section>
+
+      <section id="Tab-10_TAB" class="tab-content" style="background-color: #3d800091">
+        <div>
+          TAB 10
+        </div>
+      </section>
+
+      <section id="Tab-11_TAB" class="tab-content" style="background-color: lightblue">
+        <div>
+          TAB 11
+        </div>
+      </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </section>
+    
+  </section>
+    <!-- WIDGET - Mapa Base -->
+    <section id="MapaBase" data-dojo-type="MapaBase"></section>
+
+    <!-- WIDGET - Mapa Acuícola -->
+    <section id="MapaAcuicola" data-dojo-type="MapaAcuicola"></section>
+
+    <!-- MODAL - Información de contacto -->
+    <section id="ModalInformation" data-dojo-type="ModalInformation"></section>
+
+  </body>
+
+  <!-- JS -->
+  <!--
+  <script type="text/javascript" src="config-dojo.js" ></script>
+  -->
+
+  <script src="https://js.arcgis.com/4.24/"></script>
+  <!--
+  <script src="https://js.arcgis.com/3.41/"></script>
+  -->
+  <!--
+  <script type="text/javascript" src="main.js" ></script>
+  -->
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <script src="./js/script.js"></script>
+  <script type="text/javascript" >
+    $(window).on("load", function(){
+
+      /* Modal de Información */
+      $("#btnInfo").trigger("click");
+
+      /* Widget - Boton cerrar */
+      $(".widget-close").on('click', function(event){
+        $(this).parents(':eq(1)').hide("slow");
+      });
+
+      /* Widget - Abrir widget de menú secundario */
+      $("#ViewerRightSideMenu .grid-item").on('click', function(){
+        var WidgetID = $(this).attr("id");
+        $("#"+WidgetID.split("Widget")[1]).show();
+      });
+    });
+  </script>
+
+
+  <script>
+    var map;
+    /*
+    require([
+      "esri/map",
+      "esri/geometry/Extent",
+      "dojo/domReady!"
+    ], function(Map, Extent) {
+        // First map
+        //map = new Map("map", {center: [-76, -10],zoom: 8,basemap: "topo"});
+      
+        // Second map
+        map = new Map("map", {
+          //basemap: "dark-gray-vector"
+          basemap: "topo"
+        });
+      
+        //Extent object JSON.
+        var extent = new Extent({
+            "type": "extent",
+            "xmin": -8645721.19,
+            "ymin": -1370434.35,
+            "xmax": -8500337.96,
+            "ymax": -1324572.13,
+            "spatialReference": {
+              "wkid": 102100,
+              "latestWkid": 3857
+            }
+        });
+        map.setExtent(extent);
+      // Note: Map: Extent Change
+      // => https://developers.arcgis.com/javascript/3/samples/map_currentextent/
+    });
+    */
+
+    require([
+      "esri/config",
+      "esri/Map",
+      "esri/views/MapView"
+    ], 
+    function (esriConfig,Map, MapView) {
+      esriConfig.apiKey = "AAPK37b272c8c1a74a6fbe9e9dad36cb95a1MfGx_sgyRMoFIU6Vfk834Goq_v7uIYMl5Fa0iSIWyQr2RgQ5P5s3RN97zoNlKtPd";
+
+      const map = new Map({
+        basemap: "arcgis-topographic"
+      });
+
+      const view = new MapView({
+        map: map,
+        center: [-76, -10], // Longitude, latitude
+        zoom: 6, // Zoom level
+        container: "map" // Div element
+      });
+
+    });
+  </script>
+  
+
+
+  <!--
+  <script>
+  require([
+    "dojo/dnd/Moveable","dojo/dom","dojo/domReady!"
+    ], function(
+        Moveable,dom
+      ){
+        var dnd = new Moveable(dom.byId("SearchDM_0"));
+      }
+  );
+  </script>
+  -->
+
+  <!--
+  <script>
+  require([
+  "dojo/dnd/Moveable", "dojo/query", "dojo/_base/lang","dojo/dom","dojo/domReady!"
+  ], function(
+      Moveable,query,lang,dom
+    ){
+        var myObject = {
+              id: "myObject",
+              onClick: function(evt){
+                console.log("LE DIO CLIC MIERDA !!!");
+                  var dnd = new Moveable(dom.byId(this.id));
+              }
+          };
+          query(".widget").on("click", myObject.onClick);
+          console.log("Hola Mundo");
+    });
+    </script>
+  -->
+
+  <!--
+  require(["dojo/_base/declare","dojo/dom" ,"dojo/_base/event", "dojo/dnd/Mover","dojo/dnd/Moveable"],
+    function(declare, dom, event, Mover, Moveable){
+      var StepMover = declare([Mover], {
+        onMouseMove: function(e){
+          var m = this.marginBox;
+          if(e.ctrlKey){
+            this.host.onMove(this, {l: parseInt((m.l + e.pageX) / 5) * 5, t: parseInt((m.t + e.pageY) / 5) * 5});
+          }else{
+            this.host.onMove(this, {l: m.l + e.pageX, t: m.t + e.pageY});
+          }
+          event.stop(e);
+        }
+      });
+
+      //Create your "Moveable" as
+      var myMoveable = new Moveable("SearchDM_0", {
+        mover: StepMover
+      });
+    });
+  -->
+</html>
