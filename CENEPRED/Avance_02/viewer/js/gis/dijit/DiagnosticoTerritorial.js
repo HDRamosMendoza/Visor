@@ -608,7 +608,7 @@ define([
                     console.log(cValue.name);
                     console.log(cValue.url);
                 }.bind(this));
-                return this._prueba(cValue.srv); /*console.log(currentValue.url);*/
+                return this._prueba(cValue.srv);
             } else {
                 console.log(cValue.url);
             }
