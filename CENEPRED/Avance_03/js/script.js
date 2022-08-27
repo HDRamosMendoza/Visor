@@ -93,6 +93,29 @@ let _htmlSummary = function(_id) {
 		tblBody.appendChild(row);
 		tbl.appendChild(tblHead);
 		tbl.appendChild(tblBody);
+
+		let tblFoot = document.createElement("tfoot");
+		let rowFoot = document.createElement("tr");
+		let rowFootTD = document.createElement("td");
+		rowFootTD.colSpan = "2";
+		rowFootTD.style.textAlign = "right";
+		rowFootTD.style.fontWeight = "900";
+
+		let rowFootTD_Text = document.createTextNode("Total");
+		rowFootTD.appendChild(rowFootTD_Text);
+
+		let rowFootTDCant = document.createElement("td");
+		rowFootTDCant.style.textAlign = "right";
+		
+		let rowFootTD_Cant = document.createTextNode("0");
+		rowFootTDCant.id = "ID_Total";
+		rowFootTDCant.appendChild(rowFootTD_Cant);
+
+		rowFoot.appendChild(rowFootTD);
+		rowFoot.appendChild(rowFootTDCant);
+		tblFoot.appendChild(rowFoot);
+
+		tbl.appendChild(tblFoot);
 		/*
 		tblDiv.appendChild(tbl);
 		*/
@@ -107,6 +130,7 @@ _htmlSummary("ID_TableSummary");
 let _htmlSummaryLoad = function() {
 	try {
 		let countItem = 1;
+		let countCant = 0;
 		let arr = [
 			{"name":"Capa temática", "cant": 4},
 			{"name":"Capa temática", "cant": 54},
@@ -130,7 +154,10 @@ let _htmlSummaryLoad = function() {
 			fragment.appendChild(row);
 			document.getElementById("ID_Table_Tbody").appendChild(fragment);
 			countItem++;
+			countCant = countCant + currentValue.cant;
+			document.getElementById("ID_Total").innerText = countCant;
 		});
+		
 	} catch (error) {
 		console.error(`Error: _htmlSummaryLoad => ${error.name} - ${error.message}`);
 	}

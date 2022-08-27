@@ -76,11 +76,17 @@ body { background-color: #f6f6f6; }
   color: #555555;
   width: 650%;
 }
+
 .tbl tbody tr > td:nth-child(3) {
   background-color: rgba(0,0,0,0.1);
   color: #555555;
   text-align: right;    
   width: 30%;
+}
+
+.tbl tfoot tr {
+  background-color: rgba(0,0,0,0.1);
+  color: #555555;
 }
 /* Feature Table - SHOW */
 .esri-feature-table {
