@@ -148,7 +148,7 @@ let map;
           datasets: [
             {
             /*axis: 'y',*/
-            label: 'My First Dataset',
+            label: 'Cantidad',
             data: [65, 59, 80, 81, 56, 55, 40],
             fill: false,
             backgroundColor: [

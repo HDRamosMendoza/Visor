@@ -52,7 +52,7 @@ let _tabActive = function() {
 let _htmlSummary = function(_id) {
 	try {
 		let tblDiv = document.createElement("div");
-		tblDiv.className = "report-subtitle"
+		tblDiv.className = "report-subtitle";
 		let rowTD_NodeDiv = document.createTextNode("Resumen:");
 		tblDiv.appendChild(rowTD_NodeDiv);
 
@@ -85,14 +85,17 @@ let _htmlSummary = function(_id) {
 		let rowTD = document.createElement("td");
 		rowTD.colSpan = "3";
 		rowTD.style.textAlign = "center";
+		/*
 		let rowTD_Node = document.createTextNode("Sin Coincidencias");
-
 		rowTD.appendChild(rowTD_Node);
 		row.appendChild(rowTD);
+		*/
 		tblBody.appendChild(row);
 		tbl.appendChild(tblHead);
 		tbl.appendChild(tblBody);
-		//tblDiv.appendChild(tbl);
+		/*
+		tblDiv.appendChild(tbl);
+		*/
 		_elementById(_id).appendChild(tblDiv);
 		_elementById(_id).appendChild(tbl);
 	} catch (error) {
@@ -100,6 +103,39 @@ let _htmlSummary = function(_id) {
 	}
 }
 _htmlSummary("ID_TableSummary");
+
+let _htmlSummaryLoad = function() {
+	try {
+		let countItem = 1;
+		let arr = [
+			{"name":"Capa temática", "cant": 4},
+			{"name":"Capa temática", "cant": 54},
+			{"name":"Capa temática", "cant": 48}
+		];
+		arr.map(function(currentValue) {
+			let fragment = document.createDocumentFragment();
+			let row = document.createElement("tr");
+			let cell_0 = document.createElement("td");
+			let cellText_0 = document.createTextNode(countItem);
+			cell_0.appendChild(cellText_0);
+			let cell_1 = document.createElement("td");
+			let cellText_1 = document.createTextNode(currentValue.name);
+			cell_1.appendChild(cellText_1);
+			let cell_2 = document.createElement("td");
+			let cellText_2 = document.createTextNode(currentValue.cant);
+			cell_2.appendChild(cellText_2);
+			row.appendChild(cell_0);
+			row.appendChild(cell_1);
+			row.appendChild(cell_2);
+			fragment.appendChild(row);
+			document.getElementById("ID_Table_Tbody").appendChild(fragment);
+			countItem++;
+		});
+	} catch (error) {
+		console.error(`Error: _htmlSummaryLoad => ${error.name} - ${error.message}`);
+	}
+};
+_htmlSummaryLoad();
 
 
 

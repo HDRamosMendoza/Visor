@@ -29,70 +29,87 @@
       <div class="report-title">
         
         <h2>
-          <i class="fa fa-bar-chart" aria-hidden="true"></i> 
+          <i class="fa fa-file-text" aria-hidden="true"></i> 
           Reporte Estadístico del Distrito de CHURUJA, BONGARA, AMAZONAS
         </h2>
       </div>
       <!-- /Sub Title -->
 
-      <section class="tabs">
-        <input id="tab-1" type="radio" name="radio-set" class="tab-selector-1" checked="checked" />
-        <label for="tab-1" class="tab-label-1">Variables 1</label>
-
-        <input id="tab-2" type="radio" name="radio-set" class="tab-selector-2" />
-        <label for="tab-2" class="tab-label-2">Variables 2</label>
-
-        <input id="tab-3" type="radio" name="radio-set" class="tab-selector-3" />
-        <label for="tab-3" class="tab-label-3">Variables 3</label>
-
-        <input id="tab-4" type="radio" name="radio-set" class="tab-selector-4" />
-        <label for="tab-4" class="tab-label-4">Variables 4</label>
+      <main>
+  
+        <input id="tab1" type="radio" name="tabs-2" class="tabs" checked>
+        <label for="tab1">Variable 01</label>
+          
+        <input id="tab2" type="radio" name="tabs-2" class="tabs">
+        <label for="tab2">Variable 02</label>
+          
+        <input id="tab3" type="radio" name="tabs-2" class="tabs">
+        <label for="tab3">Variable 03</label>
         
-        <div class="clear-shadow"></div>
-      
-          <div class="content">
-            <div class="content-1">
-            <h2>Variables</h2>
+        <section id="content1">
+          <div>
             <!-- Content -->
-            
-            <section class="report-content">
+            <div class="report-content">
+
               <!-- Graphic -->
-              <section class="report-aside report-graphic" id="ID_Graphic">    
+              <div class="report-aside report-graphic" id="ID_Graphic">    
                 <canvas id="yearsChart" height="150px"></canvas>
-              </section>
+              </div>
               <!-- /Graphic -->
+
               <!-- Summary -->
-              <section class="report-aside report-summary" id="ID_TableSummary" >
-              </section>
+              <div class="report-aside report-summary" id="ID_TableSummary" >
+              </div>
               <!-- /Summary -->
-            </section>
+
+            </div>
             <!-- /Content -->
             
-            
-          </div>
-          <div class="content-2">
-            <h2>Variables</h2>
-            <p>Do you see any Teletubbies in here? Do you see a slender plastic tag clipped to my shirt with my name printed on it? Do you see a little Asian child with a blank expression on his face sitting outside on a mechanical helicopter that shakes when you put quarters in it? No? Well, that's what you see at a toy store. And you must think you're in a toy store, because you're here shopping for an infant named Jeb.</p>
-            
-          </div>
-            <div class="content-3">
-              <h2>Variables</h2>
-            <p>The path of the righteous man is beset on all sides by the iniquities of the selfish and the tyranny of evil men. Blessed is he who, in the name of charity and good will, shepherds the weak through the valley of darkness, for he is truly his brother's keeper and the finder of lost children. And I will strike down upon thee with great vengeance and furious anger those who would attempt to poison and destroy My brothers. And you will know My name is the Lord when I lay My vengeance upon thee.</p>
-            
-          </div>
-          <div class="content-4">
-            <h2>Variables</h2>
-            <p>You see? It's curious. Ted did figure it out - time travel. And when we get back, we gonna tell everyone. How it's possible, how it's done, what the dangers are. But then why fifty years in the future when the spacecraft encounters a black hole does the computer call it an 'unknown entry event'? Why don't they know? If they don't know, that means we never told anyone. And if we never told anyone it means we never made it back. Hence we die down here. Just as a matter of deductive logic.</p>
-            
-          </div>
-        </div>
-      </section>
+            <!-- FeatureTable -->
+            <aside class="report-table" id="ID_TableDetail"></aside>
+            <!-- /FeatureTable -->
 
-      <!-- FeatureTable -->
-      <aside class="report-table" id="ID_TableDetail"></aside>
-      <!-- /FeatureTable -->
+            <!-- Pagination -->
+            
+            <div class="report-pagination">
+              <div class="pagination-text">
+                Mostrando 20 de 2000 información disponibles
+              </div>
+              <div class="pagination">
+                <a href="#">
+                  <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </a>
+                <a href="#">1</a>
+                <a href="#" class="active">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#">5</a>
+                <a href="#">6</a>
+                <a href="#">
+                  <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+            
+            <!-- /Pagination -->
 
-      
+          </div>
+        </section>
+          
+        <section id="content2">
+          <div>
+            It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+          </div>
+        </section>
+          
+        <section id="content3">
+          <div>
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+          </div>
+        </section>
+         
+          
+      </main>
 
     </section>
 
