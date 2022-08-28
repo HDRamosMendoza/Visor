@@ -67,7 +67,7 @@ let _htmlSummary = function(_id) {
 		rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
 
 		let rowHeadTH_Name = document.createElement("th");
-		let rowHeadTH_NameNode = document.createTextNode("Ámbito");
+		let rowHeadTH_NameNode = document.createTextNode("Descripción");
 		rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
 
 		let rowHeadTH_Count = document.createElement("th");
@@ -132,9 +132,9 @@ let _htmlSummaryLoad = function() {
 		let countItem = 1;
 		let countCant = 0;
 		let arr = [
-			{"name":"Capa temática", "cant": 4},
-			{"name":"Capa temática", "cant": 54},
-			{"name":"Capa temática", "cant": 48}
+			{"name":"Información", "cant": 4},
+			{"name":"Información", "cant": 54},
+			{"name":"Información", "cant": 48}
 		];
 		arr.map(function(currentValue) {
 			let fragment = document.createDocumentFragment();
