@@ -68,9 +68,13 @@ define([
         templateString: drawTemplate,
         baseClass: 'hdrm_dt',
         lyrList: "",
+        lyrAnalysis: "",
+        lyrGroup: [],
         countItem: 1,
         countResult: 0,
         textAmbito: "",
+        geometryIntersect: "",
+        
 
         postCreate: function () {
             this.inherited(arguments);
@@ -88,7 +92,10 @@ define([
             const lyrDis = config.lyrFilter[2];
             const srvDis = lyrDis.srv[0];
             /* Setup CAPAS */
-            this.lyrList = config.lyrList;
+            this.lyrList = config.lyrList_2;
+
+            /* Setup CAPAS DE ANÁLISIS */
+            this.lyrAnalysis = config.lyrAnalysis_2;
             
             /* Load DEPARTAMENTO */
             let fillDep = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,97,97,0]);
@@ -207,9 +214,9 @@ define([
                 try {
                     let disp = this.ID_Alert;
                     this.textAmbito = "";
-                    let objectLiteral = false == this._validateSelect(selDis) ? [selDis.get('value'),srvDis.url,selDis.get('displayedValue'),"Distrito"] :
-                                        false == this._validateSelect(selPro) ? [selPro.get('value'),srvPro.url,selPro.get('displayedValue'),"Provincia"] :
-                                        false == this._validateSelect(selDep) ? [selDep.get('value'),srvDep.url,selDep.get('displayedValue'),"Departamento"] :
+                    let objectLiteral = false == this._validateSelect(selDis) ? [selDis.get('value'),srvDis.url] :
+                                        false == this._validateSelect(selPro) ? [selPro.get('value'),srvPro.url] :
+                                        false == this._validateSelect(selDep) ? [selDep.get('value'),srvDep.url] :
                                         true;
 
                     if(objectLiteral == true) {
@@ -230,6 +237,9 @@ define([
                     /* Reinicia contador */
                     this.countItem = 1;
                     this.countResult = 0;
+
+                    /* Reinicia el grupo de capas */
+                    this.lyrGroup = [];
 
                     /* Muestra la pestaña RESULTADO (segunda pestaña) */
                     this._elementById("tab2").click();
@@ -252,6 +262,52 @@ define([
                     /* Muestra la pestaña ANALISIS (segunda pestaña) */
                     this._elementById("tab3").click();
 
+                    console.log("ANALISIS");
+                    console.log(this.lyrAnalysis);
+                    
+                    this.lyrAnalysis.map(function(lyr) {
+                        /*
+                        let query = new Query(); 
+                        //query.objectIds = [id];
+                        query.outFields = currentValue.fields.map(x=>x.field);
+
+                        console.log(currentValue);
+                        const lyr = new FeatureLayer(currentValue.url, { mode: FeatureLayer.MODE_SELECTION });
+                        lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
+                            try {
+                                features.map(function(cValue) {
+                                    this._jsonSRV(this.lyrList, cValue.geometry);
+                                }.bind(this));
+                            } catch (error) {
+                                console.error(`Error: _intersectLayer/selectFeatures => ${error.name} - ${error.message}`);
+                            }
+                        }.bind(this));
+                        */
+                       console.log(lyr.url);
+                        let queryTask = new QueryTask(lyr.url);
+                        let query = new Query();
+                        query.outFields = lyr.fields.map(x => x.field);
+                        query.geometry = this.geometryIntersect;
+                        query.SpatialRelationship = "esriSpatialRelIntersects";
+                        query.geometryType = "esriGeometryEnvelope";
+                        query.returnGeometry = true;
+                        queryTask.execute(query).then(
+                            (response) => {
+                                try {
+                                    console.log(response.features);
+                                } catch (error) {
+                                    console.error(`Error: _queryTask/queryTask.execute response => ${error.name} - ${error.message}`);
+                                }                    
+                            },
+                            (error) => {  
+                                console.error(`Error: Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
+                            }
+                        ).always(lang.hitch(this, function() {
+
+                        }.bind(this)));
+                        
+                    }.bind(this));
+                    console.log("ANALISIS");
 
                 } catch (error) {
                     console.error(`Error: button/ID_Report (click) => ${error.name} - ${error.message}`);
@@ -432,14 +488,14 @@ define([
         _intersectLayer: function(GPL) {
             /* Intersección de las capas operativas */
             try {
-                let [id, srv, selected, ambito] = GPL;
-                /*window.selected = selected; window.ambito = ambito;*/
+                let [id, srv] = GPL;
                 let query = new Query(); query.objectIds = [id];
                 const lyr = new FeatureLayer(srv, { mode: FeatureLayer.MODE_SELECTION });
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
-                            this._jsonSRV(this.lyrList, cValue.geometry);
+                            this.geometryIntersect = cValue.geometry;
+                            this._jsonSRV(this.lyrList);
                         }.bind(this));
                     } catch (error) {
                         console.error(`Error: _intersectLayer/selectFeatures => ${error.name} - ${error.message}`);
@@ -449,7 +505,7 @@ define([
                 console.error(`Error: _intersectLayer => ${error.name} - ${error.message}`);
             }
         },
-        _jsonSRV: function(lyrList, graphicGeometry) {
+        _jsonSRV: function(lyrList) {
             /* Object: De prueba para recorrer las capas a intersectar. Función recursiva de lista de capas */
             try {
                 lyrList.map(function(cValue) {
@@ -459,38 +515,38 @@ define([
                                 currentValue.srv.map(function(currValue) {
                                     if(currValue.hasOwnProperty('srv')) {
                                         currValue.srv.map(function(curreVal) {
-                                            this._queryTask(curreVal,curreVal,graphicGeometry);
+                                            this._queryTask(curreVal,curreVal);
                                         }.bind(this));
                                     } else {
-                                        this._queryTask(currValue,currValue.url,graphicGeometry);
+                                        this._queryTask(currValue,currValue.url);
                                     }
                                 }.bind(this));
                             } else {
-                                this._queryTask(currentValue,currentValue.url,graphicGeometry);
+                                this._queryTask(currentValue,currentValue.url);
                             }
                         }.bind(this));
                     } else {
-                        this._queryTask(cValue,cValue.url,graphicGeometry);
+                        this._queryTask(cValue,cValue.url);
                     }
                 }.bind(this));
             } catch (error) {
                 console.error(`Error: _jsonSRV ${error.name} - ${error.message}`);
-            }
-            
+            }            
         },
-        _queryTask: function(lyr, srv, graphicGeometry) {
+        _queryTask: function(lyr, srv) {
             try {
                 this.ID_Table_Count.style.display = "none";
                 this.ID_Load.style.display = "block";
                 let queryTask = new QueryTask(srv);
                 let query = new Query();
                 query.outFields = lyr.fields.map(x => x.field);
-                query.geometry = graphicGeometry;
+                query.geometry = this.geometryIntersect;
                 query.SpatialRelationship = "esriSpatialRelIntersects";
                 query.geometryType = "esriGeometryEnvelope";
                 queryTask.execute(query).then(
                     (response) => {
                         try {
+                            /*
                             let fragment = document.createDocumentFragment();
                             let row = document.createElement("tr");
                             let cell_0 = document.createElement("td");
@@ -507,12 +563,25 @@ define([
                             row.appendChild(cell_2);
                             fragment.appendChild(row);
                             this._elementById("ID_Table_Tbody").appendChild(fragment);
+                            */
                             this.countResult = this.countResult + response.features.length;
                             this.ID_Count.innerText = this.countResult;
                             //this.ID_CountText.innerText = `${this.textHelp} ${window.ambito} - ${window.selected}`;
                             this.ID_CountText.innerHTML = this.textAmbito;
                             /*this.ID_CountResult.innerText = `1 - ${this.countResult}`;*/
                             this.countItem++;
+                            if(this.lyrGroup.length == 0) {
+                                //this.lyrGroup.push({ padre:  lyr.padre[0], capa: lyr.name, cantidad: parseInt(response.features.length) });
+                                this.lyrGroup.push({ capa: lyr.name, cantidad: parseInt(response.features.length) });
+                            } else {
+                                let index = this._validatedData(this.lyrGroup, lyr.padre[0]);
+                                if(index == false){
+                                    //this.lyrGroup.push({ padre:  lyr.padre[0], capa: lyr.padre[0], cantidad: response.features.length});
+                                    this.lyrGroup.push({ capa: lyr.padre[0], cantidad: response.features.length});
+                                } else {                                    
+                                    this.lyrGroup[index].cantidad = this.lyrGroup[index].cantidad + response.features.length;
+                                }
+                            }                            
                             /*
                             let fragment = document.createDocumentFragment(); 
                             response.features.map(function (cValue) {                                
@@ -566,6 +635,31 @@ define([
                     this.ID_Load.style.display = "none";
                     this.ID_Table_Count.style.display = "block";
                     this._elementById("ID_Resultado_Total").innerText = `${this.countResult}`;
+                    if((this.countItem -1)  == this.lyrList.length) {
+
+                        this._sortJSON(this.lyrGroup,'cantidad','desc');
+                        
+                        this._elementById("ID_Table_Tbody").innerHTML = "";
+                        
+                        this.lyrGroup.map(function(cValue, index){
+                            let fragment = document.createDocumentFragment();
+                            let row = document.createElement("tr");
+                            let cell_0 = document.createElement("td");
+                            let cellText_0 = document.createTextNode(index + 1);
+                            cell_0.appendChild(cellText_0);
+                            let cell_1 = document.createElement("td");
+                            let cellText_1 = document.createTextNode(cValue.capa);
+                            cell_1.appendChild(cellText_1);
+                            let cell_2 = document.createElement("td");
+                            let cellText_2 = document.createTextNode(cValue.cantidad);
+                            cell_2.appendChild(cellText_2);
+                            row.appendChild(cell_0);
+                            row.appendChild(cell_1);
+                            row.appendChild(cell_2);
+                            fragment.appendChild(row);
+                            this._elementById("ID_Table_Tbody").appendChild(fragment);
+                        }.bind(this));                                           
+                    }
                 }.bind(this)));
             } catch (error) { 
                 console.error(`Error: _queryTask => ${error.name} - ${error.message}`); 
@@ -578,6 +672,30 @@ define([
                 (error) => { console.error(`Error: Oops! Es tu servidor esta desconectado => ${error.name} - ${error.message}`); }
             ).always(lang.hitch(this, function() { console.log("Always"); }));
             */
+        },
+        _validatedData: function(_group,_name){
+            let padreVal = false
+            for (let index = 0; index < _group.length; index++) {                
+                if(_group[index].capa == _name) {
+                    padreVal = index;
+                    break;
+                }                
+            }            
+            return padreVal;
+        },
+        _sortJSON: function(data, key, orden) {
+            return data.sort(function (a, b) {
+                var x = a[key],
+                y = b[key];
+        
+                if (orden === 'asc') {
+                    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+                }
+        
+                if (orden === 'desc') {
+                    return ((x > y) ? -1 : ((x < y) ? 1 : 0));
+                }
+            });
         },
         _htmlSummary: function() {
             try {
@@ -657,6 +775,15 @@ define([
             } else {
                 console.log(cValue.url);
             }
+        },
+        _ordenarAsc(arr, pkey) {
+            console.log(arr);
+            arr.sort(function (a, b) {
+               return a[pkey] > b[pkey];
+            });
+        },
+        _ordenarDesc(arr, pkey) {
+            this._ordenarAsc(arr, pkey); arr.reverse(); 
         },
         _elementById: function (paramId) {
             try {
