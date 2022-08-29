@@ -164,7 +164,149 @@ let _htmlSummaryLoad = function() {
 };
 _htmlSummaryLoad();
 
+/* */
+
+const abc = {"lyrList": [
+	{ 
+		"name": "Información CENEPRED",
+		"srv": [
+			{ 
+				"name": "Planes PPRRD",
+				"fields":[
+					{
+						"alias": "Nombre",
+						"field": "nombre"
+					},
+					{
+						"alias": "Descripción",
+						"field": "descripcion"
+					},
+					{
+						"alias": "Ámbito",
+						"field": "ambito"
+					},
+					{		
+						"alias": "Autor Corporativo",
+						"field": "autor_corporativo"
+					}
+				],
+				"url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000"
+			}
+		]
+	},
+	{ 
+		"name": "Papu CENEPRED",
+		"url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000"
+		
+	},
+	{ 
+		"name": "Cartografía Riesgos",
+		"srv": [
+			{
+				"name": "Evaluaciones de Riesgo",
+				"fields":[
+					{
+						"alias": "Nombre",
+						"field": "nombre"
+					},
+					{
+						"alias": "Descripción",
+						"field": "descripcion"
+					}
+				],
+				"url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4010000"
+			},
+			{ 
+				"name": "Zonas de Riesgo No Mitigables",
+				"fields":[
+					{
+						"alias": "Predio",
+						"field": "nom_predio"
+					},
+					{
+						"alias": "Fecha Doc.",
+						"field": "fecha_doc"
+					},
+					{
+						"alias": "Información",
+						"field": "bdcenepred_informacion_compleme"
+					},
+					{
+						"alias": "Parte Registral",
+						"field": "part_regis"
+					}
+				],
+				"url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4020000"
+			}
+		]
+	}
+]
+};
+
+console.log(abc);
+
+function hola(_abc) {
+	/*
+	if(!_abc.srv) {
+		_abc.map(function(currentValue) {
+			
+			//console.log(currentValue);
+			if(!currentValue.srv) {
+				console.log("NO TIENE SRV");
+				ab.push(
+					{
+						"name": currentValue.name,
+						"url": currentValue.url
+					}
+				);
+				return {
+					"name": currentValue.name,
+					"url": currentValue.url
+				};
+				//return {"url": currentValue.url};
+			} else {
+				console.log("SI TIENE SRV");
+				ab.push(
+					{
+						"name": currentValue.name,
+						"hijos":[ hola(currentValue)]
+					}
+				);
+				//return hola(currentValue.srv);
+			}
+
+		});
+
+	} else {
+		ab.push(
+			{"name": _abc.name, "url": _abc.url}
+		);
+	}
+	*/
+
+	return [
+		{
+			"hijos": abc
+		}
+
+	];
+	
 
 
+	
+	
+	if (!_abc.srv){
+        this._treeDefault.push(nodeOD.id);
+        return true;
+      } else {
+        this._treeDefault.push(nodeOD.id);
+        return this._getRamos(nodeOD.parent);
+      } 
+	  
+};
 
+let ac = hola(abc.lyrList);
+console.log("ac");
+console.log(ac);
+console.log("ac");
 
