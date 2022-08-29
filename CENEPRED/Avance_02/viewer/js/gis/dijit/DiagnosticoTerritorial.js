@@ -74,14 +74,11 @@ define([
         countResult: 0,
         textAmbito: "",
         geometryIntersect: "",
-        
-
         postCreate: function () {
             this.inherited(arguments);
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
             this._htmlSummary();
-
             /* Setup DEPARTAMENTO */
             const lyrDep = config.lyrFilter[0];
             const srvDep = lyrDep.srv[0];
@@ -93,10 +90,8 @@ define([
             const srvDis = lyrDis.srv[0];
             /* Setup CAPAS */
             this.lyrList = config.lyrList_2;
-
             /* Setup CAPAS DE ANÁLISIS */
-            this.lyrAnalysis = config.lyrAnalysis_2;
-            
+            this.lyrAnalysis = config.lyrAnalysis_2;            
             /* Load DEPARTAMENTO */
             let fillDep = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,97,97,0]);
             let featureLayerDep = this._loadLayer(lyrDep.srv[0].objectID, srvDep.url, fillDep, lyrDep.srv[0].depName);
@@ -105,8 +100,7 @@ define([
             let featureLayerPro = this._loadLayer(lyrPro.srv[0].objectID, srvPro.url, fillPro, lyrPro.srv[0].proName);
             /* Load DISTRITO */
             let fillDis = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,255,255,0]);
-            let featureLayerDis = this._loadLayer(lyrDis.srv[0].objectID, srvDis.url, fillDis, lyrDis.srv[0].disName);
-            
+            let featureLayerDis = this._loadLayer(lyrDis.srv[0].objectID, srvDis.url, fillDis, lyrDis.srv[0].disName);            
             /* Filter DEPARTAMENTO */            
             let selDep = this._ambito(lyrDep.htmlID, lyrDep.htmlPH, lyrDep.htmlPH, lyrDep.htmlLBL, srvDep.order, srvDep.objectID, srvDep.item, srvDep.url, '1=1');
             selDep.on("change", function(evt) {
@@ -192,7 +186,6 @@ define([
                     /* Limpiando pestaña RESULTADO */
                     this.ID_Count.innerHTML  = 0;
                     this.ID_CountText.innerHTML  = this.textAmbito = "";
-                    /*this.ID_CountResult.innerHTML  = "0 - 0";*/
                     this.ID_Table_Count.innerHTML = '';
                     this._htmlSummary();
                 } catch (error) {
@@ -218,13 +211,11 @@ define([
                                         false == this._validateSelect(selPro) ? [selPro.get('value'),srvPro.url] :
                                         false == this._validateSelect(selDep) ? [selDep.get('value'),srvDep.url] :
                                         true;
-
                     if(objectLiteral == true) {
                         disp.style.display = "block";
                         setTimeout(() => { disp.style.display = "none"; }, 3000);
                         return false;
                     }
-
                     /* Texto de Ámbito */
                     this.textAmbito = this.textAmbito.concat(`${selDep.get('displayedValue')} (departamento)`);
                     this.textAmbito = this._validateSelect(selPro) ? this.textAmbito.concat("") : this.textAmbito.concat(`/${selPro.get('displayedValue')} (provincia)`);
@@ -232,23 +223,18 @@ define([
                     let textAmbito_Temp = this.textAmbito.split("/");
                     textAmbito_Temp[textAmbito_Temp.length-1] = `<span style="padding: 5px 5px;color:#555555;font-weight:800;">${textAmbito_Temp[textAmbito_Temp.length-1]}</span>`;
                     textAmbito_Temp = textAmbito_Temp.join(" / ");
-                    this.textAmbito = `<p style="line-height:20px;background-color:rgba(0,0,0,0.1);padding:5px;">${textAmbito_Temp}</p>`;
-                    
+                    this.textAmbito = `<p style="line-height:20px;background-color:rgba(0,0,0,0.1);padding:5px;">${textAmbito_Temp}</p>`;                    
                     /* Reinicia contador */
                     this.countItem = 1;
                     this.countResult = 0;
-
                     /* Reinicia el grupo de capas */
                     this.lyrGroup = [];
-
                     /* Muestra la pestaña RESULTADO (segunda pestaña) */
                     this._elementById("tab2").click();
                     this.ID_Table_Count.style.display = "none";
                     this.ID_Load.style.display = "block";
-
                     /* Eliminar contenido del resultado */
-                    this._removeChild(this._elementById("ID_Table_Tbody"), this.ID_Count/*, this.ID_CountResult*/);
-                    
+                    this._removeChild(this._elementById("ID_Table_Tbody"), this.ID_Count/*, this.ID_CountResult*/);                    
                     /* Intersect layer */
                     this._intersectLayer(objectLiteral);
                 } catch (error) {
@@ -566,17 +552,13 @@ define([
                             */
                             this.countResult = this.countResult + response.features.length;
                             this.ID_Count.innerText = this.countResult;
-                            //this.ID_CountText.innerText = `${this.textHelp} ${window.ambito} - ${window.selected}`;
                             this.ID_CountText.innerHTML = this.textAmbito;
-                            /*this.ID_CountResult.innerText = `1 - ${this.countResult}`;*/
                             this.countItem++;
                             if(this.lyrGroup.length == 0) {
-                                //this.lyrGroup.push({ padre:  lyr.padre[0], capa: lyr.name, cantidad: parseInt(response.features.length) });
                                 this.lyrGroup.push({ capa: lyr.name, cantidad: parseInt(response.features.length) });
                             } else {
                                 let index = this._validatedData(this.lyrGroup, lyr.padre[0]);
-                                if(index == false){
-                                    //this.lyrGroup.push({ padre:  lyr.padre[0], capa: lyr.padre[0], cantidad: response.features.length});
+                                if(index == false) {
                                     this.lyrGroup.push({ capa: lyr.padre[0], cantidad: response.features.length});
                                 } else {                                    
                                     this.lyrGroup[index].cantidad = this.lyrGroup[index].cantidad + response.features.length;
@@ -630,19 +612,14 @@ define([
                         console.error(`Error: Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
                     }
                 ).always(lang.hitch(this, function() {
-                    //this.ID_Count.innerText = this.ID_Result_List.childNodes.length;
-                    //this.ID_CountResult.innerText = `1 - ${this.ID_Result_List.childNodes.length}`;
-                    
                     this._elementById("ID_Resultado_Total").innerText = `${this.countResult}`;
                     if((this.countItem -1)  == this.lyrList.length) {
                         
                         this.ID_Load.style.display = "none";
                         this.ID_Table_Count.style.display = "block";
-
-                        this._sortJSON(this.lyrGroup,'cantidad','desc');
-                        
-                        this._elementById("ID_Table_Tbody").innerHTML = "";
-                        
+                        /* Ordenando el json de capas */
+                        this._sortJSON(this.lyrGroup,'cantidad','desc');                        
+                        this._elementById("ID_Table_Tbody").innerHTML = "";                        
                         this.lyrGroup.map(function(cValue, index){
                             let fragment = document.createDocumentFragment();
                             let row = document.createElement("tr");
@@ -675,31 +652,36 @@ define([
             ).always(lang.hitch(this, function() { console.log("Always"); }));
             */
         },
-        _validatedData: function(_group,_name){
-            let padreVal = false
-            for (let index = 0; index < _group.length; index++) {                
-                if(_group[index].capa == _name) {
-                    padreVal = index;
-                    break;
-                }                
-            }            
-            return padreVal;
+        _validatedData: function(_group,_name) {
+            /* Se valida la data */
+            try {
+                let padreVal = false
+                for (let index = 0; index < _group.length; index++) {                
+                    if(_group[index].capa == _name) {
+                        padreVal = index; break;
+                    }                
+                }            
+                return padreVal;
+            } catch (error) { 
+                console.error(`Error: _validatedData => ${error.name} - ${error.message}`); 
+            }
         },
         _sortJSON: function(data, key, orden) {
-            return data.sort(function (a, b) {
-                var x = a[key],
-                y = b[key];
-        
-                if (orden === 'asc') {
-                    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-                }
-        
-                if (orden === 'desc') {
-                    return ((x > y) ? -1 : ((x < y) ? 1 : 0));
-                }
-            });
+            /* Ordenando el json de capas */
+            try {
+                return data.sort(function (a, b) {
+                    var x = a[key], y = b[key];
+            
+                    if (orden === 'asc') { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+            
+                    if (orden === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+                });
+            } catch (error) { 
+                console.error(`Error: _sortJSON => ${error.name} - ${error.message}`); 
+            }
         },
         _htmlSummary: function() {
+            /* Se crea la tabla de resumen */
             try {
                 let tbl = document.createElement("table");
                 tbl.className = "tbl";
@@ -756,10 +738,10 @@ define([
                 console.error(`Error: _htmlSummary => ${error.name} - ${error.message}`);
             }
         },
-        _removeChild: function(listDiv, divCount/*, divCountResult*/) {
+        _removeChild: function(listDiv, divCount) {
+            /* Se limpia la estructura */
             try {
                 divCount.innerText = "0";
-                //divCountResult.innerText = "0 - 0";
                 while(listDiv.firstChild) {
                     listDiv.removeChild(listDiv.firstChild);
                 }
@@ -778,16 +760,8 @@ define([
                 console.log(cValue.url);
             }
         },
-        _ordenarAsc(arr, pkey) {
-            console.log(arr);
-            arr.sort(function (a, b) {
-               return a[pkey] > b[pkey];
-            });
-        },
-        _ordenarDesc(arr, pkey) {
-            this._ordenarAsc(arr, pkey); arr.reverse(); 
-        },
         _elementById: function (paramId) {
+            /* Se valida el ID */
             try {
                 let id = document.getElementById(paramId);
                 if(id !== null && id !== undefined)
