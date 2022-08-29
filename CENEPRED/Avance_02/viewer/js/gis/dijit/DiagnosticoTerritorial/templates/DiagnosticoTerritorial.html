@@ -9,7 +9,7 @@
             <label for="tab2">Resultado</label>
               
             <input id="tab3" type="radio" name="tabs-2">
-            <label for="tab3">Analizar</label>
+            <label for="tab3">Análisis</label>
             
             <section id="content1">
                 <div class="tab-content">
@@ -59,15 +59,15 @@
                     </div>
 
                     <div class="form-filter action-btn">
-                        <button type="button" class="form-btn" data-dojo-attach-point="ID_Clear" style="float: left;">
+                        <button type="button" class="btn-float" data-dojo-attach-point="ID_Clear">
                             <i class="fa fa-eraser" aria-hidden="true"></i>
                             Limpiar
                         </button>
-                        <button type="button" class="form-btn" data-dojo-attach-point="ID_Report">
+                        <button type="button" data-dojo-attach-point="ID_Report">
                             <i class="fa fa-file-text" aria-hidden="true"></i>
                             Reporte
                         </button>  
-                        <button type="button" class="form-btn" data-dojo-attach-point="ID_Diagnosis">
+                        <button type="button" data-dojo-attach-point="ID_Diagnosis">
                             <i class="fa fa-search" aria-hidden="true"></i>
                             Diagnóstico
                         </button>                        
@@ -79,8 +79,9 @@
                 <div class="tab-content">
                     <div class="form-count">
                         <div class="form-count-count" data-dojo-attach-point="ID_Count">0</div>
-                        <div class="form-count-title" data-dojo-attach-point="ID_CountText">Coincidencias</div>
-                        <div class="form-count-resul" data-dojo-attach-point="ID_CountResult">0 - 0</div>                        
+                        <div class="form-count-title">Coincidencia(s) de registro(s)</div>
+                        <div class="form-count-title" data-dojo-attach-point="ID_CountText"></div>
+                        <!-- <div class="form-count-resul" data-dojo-attach-point="ID_CountResult">0 - 0</div>  -->
                     </div>
 
                     <label class="subTitle">Resumen de diagnóstico:</label>
@@ -103,20 +104,29 @@
                         </div> 
                     </div>
                     -->
+
                     <div data-dojo-attach-point="ID_Table_Count"></div>
 
-                    <div class="form-count">
-                        <div class="form-count-count">
-                            <button type="button">
-                                <i class="fa fa-line-chart" aria-hidden="true"></i>
-                                Analizar
-                            </button>
-                            <select id="ID_Formato">
-                                <option value="">
-                                    Formato
-                                </option>
-                            </select>
-                        </div>
+                    <div class="form-result-button">
+                        <button type="button" class="btn-float" data-dojo-attach-point="ID_Analisis">
+                            <i class="fa fa-reorder" aria-hidden="true"></i>
+                            Análisis
+                        </button>
+                        <span>
+                            <select>
+                                <option value="">XLS</option>
+                                <option value="">CSV</option>
+                                <option value="">JSON</option>
+                                <option value="">SHP (.zip)</option>
+                                <option value="">KMZ</option>
+                                <option value="">GeoJSON</option>
+                                <option value="">WKT</option>
+                            </select>  
+                            <button type="button" data-dojo-attach-point="ID_Diagnosis">
+                                <i class="fa fa-download" aria-hidden="true"></i>
+                                Descargar
+                            </button>    
+                        </span>                    
                     </div>
 
                 </div>

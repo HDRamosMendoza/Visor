@@ -70,6 +70,8 @@ define([
         lyrList: "",
         countItem: 1,
         countResult: 0,
+        textAmbito: "",
+
         postCreate: function () {
             this.inherited(arguments);
             const config = JSON.parse(configJSON);
@@ -182,8 +184,8 @@ define([
                     this.map.centerAt(new Point(-75.015152, -9.189967));
                     /* Limpiando pestaña RESULTADO */
                     this.ID_Count.innerHTML  = 0;
-                    this.ID_CountText.innerHTML  = "Coincidencias";
-                    this.ID_CountResult.innerHTML  = "0 - 0";
+                    this.ID_CountText.innerHTML  = this.textAmbito = "";
+                    /*this.ID_CountResult.innerHTML  = "0 - 0";*/
                     this.ID_Table_Count.innerHTML = '';
                     this._htmlSummary();
                 } catch (error) {
@@ -204,29 +206,55 @@ define([
                 /* Button (click) - ID_Diagnosis */
                 try {
                     let disp = this.ID_Alert;
-                    console.log(selDis.get('value'));
+                    this.textAmbito = "";
                     let objectLiteral = false == this._validateSelect(selDis) ? [selDis.get('value'),srvDis.url,selDis.get('displayedValue'),"Distrito"] :
                                         false == this._validateSelect(selPro) ? [selPro.get('value'),srvPro.url,selPro.get('displayedValue'),"Provincia"] :
                                         false == this._validateSelect(selDep) ? [selDep.get('value'),srvDep.url,selDep.get('displayedValue'),"Departamento"] :
-                                        true;                    
+                                        true;
+
                     if(objectLiteral == true) {
                         disp.style.display = "block";
                         setTimeout(() => { disp.style.display = "none"; }, 3000);
                         return false;
                     }
+
+                    /* Texto de Ámbito */
+                    this.textAmbito = this.textAmbito.concat(`${selDep.get('displayedValue')} (departamento)`);
+                    this.textAmbito = this._validateSelect(selPro) ? this.textAmbito.concat("") : this.textAmbito.concat(`/${selPro.get('displayedValue')} (provincia)`);
+                    this.textAmbito = this._validateSelect(selDis) ? this.textAmbito.concat("") : this.textAmbito.concat(`/${selDis.get('displayedValue')} (distrital)`);                    
+                    let textAmbito_Temp = this.textAmbito.split("/");
+                    textAmbito_Temp[textAmbito_Temp.length-1] = `<span style="padding: 5px 5px;color:#555555;font-weight:800;">${textAmbito_Temp[textAmbito_Temp.length-1]}</span>`;
+                    textAmbito_Temp = textAmbito_Temp.join(" / ");
+                    this.textAmbito = `<p style="line-height:20px;background-color:rgba(0,0,0,0.1);padding:5px;">${textAmbito_Temp}</p>`;
+                    
                     /* Reinicia contador */
                     this.countItem = 1;
                     this.countResult = 0;
-                    /* Mostrar la segunda pestaña */
-                    document.getElementById("tab2").click();                    
+
+                    /* Muestra la pestaña RESULTADO (segunda pestaña) */
+                    this._elementById("tab2").click();
                     this.ID_Table_Count.style.display = "none";
-                    this.ID_Load.style.display = "block";                    
+                    this.ID_Load.style.display = "block";
+
                     /* Eliminar contenido del resultado */
-                    this._removeChild(document.getElementById("ID_Table_Tbody"), this.ID_Count, this.ID_CountResult);
+                    this._removeChild(this._elementById("ID_Table_Tbody"), this.ID_Count/*, this.ID_CountResult*/);
+                    
                     /* Intersect layer */
                     this._intersectLayer(objectLiteral);
                 } catch (error) {
                     console.error(`Error: button/ID_Diagnosis (click) => ${error.name} - ${error.message}`);
+                }
+            })));
+
+            this.own(on(this.ID_Analisis, 'click', lang.hitch(this, () => {
+                /* Button (click) - ID_Analisis */
+                try {
+                    /* Muestra la pestaña ANALISIS (segunda pestaña) */
+                    this._elementById("tab3").click();
+
+
+                } catch (error) {
+                    console.error(`Error: button/ID_Report (click) => ${error.name} - ${error.message}`);
                 }
             })));
 
@@ -405,7 +433,7 @@ define([
             /* Intersección de las capas operativas */
             try {
                 let [id, srv, selected, ambito] = GPL;
-                window.selected = selected; window.ambito = ambito;
+                /*window.selected = selected; window.ambito = ambito;*/
                 let query = new Query(); query.objectIds = [id];
                 const lyr = new FeatureLayer(srv, { mode: FeatureLayer.MODE_SELECTION });
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
@@ -478,11 +506,12 @@ define([
                             row.appendChild(cell_1);
                             row.appendChild(cell_2);
                             fragment.appendChild(row);
-                            document.getElementById("ID_Table_Tbody").appendChild(fragment);
+                            this._elementById("ID_Table_Tbody").appendChild(fragment);
                             this.countResult = this.countResult + response.features.length;
-                            this.ID_CountText.innerText = `Coincidencias: ${window.ambito} - ${window.selected}`;
                             this.ID_Count.innerText = this.countResult;
-                            this.ID_CountResult.innerText = `1 - ${this.countResult}`;
+                            //this.ID_CountText.innerText = `${this.textHelp} ${window.ambito} - ${window.selected}`;
+                            this.ID_CountText.innerHTML = this.textAmbito;
+                            /*this.ID_CountResult.innerText = `1 - ${this.countResult}`;*/
                             this.countItem++;
                             /*
                             let fragment = document.createDocumentFragment(); 
@@ -521,7 +550,9 @@ define([
                                 formCard.appendChild(div);
                                 fragment.appendChild(formCard);
                             }.bind(this));                            
-                            this.ID_Result_List.appendChild(fragment);*/
+                            this.ID_Result_List.appendChild(fragment); 
+                            */
+                           /* this.textAmbito */
                         } catch (error) {
                             console.error(`Error: _queryTask/queryTask.execute response => ${error.name} - ${error.message}`);
                         }                    
@@ -534,6 +565,7 @@ define([
                     //this.ID_CountResult.innerText = `1 - ${this.ID_Result_List.childNodes.length}`;
                     this.ID_Load.style.display = "none";
                     this.ID_Table_Count.style.display = "block";
+                    this._elementById("ID_Resultado_Total").innerText = `${this.countResult}`;
                 }.bind(this)));
             } catch (error) { 
                 console.error(`Error: _queryTask => ${error.name} - ${error.message}`); 
@@ -551,27 +583,23 @@ define([
             try {
                 let tbl = document.createElement("table");
                 tbl.className = "tbl";
+                /* Head */
                 let tblHead = document.createElement("thead");
-
                 let rowHead = document.createElement("tr");
-
                 let rowHeadTH_Item = document.createElement("th");
                 let rowHeadTH_ItemNode = document.createTextNode("#");
                 rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
-
                 let rowHeadTH_Name = document.createElement("th");
                 let rowHeadTH_NameNode = document.createTextNode("Capas");
                 rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
-
                 let rowHeadTH_Count = document.createElement("th");
                 let rowHeadTH_CountSize = document.createTextNode("Cantidad");
                 rowHeadTH_Count.appendChild(rowHeadTH_CountSize);
-
                 rowHead.appendChild(rowHeadTH_Item);
                 rowHead.appendChild(rowHeadTH_Name);
                 rowHead.appendChild(rowHeadTH_Count);
                 tblHead.appendChild(rowHead);
-
+                /* Body */
                 let tblBody = document.createElement("tbody");
                 tblBody.id = "ID_Table_Tbody";
                 let row = document.createElement("tr");
@@ -579,22 +607,39 @@ define([
                 rowTD.colSpan = "3";
                 rowTD.style.textAlign = "center";
                 let rowTD_Node = document.createTextNode("Sin Coincidencias");
-
                 rowTD.appendChild(rowTD_Node);
                 row.appendChild(rowTD);
                 tblBody.appendChild(row);
                 tbl.appendChild(tblHead);
                 tbl.appendChild(tblBody);
-
+                /* Foot */
+                let tblFoot = document.createElement("tfoot");
+                let rowFoot = document.createElement("tr");
+                let rowFootTD = document.createElement("td");
+                rowFootTD.colSpan = "2";
+                rowFootTD.style.textAlign = "right";
+                rowFootTD.style.fontWeight = "800";
+                let rowFootTD_Text = document.createTextNode("Total");
+                rowFootTD.appendChild(rowFootTD_Text);
+                let rowFootTDCant = document.createElement("td");
+                rowFootTDCant.style.textAlign = "right";                
+                let rowFootTD_Cant = document.createTextNode("0");
+                rowFootTDCant.id = "ID_Resultado_Total";
+                rowFootTDCant.appendChild(rowFootTD_Cant);
+                rowFoot.appendChild(rowFootTD);
+                rowFoot.appendChild(rowFootTDCant);
+                tblFoot.appendChild(rowFoot);
+                tbl.appendChild(tblFoot);
+                /* ID */
                 this.ID_Table_Count.appendChild(tbl);
             } catch (error) {
                 console.error(`Error: _htmlSummary => ${error.name} - ${error.message}`);
             }
         },
-        _removeChild: function(listDiv, divCount, divCountResult) {
+        _removeChild: function(listDiv, divCount/*, divCountResult*/) {
             try {
                 divCount.innerText = "0";
-                divCountResult.innerText = "0 - 0";
+                //divCountResult.innerText = "0 - 0";
                 while(listDiv.firstChild) {
                     listDiv.removeChild(listDiv.firstChild);
                 }
@@ -611,6 +656,17 @@ define([
                 return this._prueba(cValue.srv);
             } else {
                 console.log(cValue.url);
+            }
+        },
+        _elementById: function (paramId) {
+            try {
+                let id = document.getElementById(paramId);
+                if(id !== null && id !== undefined)
+                    return id;
+                else
+                    console.error(`Error: ID (${paramId}) => null || undefined`);
+            } catch(error) {
+                console.error(`_elementById => ${error.name} - ${error.message}`);
             }
         }
     });

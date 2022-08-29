@@ -31,7 +31,7 @@
     content: '\f03a';
   }
   .hdrm_dt main label[for*='3']:before {
-    content: '\f0c3';
+    content: '\f0c9';
   }
   .hdrm_dt main label:hover {
     color: #888;
@@ -93,12 +93,12 @@
   }
   .hdrm_dt .form-filter > select {
     width: 64%;
-    -webkit-box-shadow: none;
   }
   .hdrm_dt .tab-content .action-btn {
     text-align: right;
-  }  
-  .hdrm_dt .form-filter .form-btn {
+  }
+  /*  
+  .hdrm_dt .form-btn {
     color: #FFFFFF;
     cursor: pointer;
     margin-left: 0;
@@ -110,6 +110,7 @@
     margin-top: 7px;
     font-size: 12px !important;
   }
+  */
   .hdrm_dt .form-filter button:hover {
     background-color: rgba(0,0,0,0.3) !important;
   }
@@ -121,15 +122,24 @@
     float: left;
     margin-top: 7px;
   }
-  .hdrm_dt .form-count .form-count-count button,
-  .hdrm_dt .form-count .form-count-count select {
+  .hdrm_dt button {
     background-color: rgba(0,0,0,0.5);
-    border: 0;
-    border-radius: 0;
     color: #FFFFFF;
+    border: 0;
+  }
+  .hdrm_dt .btn-float {
+    float: left !important;
+  }
+  .hdrm_dt button,
+  .hdrm_dt select {
+    border-radius: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: 12px !important;
     height: 30px;
-    width: 90px;
+    margin-top: 7px;
     -webkit-box-shadow: none;
+    width: 90px;
   }
   /************************/
   .hdrm_dt .form-content {
@@ -155,15 +165,12 @@
     text-align: right;
     width: 50px;
   }
-  .hdrm_dt .form-content button,
-  .hdrm_dt .form-content select {
-    -webkit-box-shadow: none;
-    border: 0;
-    border-radius: 0;
-    color: #FFFFFF;
-    background-color: rgba(0,0,0,0.5);
-    height: 27px;
+  /*
+  .hdrm_dt .form-content > button,
+  .hdrm_dt .form-content > select {
+    height: 27px !important;
   }
+  */  
   /*****************/
   .hdrm_dt .form-scroll {
     max-height: 350px;
@@ -215,6 +222,9 @@
   }
   /** CARD **/
   
+  .hdrm_dt .form-count {
+    margin-bottom: 15px;
+  }
   .hdrm_dt .form-count .form-count-count:nth-child(1) {
     width: 100%;
     text-align: center;
@@ -229,14 +239,14 @@
     box-sizing: border-box;
     display: inline-block;
     vertical-align: top;
-  }
+  }  
   .hdrm_dt .form-count .form-count-title {
+    color: #000;
     box-sizing: border-box;
-    text-align: center;
     font-size: 12px;
     font-weight: normal;
-    color: #000;
-    margin-top: 5px;
+    text-align: center;
+    margin-top: 3px; 
   }
   .hdrm_dt .form-count .form-count-resul {
     box-sizing: border-box;
@@ -306,8 +316,6 @@
     width: 50%;
   }
   */
-  
-
   /* Animación de carga */
   .hdrm_dt .lds-facebook {
     display: inline-block;
@@ -354,35 +362,44 @@
     font-size: 13px;
     margin-top: 10px;
     width: 100%;
+    background-color: rgba(0,0,0,0.1);
+    color: #555555;
   }
   .hdrm_dt .tab-content .tbl, 
   .hdrm_dt .tab-content .tbl td, 
   .hdrm_dt .tab-content .tbl th {
     border: 1px solid #FFFFFF !important;
     padding: 5px 10px;
+    font-size: 12px !important;
   }
   .hdrm_dt .tab-content .tbl thead {
-    background-color: rgba(0,0,0,0.4);
-    color: #FFFFFF;
+    background-color: rgba(0,0,0,0.3);
+    color: #FFFFFF !important;
   }
   .hdrm_dt .tab-content .tbl thead tr > th {
     padding: 5px;
-    font-size: 13px;
   }
   .hdrm_dt .tab-content .tbl tbody tr > td:nth-child(1) {
-    background-color: rgba(0,0,0,0.1);
-    color: #555555;
     text-align: right;    
     width: 5%;
   }
   .hdrm_dt .tab-content .tbl tbody tr > td:nth-child(2) {
-    background-color: rgba(0,0,0,0.1);
-    color: #555555;
     width: 650%;
   }
   .hdrm_dt .tab-content .tbl tbody tr > td:nth-child(3) {
-    background-color: rgba(0,0,0,0.1);
-    color: #555555;
     text-align: right;    
     width: 30%;
+  }
+
+  /* Botones de resultado */
+  .hdrm_dt .form-result-button {
+    height: 30px;
+  }
+  .hdrm_dt .form-result-button span {
+    float: right;
+  }
+  .hdrm_dt .form-result-button span select { 
+    height: 30px;
+    margin-top: 7px;
+    width: 80px;
   }
