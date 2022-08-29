@@ -56,6 +56,7 @@ body { background-color: #f6f6f6; }
 .tbl th {
   border: 1px solid #FFFFFF !important;
   padding: 5px 10px;
+  font-size: 12px !important;
 }
 .tbl thead {
   background-color: rgba(0,0,0,0.4);
