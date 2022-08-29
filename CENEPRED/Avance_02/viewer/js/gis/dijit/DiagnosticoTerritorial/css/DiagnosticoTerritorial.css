@@ -111,7 +111,7 @@
     font-size: 12px !important;
   }
   */
-  .hdrm_dt .form-filter button:hover {
+  .hdrm_dt button:hover {
     background-color: rgba(0,0,0,0.3) !important;
   }
   /***********************/

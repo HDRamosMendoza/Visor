@@ -632,10 +632,12 @@ define([
                 ).always(lang.hitch(this, function() {
                     //this.ID_Count.innerText = this.ID_Result_List.childNodes.length;
                     //this.ID_CountResult.innerText = `1 - ${this.ID_Result_List.childNodes.length}`;
-                    this.ID_Load.style.display = "none";
-                    this.ID_Table_Count.style.display = "block";
+                    
                     this._elementById("ID_Resultado_Total").innerText = `${this.countResult}`;
                     if((this.countItem -1)  == this.lyrList.length) {
+                        
+                        this.ID_Load.style.display = "none";
+                        this.ID_Table_Count.style.display = "block";
 
                         this._sortJSON(this.lyrGroup,'cantidad','desc');
                         
@@ -708,7 +710,7 @@ define([
                 let rowHeadTH_ItemNode = document.createTextNode("#");
                 rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
                 let rowHeadTH_Name = document.createElement("th");
-                let rowHeadTH_NameNode = document.createTextNode("Capas");
+                let rowHeadTH_NameNode = document.createTextNode("Capas / Temáticas");
                 rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
                 let rowHeadTH_Count = document.createElement("th");
                 let rowHeadTH_CountSize = document.createTextNode("Cantidad");
