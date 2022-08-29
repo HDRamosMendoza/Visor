@@ -243,54 +243,51 @@ define([
             })));
 
             this.own(on(this.ID_Analisis, 'click', lang.hitch(this, () => {
-                /* Button (click) - ID_Analisis */
+                /* Button (click) - ID_Analisis. Muestra la pestaña ANALISIS (segunda pestaña) */
                 try {
-                    /* Muestra la pestaña ANALISIS (segunda pestaña) */
                     this._elementById("tab3").click();
-
-                    console.log("ANALISIS");
                     console.log(this.lyrAnalysis);
                     
-                    this.lyrAnalysis.map(function(lyr) {
-                        /*
-                        let query = new Query(); 
-                        //query.objectIds = [id];
-                        query.outFields = currentValue.fields.map(x=>x.field);
-
-                        console.log(currentValue);
-                        const lyr = new FeatureLayer(currentValue.url, { mode: FeatureLayer.MODE_SELECTION });
-                        lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
-                            try {
-                                features.map(function(cValue) {
-                                    this._jsonSRV(this.lyrList, cValue.geometry);
-                                }.bind(this));
-                            } catch (error) {
-                                console.error(`Error: _intersectLayer/selectFeatures => ${error.name} - ${error.message}`);
-                            }
-                        }.bind(this));
-                        */
-                       console.log(lyr.url);
-                        let queryTask = new QueryTask(lyr.url);
-                        let query = new Query();
-                        query.outFields = lyr.fields.map(x => x.field);
-                        query.geometry = this.geometryIntersect;
-                        query.SpatialRelationship = "esriSpatialRelIntersects";
-                        query.geometryType = "esriGeometryEnvelope";
-                        query.returnGeometry = true;
-                        queryTask.execute(query).then(
-                            (response) => {
-                                try {
-                                    console.log(response.features);
-                                } catch (error) {
-                                    console.error(`Error: _queryTask/queryTask.execute response => ${error.name} - ${error.message}`);
-                                }                    
-                            },
-                            (error) => {  
-                                console.error(`Error: Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
-                            }
-                        ).always(lang.hitch(this, function() {
-
-                        }.bind(this)));
+                    this.lyrList.map(function(lyr) {
+                        if(lyr.analysis){
+                            console.log(lyr);
+                            let queryTask = new QueryTask(lyr.url);
+                            let query = new Query();
+                            query.outFields = lyr.fields.map(x => x.field);
+                            query.geometry = this.geometryIntersect;
+                            query.SpatialRelationship = "esriSpatialRelIntersects";
+                            query.geometryType = "esriGeometryEnvelope";
+                            queryTask.executeForCount(query).then(
+                                (count) => {
+                                    try {
+                                        /*
+                                        this.countResult = this.countResult + count;
+                                        this.ID_Count.innerText = this.countResult;
+                                        this.ID_CountText.innerHTML = this.textAmbito;
+                                        this.countItem++;
+                                        if(this.lyrGroup.length == 0) {
+                                            this.lyrGroup.push({ capa: lyr.name, cantidad: count });
+                                        } else {
+                                            let index = this._validatedData(this.lyrGroup, lyr.padre[0]);
+                                            if(index == false) {
+                                                this.lyrGroup.push({ capa: lyr.padre[0], cantidad: count});
+                                            } else {                                    
+                                                this.lyrGroup[index].cantidad = this.lyrGroup[index].cantidad + count;
+                                            }
+                                        }
+                                        */
+                                    } catch (error) {
+                                        console.error(`Error: _queryTask/queryTask.executeForCount response => ${error.name} - ${error.message}`);
+                                    }                    
+                                },
+                                (error) => {  
+                                    console.error(`Error: _queryTask/queryTask.executeForCount - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
+                                }
+                            ).always(lang.hitch(this, function() {
+                                
+                                
+                            }.bind(this)));                            
+                        }
                         
                     }.bind(this));
                     console.log("ANALISIS");
@@ -529,95 +526,35 @@ define([
                 query.geometry = this.geometryIntersect;
                 query.SpatialRelationship = "esriSpatialRelIntersects";
                 query.geometryType = "esriGeometryEnvelope";
-                queryTask.execute(query).then(
-                    (response) => {
+                queryTask.executeForCount(query).then(
+                    (count) => {
                         try {
-                            /*
-                            let fragment = document.createDocumentFragment();
-                            let row = document.createElement("tr");
-                            let cell_0 = document.createElement("td");
-                            let cellText_0 = document.createTextNode(this.countItem);
-                            cell_0.appendChild(cellText_0);
-                            let cell_1 = document.createElement("td");
-                            let cellText_1 = document.createTextNode(lyr.name);
-                            cell_1.appendChild(cellText_1);
-                            let cell_2 = document.createElement("td");
-                            let cellText_2 = document.createTextNode(response.features.length);
-                            cell_2.appendChild(cellText_2);
-                            row.appendChild(cell_0);
-                            row.appendChild(cell_1);
-                            row.appendChild(cell_2);
-                            fragment.appendChild(row);
-                            this._elementById("ID_Table_Tbody").appendChild(fragment);
-                            */
-                            this.countResult = this.countResult + response.features.length;
+                            this.countResult = this.countResult + count;
                             this.ID_Count.innerText = this.countResult;
                             this.ID_CountText.innerHTML = this.textAmbito;
                             this.countItem++;
                             if(this.lyrGroup.length == 0) {
-                                this.lyrGroup.push({ capa: lyr.name, cantidad: parseInt(response.features.length) });
+                                this.lyrGroup.push({ capa: lyr.name, cantidad: count });
                             } else {
                                 let index = this._validatedData(this.lyrGroup, lyr.padre[0]);
                                 if(index == false) {
-                                    this.lyrGroup.push({ capa: lyr.padre[0], cantidad: response.features.length});
+                                    this.lyrGroup.push({ capa: lyr.padre[0], cantidad: count});
                                 } else {                                    
-                                    this.lyrGroup[index].cantidad = this.lyrGroup[index].cantidad + response.features.length;
+                                    this.lyrGroup[index].cantidad = this.lyrGroup[index].cantidad + count;
                                 }
-                            }                            
-                            /*
-                            let fragment = document.createDocumentFragment(); 
-                            response.features.map(function (cValue) {                                
-                                let formCard = document.createElement("div");
-                                formCard.className = "form-card";
-                                let span = document.createElement("span");
-                                span.className = "form-item";
-                                let div = document.createElement("div");
-                                div.className = "form-item";
-                                let lbl = document.createElement("label");
-                                let tNode = document.createTextNode(`${this.countItem}. ${lyr.name}`);
-                                let iconSpan = document.createElement("span");
-                                iconSpan.title = "ZOOM";
-                                let iconI = document.createElement("i");
-                                iconI.className = "fa fa-map";
-                                iconSpan.appendChild(iconI);
-                                lbl.appendChild(tNode);
-                                span.appendChild(lbl);
-                                span.appendChild(iconSpan);
-                                this.countItem++;
-                                lyr.fields.forEach(function(arg) {
-                                    let itemDiv = document.createElement('div');
-                                    itemDiv.className = "form-item-content";
-                                    let itemLabel = document.createElement('label');
-                                    itemLabel.textContent = arg.alias;
-                                    let itemSpan = document.createElement('span');
-                                    let itemP = document.createElement('p');
-                                    itemP.textContent = cValue.attributes[arg.field];
-                                    itemSpan.appendChild(itemP);
-                                    itemDiv.appendChild(itemLabel);
-                                    itemDiv.appendChild(itemSpan);
-                                    div.appendChild(itemDiv);
-                                });
-                                formCard.appendChild(span);
-                                formCard.appendChild(div);
-                                fragment.appendChild(formCard);
-                            }.bind(this));                            
-                            this.ID_Result_List.appendChild(fragment); 
-                            */
-                           /* this.textAmbito */
+                            }
                         } catch (error) {
-                            console.error(`Error: _queryTask/queryTask.execute response => ${error.name} - ${error.message}`);
+                            console.error(`Error: _queryTask/queryTask.executeForCount response => ${error.name} - ${error.message}`);
                         }                    
                     },
                     (error) => {  
-                        console.error(`Error: Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
+                        console.error(`Error: _queryTask/queryTask.executeForCount - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
                     }
                 ).always(lang.hitch(this, function() {
                     this._elementById("ID_Resultado_Total").innerText = `${this.countResult}`;
                     if((this.countItem -1)  == this.lyrList.length) {
-                        
                         this.ID_Load.style.display = "none";
                         this.ID_Table_Count.style.display = "block";
-                        /* Ordenando el json de capas */
                         this._sortJSON(this.lyrGroup,'cantidad','desc');                        
                         this._elementById("ID_Table_Tbody").innerHTML = "";                        
                         this.lyrGroup.map(function(cValue, index){
@@ -637,7 +574,9 @@ define([
                             row.appendChild(cell_2);
                             fragment.appendChild(row);
                             this._elementById("ID_Table_Tbody").appendChild(fragment);
-                        }.bind(this));                                           
+                        }.bind(this));
+                        
+                        console.log(this.lyrGroup);
                     }
                 }.bind(this)));
             } catch (error) { 

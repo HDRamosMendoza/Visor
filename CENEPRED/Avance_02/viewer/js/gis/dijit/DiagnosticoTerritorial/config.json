@@ -151,6 +151,7 @@
     ],
     "lyrList_2": [
         { 
+            "analysis": false,
             "name": "Centros Poblados",
             "padre": ["Centros Poblados"],
             "fields":[
@@ -162,6 +163,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2110002"
         },
         { 
+            "analysis": false,
             "name": "Establecimientos de Salud",
             "padre": ["Establecimientos de Salud"],
             "fields":[
@@ -173,6 +175,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2020000"
         },
         { 
+            "analysis": false,
             "name": "Instituciones Educativas",
             "padre": ["Instituciones Educativas"],
             "fields":[
@@ -184,6 +187,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2030000"
         },
         { 
+            "analysis": false,
             "name": "Recursos para respuesta",
             "padre": ["Recursos para respuesta"],
             "fields":[
@@ -195,6 +199,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2040000"
         },
         { 
+            "analysis": false,
             "name": "Penitenciarias",
             "padre": ["Penitenciarias"],
             "fields":[
@@ -206,6 +211,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2050000"
         },
         { 
+            "analysis": true,
             "name": "Transporte",
             "padre": ["Infraestructura vial y transporte","Transporte"],
             "fields":[
@@ -217,6 +223,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060100"
         },
         { 
+            "analysis": true,
             "name": "Red Ferroviaria",
             "padre": ["Infraestructura vial y transporte","Red Ferroviaria"],
             "fields": [
@@ -228,6 +235,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060200"
         },
         { 
+            "analysis": true,
             "name": "Red vial",
             "padre": ["Infraestructura vial y transporte","Red vial"],
             "fields": [
@@ -239,6 +247,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060300"
         },
         { 
+            "analysis": true,
             "name": "Otra Infraestructura",
             "padre": ["Infraestructura vial y transporte","Otra Infraestructura"],
             "fields": [
@@ -250,6 +259,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060400"
         },
         { 
+            "analysis": false,
             "name": "Línea de Transmisión",
             "padre": ["Infraestructura eléctrica y sanitaria","Infraestructura eléctrica","Línea de Transmisión"],
             "fields": [
@@ -261,6 +271,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070101"
         },
         { 
+            "analysis": false,
             "name": "Central hidraúlica",
             "padre": ["Infraestructura eléctrica y sanitaria","Infraestructura eléctrica","Central hidraúlica"],
             "fields": [
@@ -272,6 +283,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070102"
         },
         { 
+            "analysis": false,
             "name": "Central térmica",
             "padre": ["Infraestructura eléctrica y sanitaria","Infraestructura eléctrica","Central térmica"],
             "fields": [
@@ -283,6 +295,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070103"
         },
         { 
+            "analysis": false,
             "name": "Infraestructura sanitaria",
             "padre": ["Infraestructura eléctrica y sanitaria","Infraestructura sanitaria"],
             "fields": [
@@ -294,6 +307,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070200"
         },
         { 
+            "analysis": false,
             "name": "Pozos, presas y bocatomas",
             "padre": ["Infraestructura hídrica","Pozos, presas y bocatomas"],
             "fields": [
@@ -305,6 +319,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080100"
         },
         { 
+            "analysis": false,
             "name": "Canales",
             "padre": ["Infraestructura hídrica","Canales"],
             "fields": [
@@ -316,6 +331,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080200"
         },
         { 
+            "analysis": false,
             "name": "Reservorios",
             "padre": ["Infraestructura hídrica","Reservorios"],
             "fields": [
@@ -327,6 +343,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080300"
         },
         { 
+            "analysis": false,
             "name": "Infraestructura de prevención y/o reducción",
             "padre": ["Infraestructura hídrica","Infraestructura de prevención y/o reducción"],
             "fields": [
@@ -338,6 +355,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080400"
         },
         { 
+            "analysis": false,
             "name": "Refinerias",
             "padre": ["Infraestructura para Hidrocarburos","Refinerias"],
             "fields": [
@@ -349,6 +367,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090100"
         },
         { 
+            "analysis": false,
             "name": "Establecimientos",
             "padre": ["Infraestructura para Hidrocarburos","Establecimientos"],
             "fields": [
@@ -360,6 +379,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090200"
         },
         { 
+            "analysis": false,
             "name": "Plantas de abastecimiento de combustibles líquidos",
             "padre": ["Infraestructura para Hidrocarburos","Plantas de abastecimiento de combustibles líquidos"],
             "fields": [
@@ -371,6 +391,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090300"
         },
         { 
+            "analysis": false,
             "name": "Planta envasadora de GLP",
             "padre": ["Infraestructura para Hidrocarburos","Planta envasadora de GLP"],
             "fields": [
@@ -382,6 +403,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090400"
         },
         { 
+            "analysis": false,
             "name": "Gasoducto, oleoducto y poliducto",
             "padre": ["Infraestructura para Hidrocarburos","Gasoducto, oleoducto y poliducto"],
             "fields": [
@@ -393,6 +415,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090500"
         },
         { 
+            "analysis": false,
             "name": "Manzanas referenciales 2017 01",
             "padre": ["Predios urbanos y rurales (Manzanas referenciales 2007)","Manzanas referenciales 2017 01"],
             "fields": [
@@ -404,6 +427,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300"
         },
         { 
+            "analysis": false,
             "name": "Manzanas referenciales 2007 02",
             "padre": ["Predios urbanos y rurales (Manzanas referenciales 2007)","Manzanas referenciales 2007 02"],
             "fields": [
