@@ -84,27 +84,10 @@
                         <!-- <div class="form-count-resul" data-dojo-attach-point="ID_CountResult">0 - 0</div>  -->
                     </div>
 
-                    <label class="subTitle">Resumen de diagnóstico:</label>
-
+                    <label class="subTitle">Resumen de Diagnóstico:</label>
                     <!-- CSS Load -->
                     <div class="lds-facebook" data-dojo-attach-point="ID_Load"><div></div><div></div><div></div></div>
-                    <!--   
-                    <div class="form-result form-scroll" data-dojo-attach-point="ID_Result_List">
-                        <div class="form-card">
-                            <span class="form-item">
-                                <label>1. Planes PPRRD</label>
-                                <span><i class="fa fa-map" aria-hidden="true"></i></span>
-                            </span>
-                            <div class="form-item">
-                                <div class="form-item-content">
-                                    <label>Campo 1</label>
-                                    <span><p> Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1</p></span>
-                                </div>
-                            </div>
-                        </div> 
-                    </div>
-                    -->
-
+                    
                     <div data-dojo-attach-point="ID_Table_Count"></div>
 
                     <div class="form-result-button">
@@ -135,13 +118,27 @@
             <section id="content3">
                 <div class="tab-content">
                     
-                    <div class="form-content">
-                        <label class="subTitle">Distancia de zona de influencia</label>
-                        <input type="number" value="" placeholder="##">
-                        <button type="button">
-                            <i class="fa fa-refresh" aria-hidden="true"></i>
-                            Refrescar
-                        </button>
+                    <div class="form-Analysis buffer">
+                        <p class="analysis-text">Distancia de zona de influencia</p>
+                        <input type="number" value="1" placeholder="##" min="1" max="30" data-dojo-attach-point="ID_Buffer">
+                        <p class="analysis-unit">kilométro(s)</p>
+                        <center>
+                            <button type="button" data-dojo-attach-point="ID_Button_Buffer">
+                                <i class="fa fa-refresh" aria-hidden="true"></i>
+                                Actualizar
+                            </button> 
+                        </center>
+                    </div>
+
+                    <label class="subTitle">Resumen de Análisis:</label>
+                    <!-- CSS Load -->
+                    <div class="lds-facebook" data-dojo-attach-point="ID_Load_Buffer"><div></div><div></div><div></div></div>
+                    
+                    <div data-dojo-attach-point="ID_Table_Analysis"></div>
+
+
+                    <div class="form-Analysis">
+
                     </div>
                 
                     <!--
@@ -153,10 +150,23 @@
                         </select>                        
                     </div>
                     -->
-                    <div class="form-content form-scroll">
-                        
+                    
+                    <!--
+                    <div class="form-result form-scroll" data-dojo-attach-point="ID_Result_List">
+                        <div class="form-card">
+                            <span class="form-item">
+                                <label>1. Planes PPRRD</label>
+                                <span><i class="fa fa-map" aria-hidden="true"></i></span>
+                            </span>
+                            <div class="form-item">
+                                <div class="form-item-content">
+                                    <label>Campo 1</label>
+                                    <span><p> Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1</p></span>
+                                </div>
+                            </div>
+                        </div> 
                     </div>
-
+                    -->
 
                     <div class="form-result-button">
                         <span>

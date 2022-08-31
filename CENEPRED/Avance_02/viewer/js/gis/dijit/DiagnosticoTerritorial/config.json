@@ -211,7 +211,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2050000"
         },
         { 
-            "analysis": true,
+            "analysis": false,
             "name": "Transporte",
             "padre": ["Infraestructura vial y transporte","Transporte"],
             "fields":[
@@ -225,7 +225,7 @@
         { 
             "analysis": true,
             "name": "Red Ferroviaria",
-            "padre": ["Infraestructura vial y transporte","Red Ferroviaria"],
+            "padre": ["Infraestructura vial y transporte", "Red Ferroviaria"],
             "fields": [
                 {
                     "alias": "objectid",
@@ -237,7 +237,7 @@
         { 
             "analysis": true,
             "name": "Red vial",
-            "padre": ["Infraestructura vial y transporte","Red vial"],
+            "padre": ["Infraestructura vial y transporte", "Red vial"],
             "fields": [
                 {
                     "alias": "objectid",
@@ -247,7 +247,7 @@
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060300"
         },
         { 
-            "analysis": true,
+            "analysis": false,
             "name": "Otra Infraestructura",
             "padre": ["Infraestructura vial y transporte","Otra Infraestructura"],
             "fields": [

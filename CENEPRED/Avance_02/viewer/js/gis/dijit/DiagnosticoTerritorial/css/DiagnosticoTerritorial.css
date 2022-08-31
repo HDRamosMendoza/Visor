@@ -403,3 +403,44 @@
     margin-top: 7px;
     width: 80px;
   }
+  
+  /* Analisis */
+  .hdrm_dt .buffer {
+    margin-top: -7px;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    margin-bottom: 10px;
+  }
+  .hdrm_dt .form-Analysis {
+    
+    padding: 10px;
+    font-size: 13px;
+  }
+  .hdrm_dt .form-Analysis input[type='number'],
+  .hdrm_dt .form-Analysis p {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0;
+  }
+  .hdrm_dt .form-Analysis .analysis-text {
+    width: 50%;
+    text-align: right;
+    padding-right: 10px;
+    margin-right: 5px;
+    border-right: 2px solid white;
+  }
+  .hdrm_dt .form-Analysis input[type='number'] {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    color: #ffffff !important;
+    border: 1px solid #a6a6a6;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    height: 26px !important;
+    line-height: 26px;
+    width: 15%;
+  }
+  .hdrm_dt .form-Analysis .analysis-unit {
+    margin-top: 2px;
+    line-height: 26px;
+    width: 20%;
+  }
+  
