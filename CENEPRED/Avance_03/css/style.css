@@ -286,16 +286,25 @@ input.tabs:checked + label {
     text-align: center;
     line-height: 50px;
     border-radius: 50px;
-
 }
+
 .tabs .tab-content > div {
   position: absolute;
   text-align: center;
   padding: 40px 20px;
   top: -200%;
 
+  transition: all 500ms ease-in-out;
 }
 .tabs .tab-content > div.active {
   top: 0px;
-
+}
+.tabs .tab-indicator {
+  position: absolute;
+  width: 4px;
+  height: 50px;
+  background-color: #00aaee;
+  left: 198px;
+  top: 80px;
+  transition: all 500ms ease-in-out;
 }
