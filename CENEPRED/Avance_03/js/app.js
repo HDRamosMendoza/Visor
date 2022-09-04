@@ -143,11 +143,12 @@ let map;
 
 
         /* Grafico de Chart JS */
+        /*
         const data = {
           labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'],
           datasets: [
             {
-            /*axis: 'y',*/
+            //axis: 'y',
             label: 'Cantidad',
             data: [65, 59, 80, 81, 56, 55, 40],
             fill: false,
@@ -196,6 +197,42 @@ let map;
             }
           }
         });
+        */
+      
+        const data = {
+          labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
+          datasets: [
+            {
+              label: 'Dataset 1',
+              data: [4,5,4,7,8],
+              backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(255, 159, 64)',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                'rgb(54, 162, 235)'
+              ],
+            }
+          ]
+        };
+
+        new Chart('ID_TABLE_Graphic', { 
+          type: 'pie',
+          data,
+          options: {
+            responsive: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+              },
+              title: {
+                display: false,
+                text: 'Chart.js Pie Chart'
+              }
+            }
+          }
+        });
+        
 
     });
 

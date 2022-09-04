@@ -23,7 +23,8 @@ body { background-color: #f6f6f6; position: relative;}
   margin-bottom: 15px;
 }
 .report-main .report-title h2 {
-  font-size: 16px;
+  font-size: 15px;
+  
 }
 .report-main .report-subtitle {
   font-size: 13px;
@@ -44,6 +45,14 @@ body { background-color: #f6f6f6; position: relative;}
   box-sizing: border-box;
   width: 50%;
 }
+
+.report-main .report-content .report-aside {
+  box-sizing: border-box;
+  vertical-align: top;
+  display: inline-block !important;
+  width: 49.5%;
+}
+
 
 /* SUMMARY */
 .tbl {
@@ -238,32 +247,45 @@ input.tabs:checked + label {
   /*top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);*/
-  width: 590px;
-  height: 360px;
-  padding: 30px 20px;
+  width: 100%;
+  height: 500px;
+  padding: 0px;
   background-color: #F5F5F5;
+  margin-top: 10px;
   /*box-shadow: 5px 5px 10px 5px #ccc;*/
   overflow: hidden;
 }
+/*
+.tabs {
+  position: relative;
+  width: 590px;
+  padding: 5px;
+  background-color: #F5F5F5;
+  overflow: hidden;
+}
+*/
 .tabs .tab-header {
   float:  left;
-  width: 180px;
+  width: 210px;
   height: 100%;
   border-right: 1px solid #ccc;
-  padding: 50px 0px;
+  padding: 0px 0px 5px;
+  
 }
 .tabs .tab-header > div {
-  height: 50px;
-  line-height: 50px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #888;
+  /*height: 50px;*/
+  /*line-height: 50px;*/
+  /*font-size: 16px;*/
+  font-size: 13px;
+  /*font-weight: 600;*/
+  color: #181818;
   cursor: pointer;
-  padding-left: 10px;
+  padding: 8px 10px;
 }
 .tabs .tab-header > div:hover,
 .tabs .tab-header > div.active {
-  color: #00acee;
+  color: white;
+  background-color: #4999b0;
 }
 .tabs .tab-header div i {
   display: inline-block;
@@ -291,13 +313,14 @@ input.tabs:checked + label {
 .tabs .tab-content > div {
   position: absolute;
   text-align: center;
-  padding: 40px 20px;
+  padding: 15px;
   top: -200%;
 
   transition: all 500ms ease-in-out;
 }
 .tabs .tab-content > div.active {
   top: 0px;
+
 }
 .tabs .tab-indicator {
   position: absolute;
@@ -307,4 +330,39 @@ input.tabs:checked + label {
   left: 198px;
   top: 80px;
   transition: all 500ms ease-in-out;
+}
+
+.tabs .tab-content .div-hr {
+  border-bottom: 2px solid #797979;
+  margin: 10px 0px;
+  width: 30px;
+}
+
+/*****************/
+
+.tabs .form-scroll {
+  
+  box-sizing: border-box;
+  overflow-y: scroll;
+}
+.tabs .form-scroll::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+.tabs .form-scroll::-webkit-scrollbar:vertical {
+  width:10px;
+}
+.tabs .form-scroll::-webkit-scrollbar-button:increment,
+.tabs .form-scroll::-webkit-scrollbar-button {
+  display: none;
+} 
+.tabs .form-scroll::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+.tabs .form-scroll::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 20px;
+  border: 2px solid #f1f2f3;
+}
+.tabs .form-scroll::-webkit-scrollbar-track {
+  border-radius: 10px;  
 }

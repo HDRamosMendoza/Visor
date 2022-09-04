@@ -31,49 +31,58 @@
 
     <section class="report-main">
 
+      <!-- Sub Title -->
+      <div class="report-title">
+        <h2>
+          <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp; Reporte Estadístico del Distrito de CHURUJA, BONGARA, AMAZONAS
+        </h2>
+      </div>
+      <!-- /Sub Title -->
+
+      <!-- Content 
+      <div class="report-content">        
+        <div class="report-aside report-summary" id="ID_TABLE_Resumen"></div>
+        <div class="report-aside report-graphic">dsdsd</div>        
+      </div>
+      /Content -->
+
+
+      <div class="report-content">
+  
+        <div class="report-aside report-graphic" >    
+          <center>
+          <canvas id="ID_TABLE_Graphic"  height="400"></canvas>
+          </center>
+        </div>
+        <div class="report-aside report-summary" id="ID_TABLE_Resumen" >
+        </div>
+      </div>
+
       <div class="tabs"> 
-        <div class="tab-header"> 
-          <div class="active">
-            <i class="fa fa-code"></i> Code
-          </div>
-          <div>
-            <i class="fa fa-code"></i> Code
-          </div>
-          <div>
-            <i class="fa fa-code"></i> Code
-          </div>
-        </div>
-        <div class="tab-indicator"> 
         
+        <div class="tab-header form-scroll" id="ID_TAB_Header"> 
+          <!-- <div class="active">
+            <i class="fa fa-code"></i> Code
+          </div>
+          <div>
+            <i class="fa fa-code"></i> Code
+          </div> -->
         </div>
-        <div class="tab-content"> 
-          <div class="active">
+        <!-- <div class="tab-indicator"></div> -->
+        <div class="tab-content" id="ID_TAB_Content">
+          <!-- <div class="active">
             <i class="fa fa-code"></i>
             <h2>Thissssis code</h2>
             <p>dfsf sdf sdf sdf dsf dsfds fds fds fds fds f dsf dsf dsfds f sad</p>
           </div>
           <div>
             <i class="fa fa-code"></i>
-            <h2>This is ffffffcode</h2>
+            <h2>Thissssis code</h2>
             <p>dfsf sdf sdf sdf dsf dsfds fds fds fds fds f dsf dsf dsfds f sad</p>
-          </div>
-          <div>
-            <i class="fa fa-code"></i>
-            <h2>This is hhhhhhhhhhhhcode</h2>
-            <p>dfsf sdf sdf sdf dsf dsfds fds fds fds fds f dsf dsf dsfds f sad</p>
-          </div>
+          </div> -->
         </div>
-      </div>
 
-      <!-- Sub Title -->
-      <div class="report-title">
-        
-        <h2>
-          <i class="fa fa-file-text" aria-hidden="true"></i> 
-          Reporte Estadístico del Distrito de CHURUJA, BONGARA, AMAZONAS
-        </h2>
       </div>
-      <!-- /Sub Title -->
 
       <main>
   
@@ -88,22 +97,23 @@
         
         <section id="content1">
           <div>
-            <!-- Content -->
-            <div class="report-content">
+            
 
-              <!-- Graphic -->
-              <div class="report-aside report-graphic" id="ID_Graphic">    
-                <canvas id="yearsChart" height="150px"></canvas>
-              </div>
-              <!-- /Graphic -->
 
-              <!-- Summary -->
-              <div class="report-aside report-summary" id="ID_TableSummary" >
-              </div>
-              <!-- /Summary -->
+<div class="report-content">
+  
+  <div class="report-aside report-graphic" id="ID_Graphic">    
+    <canvas id="yearsChart" height="150px"></canvas>
+  </div>
+  <div class="report-aside report-summary" id="ID_TableSummary" >
+  </div>
+</div>
+ 
 
-            </div>
-            <!-- /Content -->
+
+
+
+
             
             <!-- FeatureTable -->
             <aside class="report-table" id="ID_TableDetail"></aside>

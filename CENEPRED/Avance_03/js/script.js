@@ -164,9 +164,72 @@ let _htmlSummaryLoad = function() {
 };
 _htmlSummaryLoad();
 
+
+let _htmlTable = function(ID_Table) {
+	/* Se crea la tabla de resumen */
+	try {
+		const idTable = ID_Table.getAttribute("id"); 
+		const tbl = document.createElement("table");
+		tbl.className = "tbl";
+		/* Head */
+		const tblHead = document.createElement("thead");
+		const rowHead = document.createElement("tr");
+		const rowHeadTH_Item = document.createElement("th");
+		const rowHeadTH_ItemNode = document.createTextNode("#");
+		rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
+		const rowHeadTH_Name = document.createElement("th");
+		const rowHeadTH_NameNode = document.createTextNode("Capas / Temáticas");
+		rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
+		const rowHeadTH_Count = document.createElement("th");
+		const rowHeadTH_CountSize = document.createTextNode("Cantidad");
+		rowHeadTH_Count.appendChild(rowHeadTH_CountSize);
+		rowHead.appendChild(rowHeadTH_Item);
+		rowHead.appendChild(rowHeadTH_Name);
+		rowHead.appendChild(rowHeadTH_Count);
+		tblHead.appendChild(rowHead);
+		/* Body */
+		const tblBody = document.createElement("tbody");
+		tblBody.id = `${idTable}_Tbody`;
+		const row = document.createElement("tr");
+		const rowTD = document.createElement("td");
+		rowTD.colSpan = "3";
+		rowTD.style.textAlign = "center";
+		const rowTD_Node = document.createTextNode("Sin Coincidencias");
+		rowTD.appendChild(rowTD_Node);
+		row.appendChild(rowTD);
+		tblBody.appendChild(row);
+		tbl.appendChild(tblHead);
+		tbl.appendChild(tblBody);
+		/* Foot */
+		const tblFoot = document.createElement("tfoot");
+		const rowFoot = document.createElement("tr");
+		const rowFootTD = document.createElement("td");
+		rowFootTD.colSpan = "2";
+		rowFootTD.style.textAlign = "right";
+		rowFootTD.style.fontWeight = "800";
+		const rowFootTD_Text = document.createTextNode("Total");
+		rowFootTD.appendChild(rowFootTD_Text);
+		const rowFootTDCant = document.createElement("td");
+		rowFootTDCant.style.textAlign = "right";                
+		const rowFootTD_Cant = document.createTextNode("0");
+		rowFootTDCant.id = `${idTable}_Total`;
+		rowFootTDCant.appendChild(rowFootTD_Cant);
+		rowFoot.appendChild(rowFootTD);
+		rowFoot.appendChild(rowFootTDCant);
+		tblFoot.appendChild(rowFoot);
+		tbl.appendChild(tblFoot);
+		/* ID */
+		ID_Table.appendChild(tbl);
+	} catch (error) {
+		console.error(`Error: _htmlTable => ${error.name} - ${error.message}`);
+	}
+};
+
+_htmlTable(_elementById("ID_TABLE_Resumen"));
+
 /* */
 
-const abc = {"lyrList": [
+const abc = [
 	{ 
 		"name": "Información CENEPRED",
 		"srv": [
@@ -197,7 +260,6 @@ const abc = {"lyrList": [
 	{ 
 		"name": "Papu CENEPRED",
 		"url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000"
-		
 	},
 	{ 
 		"name": "Cartografía Riesgos",
@@ -240,95 +302,10 @@ const abc = {"lyrList": [
 			}
 		]
 	}
-]
-};
-
-console.log(abc);
-
-function hola(_abc) {
-	/*
-	if(!_abc.srv) {
-		_abc.map(function(currentValue) {
-			
-			//console.log(currentValue);
-			if(!currentValue.srv) {
-				console.log("NO TIENE SRV");
-				ab.push(
-					{
-						"name": currentValue.name,
-						"url": currentValue.url
-					}
-				);
-				return {
-					"name": currentValue.name,
-					"url": currentValue.url
-				};
-				//return {"url": currentValue.url};
-			} else {
-				console.log("SI TIENE SRV");
-				ab.push(
-					{
-						"name": currentValue.name,
-						"hijos":[ hola(currentValue)]
-					}
-				);
-				//return hola(currentValue.srv);
-			}
-
-		});
-
-	} else {
-		ab.push(
-			{"name": _abc.name, "url": _abc.url}
-		);
-	}
-	*/
-
-	return [
-		{
-			"hijos": abc
-		}
-
-	];
-	
+];
 
 
-	
-	
-	if (!_abc.srv){
-        this._treeDefault.push(nodeOD.id);
-        return true;
-      } else {
-        this._treeDefault.push(nodeOD.id);
-        return this._getRamos(nodeOD.parent);
-      } 
-	  
-};
 
-let ac = hola(abc.lyrList);
-console.log("ac");
-console.log(ac);
-console.log("ac");
-
-function _class(name) {
-	return document.getElementsByClassName(name);
-}
-
-let tabPanes = _class("tab-header")[0].getElementsByTagName("div");
-
-for(let i=0;i<tabPanes.length;i++){
-	tabPanes[i].addEventListener("click", function(){
-	
-		_class("tab-header")[0].getElementsByClassName("active")[0].classList.remove("active");
-		tabPanes[i].classList.add("active");
-
-		_class("tab-indicator")[0].style.top = `calc(80px + ${i*50}px)`;
-		
-		_class("tab-content")[0].getElementsByClassName("active")[0].classList.remove("active");
-		_class("tab-content")[0].getElementsByTagName("div")[i].classList.add("active");
-	
-	});
-}
 
 let jsonData = [
 	{ 
@@ -626,4 +603,70 @@ let jsonData = [
 		]
 	}];
 
+/*
+	abc.map(function(currentValue) {
+		console.log(currentValue);
+	});
+*/
+	let _jsonTravelTree = function(json, _name = "") {
+		/* Recorre un arból de n hijos */
+		try {
+			let type; let resul;
+			for (var i=0; i < json.length; i++) {
+				
+				type = typeof json[i].srv;
+				if (type == "undefined") {
+					let fragmentHeader = document.createDocumentFragment();
+					resul = true;
 
+					const divHeader = document.createElement("div");
+					divHeader.innerHTML = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+					fragmentHeader.appendChild(divHeader);
+					_elementById("ID_TAB_Header").appendChild(fragmentHeader);
+
+					let fragmentContent = document.createDocumentFragment();
+					const divContent = document.createElement("div");
+					divContent.className = "tab-group";
+					const divTitle = document.createElement("div");
+					divTitle.innerHTML = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+					const divHR = document.createElement("div");
+					divHR.className = "div-hr";
+					divContent.appendChild(divTitle);
+					divContent.appendChild(divHR);					
+					fragmentContent.appendChild(divContent);
+					_elementById("ID_TAB_Content").appendChild(fragmentContent);
+
+				} else {
+					console.log("GROUP: " + i + json[i].name);
+					resul += _jsonTravelTree(json[i].srv, _name || json[i].name);
+				}
+			}            
+			return resul;
+		
+		} catch (error) {
+			console.error(`Error: _jsonTravelTree => ${error.name} - ${error.message}`);
+		}
+	};
+
+	_jsonTravelTree(jsonData);
+
+	
+	_elementById("ID_TAB_Header").childNodes[3].className = "active";
+	_elementById("ID_TAB_Content").childNodes[3].className = "active";
+	
+	let _class = function(name) { 
+		return document.getElementsByClassName(name);
+	}	
+	let tabPanes = _class("tab-header")[0].getElementsByTagName("div");	
+	for(let i=0;i<tabPanes.length;i++) {
+		tabPanes[i].addEventListener("click", function() {		
+			_class("tab-header")[0].getElementsByClassName("active")[0].classList.remove("active");
+			tabPanes[i].classList.add("active");			
+			/*_class("tab-indicator")[0].style.top = `calc(80px + ${i*50}px)`;*/			
+			_class("tab-content")[0].getElementsByClassName("active")[0].classList.remove("active");
+			/*_class("tab-content")[0].getElementsByTagName("div")[i].classList.add("active");*/
+			_class("tab-content")[0].getElementsByClassName("tab-group")[i].classList.add("active");
+			
+		});
+	}
+	
