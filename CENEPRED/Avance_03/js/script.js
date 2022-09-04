@@ -4,16 +4,31 @@ let _elementById = function (paramId) {
 	    if(id !== null && id !== undefined){
 	        return id;
 	    } else {
-	        console.log(`
-	        	Error: ID(${paramId}) => null || undefined
-	        `);
+	        console.log(`Error: ID(${paramId}) => null || undefined`);
 	    }
 	} catch(error) {
-  		console.error(`
-  			_elementById: ${error.name} - ${error.message}.
-  		`);
+  		console.error(`_elementById: ${error.name} - ${error.message}`);
 	}
 };
+
+let _summaryGeneral = function(_ambito) {
+	try {
+		/*if(typeof _ambito === 'undefined') {*/
+		if(typeof _ambito !== 'undefined') {
+			_elementById("ID_Alert").style.display = "block";
+		} else {
+			_elementById("ID_Alert").style.display = "none";
+		}
+
+		
+
+
+	} catch(error) {
+  		console.error(`_summaryGeneral: ${error.name} - ${error.message}`);
+	}
+};
+_summaryGeneral(Window.geometryAmbito);
+
 
 /* Oculta todos los TAG que esta asociado a cada pestaña */
 let _tabDesactive = function(node) {
@@ -22,9 +37,7 @@ let _tabDesactive = function(node) {
 			_elementById(node[i].id + "_TAB").style.display = "none";
     	}
     } catch(error) {
-  		console.error(`
-  			_tabDesactive: ${error.name} - ${error.message}.
-  		`);
+  		console.error(`_tabDesactive: ${error.name} - ${error.message}`);
 	}
 };
 
@@ -43,9 +56,7 @@ let _tabActive = function() {
         	});
         }
     } catch(error) {
-  		console.error(`
-  			_tabActive: ${error.name} - ${error.message}.
-  		`);
+  		console.error(`_tabActive: ${error.name} - ${error.message}`);
 	}
 };
 
@@ -637,7 +648,7 @@ let jsonData = [
 					_elementById("ID_TAB_Content").appendChild(fragmentContent);
 
 				} else {
-					console.log("GROUP: " + i + json[i].name);
+					//console.log("GROUP: " + i + json[i].name);
 					resul += _jsonTravelTree(json[i].srv, _name || json[i].name);
 				}
 			}            
