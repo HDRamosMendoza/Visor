@@ -238,86 +238,6 @@ let _htmlTable = function(ID_Table) {
 
 _htmlTable(_elementById("ID_TABLE_Resumen"));
 
-/* */
-
-const abc = [
-	{ 
-		"name": "Información CENEPRED",
-		"srv": [
-			{ 
-				"name": "Planes PPRRD",
-				"fields":[
-					{
-						"alias": "Nombre",
-						"field": "nombre"
-					},
-					{
-						"alias": "Descripción",
-						"field": "descripcion"
-					},
-					{
-						"alias": "Ámbito",
-						"field": "ambito"
-					},
-					{		
-						"alias": "Autor Corporativo",
-						"field": "autor_corporativo"
-					}
-				],
-				"url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000"
-			}
-		]
-	},
-	{ 
-		"name": "Papu CENEPRED",
-		"url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000"
-	},
-	{ 
-		"name": "Cartografía Riesgos",
-		"srv": [
-			{
-				"name": "Evaluaciones de Riesgo",
-				"fields":[
-					{
-						"alias": "Nombre",
-						"field": "nombre"
-					},
-					{
-						"alias": "Descripción",
-						"field": "descripcion"
-					}
-				],
-				"url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4010000"
-			},
-			{ 
-				"name": "Zonas de Riesgo No Mitigables",
-				"fields":[
-					{
-						"alias": "Predio",
-						"field": "nom_predio"
-					},
-					{
-						"alias": "Fecha Doc.",
-						"field": "fecha_doc"
-					},
-					{
-						"alias": "Información",
-						"field": "bdcenepred_informacion_compleme"
-					},
-					{
-						"alias": "Parte Registral",
-						"field": "part_regis"
-					}
-				],
-				"url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4020000"
-			}
-		]
-	}
-];
-
-
-
-
 let jsonData = [
 	{ 
 		"name": "Centros Poblados",
@@ -614,11 +534,7 @@ let jsonData = [
 		]
 	}];
 
-/*
-	abc.map(function(currentValue) {
-		console.log(currentValue);
-	});
-*/
+
 	let _jsonTravelTree = function(json, _name = "") {
 		/* Recorre un arból de n hijos */
 		try {
