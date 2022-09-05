@@ -50,6 +50,8 @@ define([
     _WidgetsInTemplateMixin,
     FilteringSelect,
     TextBox,
+
+
     drawTemplate,
     JSON,
     dom,
@@ -91,19 +93,20 @@ define([
         widgetsInTemplate: true,
         templateString: drawTemplate,
         baseClass: 'hdrm_dt',
-        lyrList: "",
-        lyrAnalysis: "",
         lyrGraphics: [],
         lyrTotal: 0,
         confDiagnosis: [],
         confDiagnosis_Temp: [],
-        confListLayer: [],        
+        confAnalysis: [],
+        confReport: [],
+        confReport_Temp: [],
         countItem: 1,
         countResult: 0,
         countAnalysis: 0,
         textAmbito: "",
         geometryIntersect: "",
         geometrySRV: null,
+        randomDiagnosis: null,
         IDTableCount_Name: "",
         IDTableAnalysis_Name: "",
         /* RED VIAL */
@@ -151,20 +154,17 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             /* Setup DISTRITO */
             const lyrDis = config.lyrFilter[2];
             const srvDis = lyrDis.srv[0];
-            /* Setup CAPAS */
-            this.lyrList = config.lyrList_2;
-            /* Setup CAPAS DE ANÁLISIS */
-            this.lyrAnalysis = config.lyrAnalysis_2;    
-
-
+            
+            
+            /* Setup LAYER DIAGNOSIS */
             this.confDiagnosis = config.lyrDiagnosis;
             
             
-            //this.confListLayer = config.lyrList;
-
-            
             /* Cuenta las capas */
             this._jsonCountLayer(this.confDiagnosis);
+
+            console.log(this._getRandom());
+            console.log(this._getRandom());
 
             /* Load DEPARTAMENTO */
             let fillDep = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,97,97,0]);
@@ -773,11 +773,19 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 let [id, srv] = GPL;
                 let query = new Query(); query.objectIds = [id];
                 const lyr = new FeatureLayer(srv, { mode: FeatureLayer.MODE_SELECTION });
+                let itemRandom = this._getRandom();
+                this.randomDiagnosis = itemRandom;
+                
+                if(this.deferredDiagnosis && (this.deferredDiagnosis > 0)) {
+                    this.deferredDiagnosis.cancel();
+                }
+
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
-                            /*window.geometryIntersect = this.geometryIntersect = cValue.geometry;*/
-                            this._jsonTravelTree(this.confDiagnosis);
+                            window.geometryIntersect = this.geometryIntersect = cValue.geometry;
+                            console.log(itemRandom);
+                            this._jsonTravelTree(this.confDiagnosis, itemRandom);
                         }.bind(this));
                     } catch (error) {
                         console.error(`Error: _intersectLayer/selectFeatures => ${error.name} - ${error.message}`);
@@ -787,7 +795,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _intersectLayer => ${error.name} - ${error.message}`);
             }
         },
-        _jsonTravelTree: function(json,_name="", _rec = false) {
+        _jsonTravelTree: function(json, _random, _name="") {
             /* Recorre un arból de n hijos */
             try {
                 let type; let resul;
@@ -795,9 +803,9 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     type = typeof json[i].srv;
                     if (type == "undefined") {
                         resul = true;
-                        this._queryTask(json[i], json[i].url);
+                        this._queryTask(json[i], json[i].url, _random);
                     } else {
-                        resul += this._jsonTravelTree(json[i].srv, json[i].name, true);
+                        resul += this._jsonTravelTree(json[i].srv, _random, json[i].name);
                     }
                 }            
                 return resul;                
@@ -805,7 +813,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _jsonTravelTree => ${error.name} - ${error.message}`);
             }
         },
-        _queryTask: function(lyr, srv) {
+        _queryTask: function(lyr, srv, _random) {
             try {
                 //this.ID_Table_Count.style.display = "none";
                 //this.ID_Load.style.display = "block";
@@ -815,15 +823,19 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 query.geometry = this.geometryIntersect;
                 query.SpatialRelationship = "esriSpatialRelIntersects";
                 query.geometryType = "esriGeometryEnvelope";
-                queryTask.executeForCount(query).then(
+                this.deferredDiagnosis = queryTask.executeForCount(query)
+                this.deferredDiagnosis.then(
                     (count) => {
                         try {
-                            this.countResult = this.countResult + count;
-                            this.ID_Count.innerText = this.countResult;
-                            this.ID_CountText.innerHTML = this.textAmbito;
-                            this._elementById(`${this.IDTableCount_Name}_Total`).innerText = this.countResult;
-                            this.countItem++;
-                            lyr.cantidad = count;
+                            if (this.randomDiagnosis == _random) {
+                                this.countResult = this.countResult + count;
+                                this.ID_Count.innerText = this.countResult;
+                                this.ID_CountText.innerHTML = this.textAmbito;
+                                this._elementById(`${this.IDTableCount_Name}_Total`).innerText = this.countResult;
+                                this.countItem++;
+                                lyr.cantidad = count;
+                                this.ID_Percentage.innerHTML = this._loadTime(this.countItem -1);
+                            }
                         } catch (error) {
                             console.error(`Error: _queryTask/queryTask.executeForCount response => ${error.name} - ${error.message}`);
                         }                    
@@ -832,34 +844,38 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                         console.error(`Error: _queryTask/queryTask.executeForCount - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
                     }
                 ).always(lang.hitch(this, function() {
-                    this.ID_Percentage.innerHTML = this._loadTime(this.countItem -1);
-                    if((this.countItem - 1) == this.lyrTotal) {
-                        this.ID_Load.style.display = "none";
-                        this.ID_Table_Count.style.display = "block";
-                        this.countItem = 1;
-                        /* Recorrer el JSON y asignamos a un nuevo array - this.confDiagnosis_Temp*/
-                        this._jsonTravelTree_Temp(this.confDiagnosis);
-                        /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
-                        this._sortJSON(this.confDiagnosis_Temp,'cantidad','desc'); 
-                        /* Inserta a la tabla */
-                        this.confDiagnosis_Temp.map(function(cValue, index){
-                            let fragment = document.createDocumentFragment();
-                            let row = document.createElement("tr");
-                            let cell_0 = document.createElement("td");
-                            let cellText_0 = document.createTextNode(index + 1);
-                            cell_0.appendChild(cellText_0);
-                            let cell_1 = document.createElement("td");
-                            cell_1.innerHTML = cValue.layer;
-                            let cell_2 = document.createElement("td");
-                            let cellText_2 = document.createTextNode(cValue.cantidad || 0);
-                            cell_2.appendChild(cellText_2);
-                            row.appendChild(cell_0);
-                            row.appendChild(cell_1);
-                            row.appendChild(cell_2);
-                            fragment.appendChild(row);
-                            this._elementById(`${this.IDTableCount_Name}_Tbody`).appendChild(fragment);
-                        }.bind(this));   
-                    }
+                    try {
+                        //this.ID_Percentage.innerHTML = this._loadTime(this.countItem -1);
+                        if(((this.countItem - 1) == this.lyrTotal) && (this.randomDiagnosis == _random)) {
+                            this.ID_Load.style.display = "none";
+                            this.ID_Table_Count.style.display = "block";
+                            this.countItem = 1;
+                            /* Recorrer el JSON y asignamos a un nuevo array - this.confDiagnosis_Temp*/
+                            this._jsonTravelTree_Temp(this.confDiagnosis);
+                            /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
+                            this._sortJSON(this.confDiagnosis_Temp,'cantidad','desc'); 
+                            /* Inserta a la tabla */
+                            this.confDiagnosis_Temp.map(function(cValue, index){
+                                let fragment = document.createDocumentFragment();
+                                let row = document.createElement("tr");
+                                let cell_0 = document.createElement("td");
+                                let cellText_0 = document.createTextNode(index + 1);
+                                cell_0.appendChild(cellText_0);
+                                let cell_1 = document.createElement("td");
+                                cell_1.innerHTML = cValue.layer;
+                                let cell_2 = document.createElement("td");
+                                let cellText_2 = document.createTextNode(cValue.cantidad || 0);
+                                cell_2.appendChild(cellText_2);
+                                row.appendChild(cell_0);
+                                row.appendChild(cell_1);
+                                row.appendChild(cell_2);
+                                fragment.appendChild(row);
+                                this._elementById(`${this.IDTableCount_Name}_Tbody`).appendChild(fragment);
+                            }.bind(this));   
+                        }
+                    } catch (error) {
+                        console.error(`Error: _queryTask/queryTask always => ${error.name} - ${error.message}`);
+                    } 
                 }.bind(this)));
             } catch (error) { 
                 console.error(`Error: _queryTask => ${error.name} - ${error.message}`); 
@@ -904,18 +920,12 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
         },
 
         _jsonTravelTree_2: function(json) {
-
-                let type; let resul;
-                let abc = 0;
-
+                let type; let resul; let abc = 0;
                 for (var i=0; i < json.length; i++) {
-                    
-                    
                     type = typeof json[i].srv;
                     if (type == "undefined") {
                         resul = true;
                         abc = abc + json[i].cantidad;
-
                         this._queryTask(json[i], json[i].url);
                     } else {
                         resul += this._jsonTravelTree(json[i].srv);
@@ -925,10 +935,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 if(json.length > 0) {
                     json.total = abc;
                 }
-                
 
                 return resul;
-              
         },
         _validatedData: function(_group,_name) {
             /* Se valida la data */
@@ -1049,6 +1057,14 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     console.error(`Error: ID (${paramId}) => null || undefined`);
             } catch(error) {
                 console.error(`_elementById => ${error.name} - ${error.message}`);
+            }
+        },
+        _getRandom() {
+            /* Get Random - Deferred */
+            try {
+                return Math.floor(Math.random() * 5000000);
+            } catch(error) {
+                console.error(`__getRandomInt => ${error.name} - ${error.message}`);
             }
         }
     });
