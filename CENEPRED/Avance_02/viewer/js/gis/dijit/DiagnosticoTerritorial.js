@@ -183,7 +183,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                         /* Option TODOS - DEPARTAMENTO */
                         this.ID_Clear.click();
                         return false;
-                    }                                        
+                    }         
+                    selPro.reset();                               
                     let itemDep = selDep.get('displayedValue');
                     let queryWhere = `UPPER(${srvPro.depName}) = UPPER('${itemDep}')`;
                     selPro.store = this._ambitoUpdate(lyrDep.htmlPH, srvPro.order, srvPro.objectID, srvPro.item, srvPro.url, queryWhere);
@@ -270,7 +271,18 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             this.own(on(this.ID_Report, 'click', lang.hitch(this, () => {
                 /* Button (click) - ID_Report */
                 try {
-                    console.log("ID_Report");
+                    let disp = this.ID_Alert;
+                    let objectLiteral = false == this._validateSelect(selDis) ? [selDis.get('value'),srvDis.url] :
+                                        false == this._validateSelect(selPro) ? [selPro.get('value'),srvPro.url] :
+                                        false == this._validateSelect(selDep) ? [selDep.get('value'),srvDep.url] :
+                                        true;
+                    if(objectLiteral == true) {
+                        disp.style.display = "block";
+                        setTimeout(() => { disp.style.display = "none"; }, 3000);
+                        return false;
+                    }
+                    /* Open TAB - REPORT */
+                    window.open('http://localhost/GitHub/Visor/CENEPRED/Avance_03/', '_blank');
                 } catch (error) {
                     console.error(`Error: button/ID_Report (click) => ${error.name} - ${error.message}`);
                 }
@@ -323,10 +335,9 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     /* Buffer Analysis */
                     this._analysis();
                 } catch (error) {
-                    console.error(`Error: button/ID_Report (click) => ${error.name} - ${error.message}`);
+                    console.error(`Error: button/ID_Analisis (click) => ${error.name} - ${error.message}`);
                 }
             })));
-
 
             this.own(on(this.ID_Button_Buffer, 'click', lang.hitch(this, () => {
                 /* Button (click) - ID_Buffer */
@@ -734,6 +745,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
+                            localStorage.setItem("geometryIntersect", this.geometryIntersect);
+                            this.geometryIntersect  = cValue.geometry;
                             this.map.setExtent(cValue.geometry.getExtent().expand(1.4));
                         }.bind(this));
                     } catch (error) {
@@ -763,7 +776,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
-                            this.geometryIntersect = cValue.geometry;
+                            /*window.geometryIntersect = this.geometryIntersect = cValue.geometry;*/
                             this._jsonTravelTree(this.confDiagnosis);
                         }.bind(this));
                     } catch (error) {
