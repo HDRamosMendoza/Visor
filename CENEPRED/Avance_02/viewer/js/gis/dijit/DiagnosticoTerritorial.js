@@ -93,8 +93,11 @@ define([
         baseClass: 'hdrm_dt',
         lyrList: "",
         lyrAnalysis: "",
-        lyrGroup: [],
         lyrGraphics: [],
+        lyrTotal: 0,
+        confDiagnosis: [],
+        confDiagnosis_Temp: [],
+        confListLayer: [],        
         countItem: 1,
         countResult: 0,
         countAnalysis: 0,
@@ -127,6 +130,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
     new Color([57,153,0,0.1])
 );
 */
+        
         postCreate: function () {
             this.inherited(arguments);
             /* Servicio de Geometria */
@@ -134,7 +138,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
             this._htmlTable(this.ID_Table_Count);
-            this._htmlTable(this.ID_Table_Analysis);            
+            this._htmlTable(this.ID_Table_Analysis);    
+                 
             this.IDTableCount_Name     = this.ID_Table_Count.getAttribute("data-dojo-attach-point");
             this.IDTableAnalysis_Name  = this.ID_Table_Analysis.getAttribute("data-dojo-attach-point");
             /* Setup DEPARTAMENTO */
@@ -149,7 +154,18 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             /* Setup CAPAS */
             this.lyrList = config.lyrList_2;
             /* Setup CAPAS DE ANÁLISIS */
-            this.lyrAnalysis = config.lyrAnalysis_2;            
+            this.lyrAnalysis = config.lyrAnalysis_2;    
+
+
+            this.confDiagnosis = config.lyrDiagnosis;
+            
+            
+            //this.confListLayer = config.lyrList;
+
+            
+            /* Cuenta las capas */
+            this._jsonCountLayer(this.confDiagnosis);
+
             /* Load DEPARTAMENTO */
             let fillDep = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,97,97,0]);
             let featureLayerDep = this._loadLayer(lyrDep.srv[0].objectID, srvDep.url, fillDep, lyrDep.srv[0].depName);
@@ -286,7 +302,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     this.countItem = 1;
                     this.countResult = 0;
                     /* Reinicia el grupo de capas */
-                    this.lyrGroup = [];
+                    this.confDiagnosis_Temp = [];
                     /* Muestra la pestaña RESULTADO (segunda pestaña) */
                     this._elementById("tab2").click();
                     this.ID_Table_Count.style.display = "none";
@@ -326,12 +342,34 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
         startup: function() {
             console.log("in startup");
         },
+        _jsonCountLayer: function(json) {
+            /* Contador de servicio */
+            try {
+                let type; let resul;
+                let abc = 0;
+                for (var i=0; i < json.length; i++) {   
+                    type = typeof json[i].srv;
+                    if (type == "undefined") {
+                        resul = true;
+                        this.lyrTotal = this.lyrTotal + 1;
+                    } else {
+                        resul += this._jsonCountLayer(json[i].srv);
+                    }
+                }
+                return resul;
+            } catch (error) {
+                console.error(`Error: _jsonTravelTotal_66 => ${error.name} - ${error.message}`);
+            }
+        },
         _analysis: function() {
             try {                
                 this.ID_Table_Analysis.style.display = "none";
                 this.ID_Load_Buffer.style.display = "block";
                 this.lyrGraphics.map((currentValue) => { this.map.graphics.remove(currentValue); });
 
+                console.log("ANALIZANDO");
+
+                /*
                 if(this.queryTaskDeferred_1k && (this.queryTaskDeferred_1k > 0)) {
                     this.queryTaskDeferred_1k.cancel();
                 }
@@ -339,21 +377,29 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 if(this.queryTaskDeferred_1000k && (this.queryTaskDeferred_1000k > 0)) {
                     this.queryTaskDeferred_1000k.cancel();
                 }
+                */
 
                 this.countAnalysis = 0;    
                 this.lyrGraphics = [];                
-                this.lyrList.map(function(lyr) {
-                    if(lyr.analysis) {
-                        //console.log(lyr);
+                this.confDiagnosis.map(function(lyr) {
+                    
+
+                    console.log(lyr);
+                    console.log(lyr.fields.map(x => x.field));
+
+
+                    /*
                         let queryTask = new QueryTask(lyr.url);
                         let query = new Query();
-                        /*query.outFields = lyr.fields.map(x => x.field);*/
+                        query.outFields = lyr.fields.map(x => x.field);
                         query.geometry = this.geometryIntersect;
                         query.SpatialRelationship = "esriSpatialRelIntersects";
                         query.geometryType = "esriGeometryEnvelope";
-                        //query.returnGeometry = false;
+                        query.returnGeometry = false;
                         queryTask.executeForCount(query).then(
                             (count) => {
+                                console.log(count);
+                               
                                 try {
                                     let queryTaskSP = new QueryTask(lyr.url);
                                     let querySP = new Query();
@@ -363,7 +409,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                     querySP.geometryType = "esriGeometryEnvelope";
                                     querySP.returnGeometry = true;
                                     if(count > 1000 ) {
-                                        /* Páginación */
+                                     
                                         const sizeFeature = Math.ceil(count/500);
                                         for (let H = 0; H < sizeFeature; H++) {
                                             querySP.returnGeometry = true;
@@ -385,11 +431,11 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                                             let params = new BufferParameters();
                                                             params.distances = [this.ID_Buffer.value];
                                                             params.outSpatialReference = this.map.spatialReference;
-                                                            params.unit = GeometryService.UNIT_KILOMETER;
+                                                            params.unit = GeometryService.UNIT_METER;
                                                             params.geometries = [ currValue.geometry ];
 
                                                             this.geometrySRV.buffer(params, (bufferGeometries) => {
-                                                                // RED FERROVIARIA 
+                                                          
                                                                 const symbolRedFerroviaria = new SimpleFillSymbol(
                                                                     SimpleFillSymbol.STYLE_SOLID,
                                                                     new SimpleLineSymbol(
@@ -426,7 +472,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                         
 
                                     } else {
-                                        /* Sin Páginación */
+                                       
                                         querySP.num = 1000; querySP.start = 0;
                                         this.queryTaskDeferred_1k = queryTaskSP.execute(querySP);
                                         this.queryTaskDeferred_1k.then(
@@ -445,12 +491,12 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                                                 let params = new BufferParameters();
                                                                 params.distances = [this.ID_Buffer.value];
                                                                 params.outSpatialReference = this.map.spatialReference;
-                                                                params.unit = GeometryService.UNIT_KILOMETER;
+                                                                params.unit = GeometryService.UNIT_METER;
                                                                 params.geometries = [ currValue.geometry ];
 
                                                                 this.geometrySRV.buffer(params, (bufferGeometries) => {
 
-                                                                    /* RED VIAL */
+                                                                   
                                                                     let symbolRedVial = new SimpleFillSymbol(
                                                                         SimpleFillSymbol.STYLE_SOLID,
                                                                         new SimpleLineSymbol(
@@ -475,54 +521,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                                             }
                                                         }.bind(this));
                                                     }
-                                                    /*
-                                                    response.map(function(currValue) {
-                                                        console.log(currValue);
-                                                        let symbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASH, new Color([255,0,0]), 1);
-                                                        let graphic = new Graphic(currValue.features.geometry, symbol);
-                                                        this.map.graphics.add(graphic);
-                                                    }.bind(this));
-                                                    */
-                                                    
-                                                    /*
-                                                    let fragment = document.createDocumentFragment(); 
-                                                    response.features.map(function (cValue) {                                
-                                                        let formCard = document.createElement("div");
-                                                        formCard.className = "form-card";
-                                                        let span = document.createElement("span");
-                                                        span.className = "form-item";
-                                                        let div = document.createElement("div");
-                                                        div.className = "form-item";
-                                                        let lbl = document.createElement("label");
-                                                        let tNode = document.createTextNode(`${this.countAnalysis}. ${lyr.name}`);
-                                                        let iconSpan = document.createElement("span");
-                                                        iconSpan.title = "ZOOM";
-                                                        let iconI = document.createElement("i");
-                                                        iconI.className = "fa fa-map";
-                                                        iconSpan.appendChild(iconI);
-                                                        lbl.appendChild(tNode);
-                                                        span.appendChild(lbl);
-                                                        span.appendChild(iconSpan);
-                                                        this.countAnalysis++;
-                                                        lyr.fields.forEach(function(arg) {
-                                                            let itemDiv = document.createElement('div');
-                                                            itemDiv.className = "form-item-content";
-                                                            let itemLabel = document.createElement('label');
-                                                            itemLabel.textContent = arg.alias;
-                                                            let itemSpan = document.createElement('span');
-                                                            let itemP = document.createElement('p');
-                                                            itemP.textContent = cValue.attributes[arg.field];
-                                                            itemSpan.appendChild(itemP);
-                                                            itemDiv.appendChild(itemLabel);
-                                                            itemDiv.appendChild(itemSpan);
-                                                            div.appendChild(itemDiv);
-                                                        });
-                                                        formCard.appendChild(span);
-                                                        formCard.appendChild(div);
-                                                        fragment.appendChild(formCard);
-                                                    }.bind(this));                            
-                                                    this.ID_Result_List.appendChild(fragment); 
-                                                    */
+                                                   
                                                     
                                                 } catch (error) {
                                                     console.error(`Error: Analisis - Sin Paginación | response => ${error.name} - ${error.message}`);
@@ -532,23 +531,15 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                                 console.error(`Error: Analisis - Sin Paginación | Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
                                             }
                                         ).always(lang.hitch(this, function() {
-                                            /*
-                                            setTimeout(() => {
-                                                let abc = this.lyrGraphics.map(function(x) {
-                                                    return x.geometry;
-                                                });
-
-                                                var joinedPolygons = geometryEngine.union(abc);
-                                                
-                                            }, 8000);
-                                            */
+                                           
                                             this.ID_Load_Buffer.style.display = "none";
                                             this.ID_Table_Analysis.style.display = "block"; 
                                         }.bind(this))); 
                                     }
                                 } catch (error) {
                                     console.error(`Error: Analisis/queryTask.executeForCount response => ${error.name} - ${error.message}`);
-                                }                    
+                                }     
+                                            
                             },
                             (error) => {  
                                 console.error(`Error: Analisis/queryTask.executeForCount - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
@@ -557,7 +548,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                             this.ID_Load_Buffer.style.display = "none";
                             this.ID_Table_Analysis.style.display = "block";                            
                         }.bind(this)));                            
-                    }
+                    */
                 }.bind(this));
             } catch (error) {
                 console.error(`Error: _analysis => ${error.name} - ${error.message}`);
@@ -773,7 +764,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     try {
                         features.map(function(cValue) {
                             this.geometryIntersect = cValue.geometry;
-                            this._jsonSRV(this.lyrList);
+                            this._jsonTravelTree(this.confDiagnosis);
                         }.bind(this));
                     } catch (error) {
                         console.error(`Error: _intersectLayer/selectFeatures => ${error.name} - ${error.message}`);
@@ -783,38 +774,28 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _intersectLayer => ${error.name} - ${error.message}`);
             }
         },
-        _jsonSRV: function(lyrList) {
-            /* Object: De prueba para recorrer las capas a intersectar. Función recursiva de lista de capas */
+        _jsonTravelTree: function(json,_name="", _rec = false) {
+            /* Recorre un arból de n hijos */
             try {
-                lyrList.map(function(cValue) {
-                    if(cValue.hasOwnProperty('srv')) {
-                        cValue.srv.map(function(currentValue) {
-                            if(currentValue.hasOwnProperty('srv')) {
-                                currentValue.srv.map(function(currValue) {
-                                    if(currValue.hasOwnProperty('srv')) {
-                                        currValue.srv.map(function(curreVal) {
-                                            this._queryTask(curreVal,curreVal);
-                                        }.bind(this));
-                                    } else {
-                                        this._queryTask(currValue,currValue.url);
-                                    }
-                                }.bind(this));
-                            } else {
-                                this._queryTask(currentValue,currentValue.url);
-                            }
-                        }.bind(this));
+                let type; let resul;
+                for (var i=0; i < json.length; i++) {
+                    type = typeof json[i].srv;
+                    if (type == "undefined") {
+                        resul = true;
+                        this._queryTask(json[i], json[i].url);
                     } else {
-                        this._queryTask(cValue,cValue.url);
+                        resul += this._jsonTravelTree(json[i].srv, json[i].name, true);
                     }
-                }.bind(this));
+                }            
+                return resul;                
             } catch (error) {
-                console.error(`Error: _jsonSRV ${error.name} - ${error.message}`);
-            }            
+                console.error(`Error: _jsonTravelTree => ${error.name} - ${error.message}`);
+            }
         },
         _queryTask: function(lyr, srv) {
             try {
-                this.ID_Table_Count.style.display = "none";
-                this.ID_Load.style.display = "block";
+                //this.ID_Table_Count.style.display = "none";
+                //this.ID_Load.style.display = "block";
                 let queryTask = new QueryTask(srv);
                 let query = new Query();
                 query.outFields = lyr.fields.map(x => x.field);
@@ -827,17 +808,9 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                             this.countResult = this.countResult + count;
                             this.ID_Count.innerText = this.countResult;
                             this.ID_CountText.innerHTML = this.textAmbito;
+                            this._elementById(`${this.IDTableCount_Name}_Total`).innerText = this.countResult;
                             this.countItem++;
-                            if(this.lyrGroup.length == 0) {
-                                this.lyrGroup.push({ capa: lyr.name, cantidad: count });
-                            } else {
-                                let index = this._validatedData(this.lyrGroup, lyr.padre[0]);
-                                if(index == false) {
-                                    this.lyrGroup.push({ capa: lyr.padre[0], cantidad: count});
-                                } else {                                    
-                                    this.lyrGroup[index].cantidad = this.lyrGroup[index].cantidad + count;
-                                }
-                            }
+                            lyr.cantidad = count;
                         } catch (error) {
                             console.error(`Error: _queryTask/queryTask.executeForCount response => ${error.name} - ${error.message}`);
                         }                    
@@ -846,31 +819,33 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                         console.error(`Error: _queryTask/queryTask.executeForCount - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
                     }
                 ).always(lang.hitch(this, function() {
-                    this._elementById(`${this.IDTableCount_Name}_Total`).innerText = `${this.countResult}`;
-                    if((this.countItem -1)  == this.lyrList.length) {
+                    this.ID_Percentage.innerHTML = this._loadTime(this.countItem -1);
+                    if((this.countItem - 1) == this.lyrTotal) {
                         this.ID_Load.style.display = "none";
                         this.ID_Table_Count.style.display = "block";
-                        this._sortJSON(this.lyrGroup,'cantidad','desc');                        
-                        this._elementById(`${this.IDTableCount_Name}_Tbody`).innerHTML = "";                        
-                        this.lyrGroup.map(function(cValue, index){
+                        this.countItem = 1;
+                        /* Recorrer el JSON y asignamos a un nuevo array - this.confDiagnosis_Temp*/
+                        this._jsonTravelTree_Temp(this.confDiagnosis);
+                        /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
+                        this._sortJSON(this.confDiagnosis_Temp,'cantidad','desc'); 
+                        /* Inserta a la tabla */
+                        this.confDiagnosis_Temp.map(function(cValue, index){
                             let fragment = document.createDocumentFragment();
                             let row = document.createElement("tr");
                             let cell_0 = document.createElement("td");
                             let cellText_0 = document.createTextNode(index + 1);
                             cell_0.appendChild(cellText_0);
                             let cell_1 = document.createElement("td");
-                            let cellText_1 = document.createTextNode(cValue.capa);
-                            cell_1.appendChild(cellText_1);
+                            cell_1.innerHTML = cValue.layer;
                             let cell_2 = document.createElement("td");
-                            let cellText_2 = document.createTextNode(cValue.cantidad);
+                            let cellText_2 = document.createTextNode(cValue.cantidad || 0);
                             cell_2.appendChild(cellText_2);
                             row.appendChild(cell_0);
                             row.appendChild(cell_1);
                             row.appendChild(cell_2);
                             fragment.appendChild(row);
                             this._elementById(`${this.IDTableCount_Name}_Tbody`).appendChild(fragment);
-                        }.bind(this));
-                        //console.log(this.lyrGroup);
+                        }.bind(this));   
                     }
                 }.bind(this)));
             } catch (error) { 
@@ -884,6 +859,63 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 (error) => { console.error(`Error: Oops! Es tu servidor esta desconectado => ${error.name} - ${error.message}`); }
             ).always(lang.hitch(this, function() { console.log("Always"); }));
             */
+        },
+
+        _loadTime: function(_item) {
+            /* Tiempo de carga */
+            try {
+                return `Procesado al ${Math.round((_item*100)/this.lyrTotal)} %`;
+            } catch (error) { 
+                console.error(`Error: _loadTime => ${error.name} - ${error.message}`); 
+            }
+        },
+
+        _jsonTravelTree_Temp: function(json, _name = "") {
+            /* Recorre un arból de n hijos */
+            try {
+                let type; let resul; let layer;
+                for (var i=0; i < json.length; i++) {
+                    type = typeof json[i].srv;
+                    if (type == "undefined") {
+                        resul = true;
+                        layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+                        this.confDiagnosis_Temp.push({layer: layer, cantidad: json[i].cantidad || 0});
+                    } else {
+                        resul += this._jsonTravelTree_Temp(json[i].srv, _name || json[i].name);
+                    }
+                }            
+                return resul;
+            } catch (error) {
+                console.error(`Error: _jsonTravelTree_Temp => ${error.name} - ${error.message}`);
+            }
+        },
+
+        _jsonTravelTree_2: function(json) {
+
+                let type; let resul;
+                let abc = 0;
+
+                for (var i=0; i < json.length; i++) {
+                    
+                    
+                    type = typeof json[i].srv;
+                    if (type == "undefined") {
+                        resul = true;
+                        abc = abc + json[i].cantidad;
+
+                        this._queryTask(json[i], json[i].url);
+                    } else {
+                        resul += this._jsonTravelTree(json[i].srv);
+                    }
+                }
+
+                if(json.length > 0) {
+                    json.total = abc;
+                }
+                
+
+                return resul;
+              
         },
         _validatedData: function(_group,_name) {
             /* Se valida la data */

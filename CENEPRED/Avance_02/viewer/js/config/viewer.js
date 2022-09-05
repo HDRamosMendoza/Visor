@@ -336,7 +336,7 @@ define([
                 }
             },
             basemaps: {
-                include: true,
+                include: false,
                 id: 'basemaps',
                 type: 'domNode',
                 path: 'gis/dijit/Basemaps',
@@ -344,7 +344,7 @@ define([
                 options: 'config/basemaps'
             },
             identify: {
-                include: true,
+                include: false,
                 id: 'identify',
                 type: 'titlePane',
                 path: 'gis/dijit/Identify',
@@ -437,7 +437,7 @@ define([
                 }
             },
             legend: {
-                include: true,
+                include: false,
                 id: 'legend',
                 type: 'titlePane',
                 path: 'gis/dijit/Legend',
@@ -486,7 +486,7 @@ define([
                 }
             },
             bookmarks: {
-                include: true,
+                include: false,
                 id: 'bookmarks',
                 type: 'titlePane',
                 path: 'gis/dijit/Bookmarks',
@@ -497,7 +497,7 @@ define([
                 options: 'config/bookmarks'
             },
             find: {
-                include: true,
+                include: false,
                 id: 'find',
                 type: 'titlePane',
                 canFloat: true,
@@ -509,7 +509,7 @@ define([
                 options: 'config/find'
             },
             draw: {
-                include: true,
+                include: false,
                 id: 'draw',
                 type: 'titlePane',
                 canFloat: true,
@@ -524,7 +524,7 @@ define([
                 }
             },
             measure: {
-                include: true,
+                include: false,
                 id: 'measurement',
                 type: 'titlePane',
                 canFloat: true,
@@ -549,7 +549,7 @@ define([
                 title: "Dignóstico y Reporte Territorial",
                 iconClass: 'fa-archive',
                 open: false,
-                position: 99,
+                position: 100,
                 options: {
                     map: true,
                     mapClickMode: true,
@@ -558,7 +558,7 @@ define([
                 }
             },
             print: {
-                include: true,
+                include: false,
                 id: 'print',
                 type: 'titlePane',
                 canFloat: true,
@@ -578,7 +578,7 @@ define([
                 }
             },
             directions: {
-                include: true,
+                include: false,
                 id: 'directions',
                 type: 'titlePane',
                 path: 'gis/dijit/Directions',
@@ -628,7 +628,7 @@ define([
                 }
             },
             streetview: {
-                include: true,
+                include: false,
                 id: 'streetview',
                 type: 'titlePane',
                 canFloat: true,

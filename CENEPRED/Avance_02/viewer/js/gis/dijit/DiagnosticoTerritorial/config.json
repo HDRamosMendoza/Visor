@@ -52,7 +52,7 @@
             ]
         }
     ],
-    "lyrList": [
+    "lyrDiagnosis": [
         { 
             "name": "Centros Poblados",
             "fields":[
@@ -61,7 +61,7 @@
                     "field": "objectid_1"
                 }
             ],
-            "analysis": false,
+            
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2110002"
         },
         { 
@@ -72,7 +72,6 @@
                     "field": "objectid"
                 }
             ],
-            "analysis": false,
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2020000"
         },
         { 
@@ -83,7 +82,6 @@
                     "field": "objectid"
                 }
             ],
-            "analysis": false,
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2030000"
         },
         { 
@@ -94,7 +92,6 @@
                     "field": "objectid"
                 }
             ],
-            "analysis": false,
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2040000"
         },
         { 
@@ -105,7 +102,7 @@
                     "field": "objectid"
                 }
             ],
-            "analysis": false,
+            
             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2050000"
         },
         { 
@@ -119,7 +116,6 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060100"
                 },
                 { 
@@ -130,7 +126,7 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": true,
+                    
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060200"
                 },
                 { 
@@ -141,7 +137,7 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": true,
+                    
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060300"
                 },
                 { 
@@ -152,7 +148,6 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060400"
                 }
             ]
@@ -171,7 +166,6 @@
                                     "field": "objectid"
                                 }
                             ],
-                            "analysis": false,
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070101"
                         },
                         { 
@@ -182,7 +176,6 @@
                                     "field": "objectid"
                                 }
                             ],
-                            "analysis": false,
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070102"
                         },
                         { 
@@ -193,7 +186,6 @@
                                     "field": "objectid"
                                 }
                             ],
-                            "analysis": false,
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070103"
                         }
                     ]
@@ -206,7 +198,6 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070200"
                 }
             ]
@@ -222,7 +213,6 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080100"
                 },
                 { 
@@ -233,7 +223,6 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080200"
                 },
                 { 
@@ -244,7 +233,6 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080300"
                 },
                 { 
@@ -255,7 +243,6 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080400"
                 }
             ]
@@ -271,7 +258,6 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090100"
                 },
                 { 
@@ -282,7 +268,6 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090200"
                 },
                 { 
@@ -293,7 +278,6 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090300"
                 },
                 { 
@@ -304,7 +288,6 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090400"
                 },
                 { 
@@ -315,7 +298,6 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090500"
                 }
             ]
@@ -331,7 +313,6 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300"
                 },
                 { 
@@ -342,7 +323,6 @@
                             "field": "objectid"
                         }
                     ],
-                    "analysis": false,
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100400"
                 }
             ]

@@ -175,7 +175,6 @@
   .hdrm_dt .form-scroll {
     max-height: 350px;
     overflow-y: scroll;
-    padding-bottom: 10px;
   }
 
   .hdrm_dt .form-scroll {
@@ -183,7 +182,7 @@
     max-width: 400px;
     overflow: auto;
     box-sizing: border-box;
-    padding:0 1rem;
+    /*padding:0 1rem;*/
   }
   .hdrm_dt .form-scroll::-webkit-scrollbar {
     -webkit-appearance: none;
@@ -323,7 +322,7 @@
     width: 80px;
     height: 80px;
     display: none;
-    margin: 0 auto;
+    margin: 10px auto;
   }
   .hdrm_dt .lds-facebook div {
     display: inline-block;
@@ -360,7 +359,7 @@
   .hdrm_dt .tab-content .tbl {
     border-collapse: collapse;
     font-size: 13px;
-    margin-top: 10px;
+    /*margin-top: 10px;*/
     width: 100%;
     background-color: rgba(0,0,0,0.1);
     color: #555555;
@@ -389,6 +388,13 @@
   .hdrm_dt .tab-content .tbl tbody tr > td:nth-child(3) {
     text-align: right;    
     width: 30%;
+  }
+
+  .hdrm_dt .tab-content .load-time {
+    text-align: center;
+    width: 100%;
+    padding: 15px 0;
+    font-weight: bold;
   }
 
   /* Botones de resultado */
@@ -444,3 +450,67 @@
     width: 20%;
   }
   
+  .hdrm_dt .leyend { 
+    margin-top: 10px;
+    padding: 5px;
+    background-color: white;
+  }
+  .hdrm_dt .leyend div {
+    border-style: dashed solid !important;
+    box-sizing: border-box;
+    font-weight: 700;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    padding: 8px 5px;
+    width: 49%;    
+  }
+  .hdrm_dt .leyend div:first-child {
+    background-color: rgba(239,184,16,0.1);
+    border: 2px solid rgb(239,184,16);
+    color: rgb(239,184,16);
+  }
+  .hdrm_dt .leyend div:last-child {
+    background-color: rgba(57,153,0,0.1);
+    border: 2px solid rgb(57,153,0);
+    color: rgb(57,153,0);
+  }
+
+
+  .hdrm_dt #ID_Table_Count {
+    overflow-y: scroll;
+    max-height: 500px;
+    margin-top: 10px;
+  }
+  /*
+  #wrapper {
+    width: 235px;
+  }
+
+  .hdrm_dt .tab-content #wrapper table {
+    border: 1px solid black;
+    width: 100%;
+  }
+  
+  .hdrm_dt .tab-content  #wrapper th,
+  .hdrm_dt .tab-content #wrapper td {
+    width: 100px;
+    border: 1px solid black;
+  }
+  
+  .hdrm_dt .tab-content #wrapper thead>tr {
+    position: relative;
+    display: block;
+  }
+
+  .hdrm_dt .tab-content #wrapper thead>tr td:nth-child(1) {
+    background-color: red;
+  }
+  
+  .hdrm_dt .tab-content #wrapper tbody {
+    display: block;
+    height: 400px;
+    width: 310px;
+    overflow: auto;
+  }
+  */
