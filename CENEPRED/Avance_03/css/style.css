@@ -378,6 +378,7 @@ input.tabs:checked + label {
   right: 0;
   top: 0;
   bottom: 0;
+  /*display: none;*/
 }
 .popup-alert .popup-message {
   background-color: white;

@@ -47,7 +47,8 @@ require([
   map.setExtent(extent);
   // Note: Map: Extent Change
   // => https://developers.arcgis.com/javascript/3/samples/map_currentextent/
-        
+  _elementById("ID_Alert").style.display = "none";
+
   let loadTable = function() {
     let myFeatureLayer = new FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/RedlandsEmergencyVehicles/FeatureServer/1", {
       mode: FeatureLayer.MODE_ONDEMAND,
@@ -295,6 +296,7 @@ require([
 
   let _summaryGeneral = function(_ambito) {
     try {
+      console.log(_ambito);
       if(typeof _ambito === 'undefined') {
         _elementById("ID_Alert").style.display = "block";
       } else {
@@ -306,7 +308,7 @@ require([
         console.error(`_summaryGeneral: ${error.name} - ${error.message}`);
     }
   };
-
-  _summaryGeneral(Window.geometryAmbito);
+  
+  _summaryGeneral(localStorage.getItem("geometryIntersect"));
 
 });
