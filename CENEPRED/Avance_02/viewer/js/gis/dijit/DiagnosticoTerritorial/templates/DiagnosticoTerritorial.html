@@ -2,23 +2,21 @@
     <div>
         <main>
   
-            <input id="tab1" type="radio" name="tabs-2" checked>
-            <label for="tab1">Filtro</label>
+            <input id="ID_Tab_Filter" type="radio" name="tabs-2" checked>
+            <label for="ID_Tab_Filter">Filtro</label>
               
-            <input id="tab2" type="radio" name="tabs-2">
-            <label for="tab2">Resultado</label>
+            <input id="ID_Tab_Diagnosis" type="radio" name="tabs-2">
+            <label for="ID_Tab_Diagnosis">Resultado</label>
               
-            <input id="tab3" type="radio" name="tabs-2">
-            <label for="tab3">Análisis</label>
+            <input id="ID_Tab_Analysis" type="radio" name="tabs-2">
+            <label for="ID_Tab_Analysis">Análisis</label>
             
             <section id="content1">
                 <div class="tab-content">
                     <label class="subTitle">» Seleccionar Ámbito</label>
                     <hr>               
                     <!-- Departamento -->
-                    <div data-dojo-attach-point="ID_HDRM">
-                    </div>
-
+                    <div data-dojo-attach-point="ID_HDRM"></div>
                     <!--
                     <div class="form-filter">
                         <div>
@@ -130,19 +128,18 @@
                                 Actualizar
                             </button> 
                         </center>
-                        <div class="leyend">
+                        <div class="leyend" style="display: none;">
                             <div>Red Ferroviaria</div>
                             <div>Red Víal</div>
                         </div>
                     </div>
-                    
-                    <label class="subTitle">Resumen de Análisis:</label>
                     <!-- CSS Load -->
                     <div class="lds-facebook" data-dojo-attach-point="ID_Load_Buffer"><div></div><div></div><div></div></div>
-                    
+                    <!-- Table Analysis -->
                     <div data-dojo-attach-point="ID_Table_Analysis"></div>
-
-                
+                    <!-- SubTitle -->
+                    <label class="subTitle">Resumen de Análisis:</label>
+                    <!--<div class="form-scroll" data-dojo-attach-point="ID_Table_Report"></div>-->
                     <!--
                     <div class="form-content">
                         <label class="subTitle">Lista de Análisis</label>

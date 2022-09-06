@@ -333,6 +333,7 @@
             "name": "Infraestructura vial y transporte",
             "srv": [
                 { 
+                    "id": "ID_RedFerroviaria",
                     "name": "Red Ferroviaria",
                     "fields":[
                         {
@@ -343,6 +344,7 @@
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060200"
                 },
                 { 
+                    "id": "ID_RedVial",
                     "name": "Red vial",
                     "fields":[
                         {

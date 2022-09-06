@@ -98,11 +98,13 @@ define([
         confDiagnosis: [],
         confDiagnosis_Temp: [],
         confAnalysis: [],
+        confAnalysis_Temp: [],
         confReport: [],
         confReport_Temp: [],
         countItem: 1,
         countResult: 0,
-        countAnalysis: 0,
+        countAnalysis_Cantidad: 0,
+        countAnalysis_Km: 0,
         textAmbito: "",
         geometryIntersect: "",
         geometrySRV: null,
@@ -141,7 +143,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
             this._htmlTable(this.ID_Table_Count);
-            this._htmlTable(this.ID_Table_Analysis);    
+            this._htmlTableAnalysis(this.ID_Table_Analysis);
                  
             this.IDTableCount_Name     = this.ID_Table_Count.getAttribute("data-dojo-attach-point");
             this.IDTableAnalysis_Name  = this.ID_Table_Analysis.getAttribute("data-dojo-attach-point");
@@ -154,18 +156,14 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             /* Setup DISTRITO */
             const lyrDis = config.lyrFilter[2];
             const srvDis = lyrDis.srv[0];
-            
-            
-            /* Setup LAYER DIAGNOSIS */
+            /* Setup List Layer DIAGNOSIS */
             this.confDiagnosis = config.lyrDiagnosis;
-            
-            
+            /* Setup List Layer ANALYSIS */
+            this.confAnalysis = config.lyrAnalysis;
+            /* Setup List Layer REPORT */
+            this.confReport = config.lyrReport;
             /* Cuenta las capas */
             this._jsonCountLayer(this.confDiagnosis);
-
-            console.log(this._getRandom());
-            console.log(this._getRandom());
-
             /* Load DEPARTAMENTO */
             let fillDep = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,97,97,0]);
             let featureLayerDep = this._loadLayer(lyrDep.srv[0].objectID, srvDep.url, fillDep, lyrDep.srv[0].depName);
@@ -316,7 +314,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     /* Reinicia el grupo de capas */
                     this.confDiagnosis_Temp = [];
                     /* Muestra la pestaña RESULTADO (segunda pestaña) */
-                    this._elementById("tab2").click();
+                    this._elementById("ID_Tab_Diagnosis").click();
                     this.ID_Table_Count.style.display = "none";
                     this.ID_Load.style.display = "block";
                     /* Eliminar contenido del resultado */
@@ -331,7 +329,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             this.own(on(this.ID_Analisis, 'click', lang.hitch(this, () => {
                 /* Button (click) - ID_Analisis. Muestra la pestaña ANALISIS (segunda pestaña) */
                 try {
-                    this._elementById("tab3").click();
+                    this._elementById("ID_Tab_Analysis").click();
                     /* Buffer Analysis */
                     this._analysis();
                 } catch (error) {
@@ -372,249 +370,22 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _jsonTravelTotal_66 => ${error.name} - ${error.message}`);
             }
         },
-        _analysis: function() {
-            try {                
-                this.ID_Table_Analysis.style.display = "none";
-                this.ID_Load_Buffer.style.display = "block";
-                this.lyrGraphics.map((currentValue) => { this.map.graphics.remove(currentValue); });
-
-                console.log("ANALIZANDO");
-
-                /*
-                if(this.queryTaskDeferred_1k && (this.queryTaskDeferred_1k > 0)) {
-                    this.queryTaskDeferred_1k.cancel();
-                }
-
-                if(this.queryTaskDeferred_1000k && (this.queryTaskDeferred_1000k > 0)) {
-                    this.queryTaskDeferred_1000k.cancel();
-                }
-                */
-
-                this.countAnalysis = 0;    
-                this.lyrGraphics = [];                
-                this.confDiagnosis.map(function(lyr) {
-                    
-
-                    console.log(lyr);
-                    console.log(lyr.fields.map(x => x.field));
-
-
-                    /*
-                        let queryTask = new QueryTask(lyr.url);
-                        let query = new Query();
-                        query.outFields = lyr.fields.map(x => x.field);
-                        query.geometry = this.geometryIntersect;
-                        query.SpatialRelationship = "esriSpatialRelIntersects";
-                        query.geometryType = "esriGeometryEnvelope";
-                        query.returnGeometry = false;
-                        queryTask.executeForCount(query).then(
-                            (count) => {
-                                console.log(count);
-                               
-                                try {
-                                    let queryTaskSP = new QueryTask(lyr.url);
-                                    let querySP = new Query();
-                                    querySP.outFields = lyr.fields.map(x => x.field);
-                                    querySP.geometry = this.geometryIntersect;
-                                    querySP.SpatialRelationship = "esriSpatialRelIntersects";
-                                    querySP.geometryType = "esriGeometryEnvelope";
-                                    querySP.returnGeometry = true;
-                                    if(count > 1000 ) {
-                                     
-                                        const sizeFeature = Math.ceil(count/500);
-                                        for (let H = 0; H < sizeFeature; H++) {
-                                            querySP.returnGeometry = true;
-                                            querySP.num = 500;
-                                            querySP.start = (H*500);
-                                            this.queryTaskDeferred_1000k = queryTaskSP.execute(querySP);
-                                            this.queryTaskDeferred_1000k.then(
-                                            (response) => {
-                                                if(response.geometryType == "esriGeometryPolyline") {
-                                                    response.features.map(function(currValue) {
-                                                        try {
-                                                            this.ID_Table_Analysis.style.display = "none"; 
-                                                            this.ID_Load_Buffer.style.display = "block";
-
-                                                            let symbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASH, new Color([255,0,0]), 1);
-                                                            let graphic = new Graphic(currValue.geometry, symbol);
-                                                            this.map.graphics.add(graphic);
-                                                            
-                                                            let params = new BufferParameters();
-                                                            params.distances = [this.ID_Buffer.value];
-                                                            params.outSpatialReference = this.map.spatialReference;
-                                                            params.unit = GeometryService.UNIT_METER;
-                                                            params.geometries = [ currValue.geometry ];
-
-                                                            this.geometrySRV.buffer(params, (bufferGeometries) => {
-                                                          
-                                                                const symbolRedFerroviaria = new SimpleFillSymbol(
-                                                                    SimpleFillSymbol.STYLE_SOLID,
-                                                                    new SimpleLineSymbol(
-                                                                      SimpleLineSymbol.STYLE_SHORTDASHDOTDOT,
-                                                                      new Color([57,153,0]),
-                                                                      2
-                                                                    ),
-                                                                    new Color([57,153,0,0.1])
-                                                                );
-
-                                                                array.forEach(bufferGeometries, (geometry) => {
-                                                                    let graphic = new Graphic(geometry, symbolRedFerroviaria);
-                                                                    this.lyrGraphics.push(graphic);
-                                                                    this.map.graphics.add(graphic);
-                                                                });
-                                                            
-                                                            });
-                                                              
-                                                        } catch (error) {
-                                                            console.error(`Error: esriGeometryPolyline => ${error.name} - ${error.message}`);
-                                                        }
-                                                    }.bind(this));
-                                                    
-                                                }
-                                            }
-                                            ).always(lang.hitch(this, function() {
-                                                M = M + 1;
-                                                if(sizeFeature == M) {
-                                                    this.ID_Load_Buffer.style.display = "none";
-                                                    this.ID_Table_Analysis.style.display = "block";                                                     
-                                                }
-                                            }));                                            
-                                        }
-                                        
-
-                                    } else {
-                                       
-                                        querySP.num = 1000; querySP.start = 0;
-                                        this.queryTaskDeferred_1k = queryTaskSP.execute(querySP);
-                                        this.queryTaskDeferred_1k.then(
-                                            (response) => {
-                                                try {
-                                                    if(response.geometryType == "esriGeometryPolyline") {
-                                                        response.features.map(function(currValue) {
-                                                            try {
-                                                                this.ID_Table_Analysis.style.display = "none"; 
-                                                                this.ID_Load_Buffer.style.display = "block";
-
-                                                                let symbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASH, new Color([255,0,0]), 1);
-                                                                let graphic = new Graphic(currValue.geometry, symbol);
-                                                                this.map.graphics.add(graphic);
-                                                                
-                                                                let params = new BufferParameters();
-                                                                params.distances = [this.ID_Buffer.value];
-                                                                params.outSpatialReference = this.map.spatialReference;
-                                                                params.unit = GeometryService.UNIT_METER;
-                                                                params.geometries = [ currValue.geometry ];
-
-                                                                this.geometrySRV.buffer(params, (bufferGeometries) => {
-
-                                                                   
-                                                                    let symbolRedVial = new SimpleFillSymbol(
-                                                                        SimpleFillSymbol.STYLE_SOLID,
-                                                                        new SimpleLineSymbol(
-                                                                          SimpleLineSymbol.STYLE_SHORTDASHDOTDOT,
-                                                                          new Color([239,184,16]),
-                                                                          2
-                                                                        ),
-                                                                        new Color([239,184,16,0.1])
-                                                                    );
-                                                                
-
-                                                                    array.forEach(bufferGeometries, (geometry) => {
-                                                                        let graphic = new Graphic(geometry, symbolRedVial);
-                                                                        this.lyrGraphics.push(graphic);
-                                                                        this.map.graphics.add(graphic);
-                                                                    });
-                                                                
-                                                                });
-
-                                                            } catch (error) {
-                                                                console.error(`Error: esriGeometryPolyline => ${error.name} - ${error.message}`);
-                                                            }
-                                                        }.bind(this));
-                                                    }
-                                                   
-                                                    
-                                                } catch (error) {
-                                                    console.error(`Error: Analisis - Sin Paginación | response => ${error.name} - ${error.message}`);
-                                                }                    
-                                            },
-                                            (error) => {  
-                                                console.error(`Error: Analisis - Sin Paginación | Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
-                                            }
-                                        ).always(lang.hitch(this, function() {
-                                           
-                                            this.ID_Load_Buffer.style.display = "none";
-                                            this.ID_Table_Analysis.style.display = "block"; 
-                                        }.bind(this))); 
-                                    }
-                                } catch (error) {
-                                    console.error(`Error: Analisis/queryTask.executeForCount response => ${error.name} - ${error.message}`);
-                                }     
-                                            
-                            },
-                            (error) => {  
-                                console.error(`Error: Analisis/queryTask.executeForCount - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
-                            }
-                        ).always(lang.hitch(this, function() {
-                            this.ID_Load_Buffer.style.display = "none";
-                            this.ID_Table_Analysis.style.display = "block";                            
-                        }.bind(this)));                            
-                    */
-                }.bind(this));
-            } catch (error) {
-                console.error(`Error: _analysis => ${error.name} - ${error.message}`);
-            }
-        },
-        _showBuffer: function(bufferedGeometries) {
-            let symbol = new SimpleFillSymbol(
-                SimpleFillSymbol.STYLE_SOLID,
-                new SimpleLineSymbol(
-                    SimpleLineSymbol.STYLE_SOLID,
-                    new Color([255,0,0,0.65]),
-                    2
-                ),
-                new Color([255,0,0,0.35])
-            );
-                    console.log(bufferedGeometries);
-            /*
-            array.forEach(bufferedGeometries, function(geometry) {
-              var graphic = new Graphic(geometry, symbol);
-              this.map.graphics.add(graphic);
-            }.bind(this));  
-            */
-            bufferedGeometries.map((currentValue) => {
-                try {
-                    
-                    if (typeof(currentValue) !== 'undefined') {
-                        this.map.graphics.add(new Graphic(currentValue, symbol));    
-                    }
-                    
-                } catch (error) {
-                    console.error(`Error: bufferedGeometries => ${error.name} - ${error.message}`);
-                }
-            });
-            /*
-            let symbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASH, new Color([255,0,0]), 1);
-            let graphic = new Graphic(currValue.geometry, symbol);
-            this.map.graphics.add(graphic);
-            */
-        },       
+            
         _ambito: function(htmlID, htmlPH, htmlPHAlter, htmlLBL, order, oID, item, svr, queryWhere) {
-            /* Carga de los SELECTOR del ámbito */
-            try {
+            try { /* Carga de los SELECTOR del ámbito */
                 let options = [];
                 let container = domConstruct.create("div", {
                         id: `DIV_${htmlID}`,
-                        style: { width: '100%' }
+                        style: { width:'100%' }
                     }, this.ID_HDRM
                 );
-                
+
                 let tableContainer = new TableContainer({
                     cols: 2,
                     labelWidth: "35%",
                     customClass: "labelsAndValues", /*class: "form-labels"*/
                 }, container);
-                
+
                 const queryTask = new QueryTask(svr);
                 const querySQL = new Query();
                 querySQL.where = queryWhere;
@@ -628,7 +399,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                         results.features.map(function (cValue) {
                             const name = cValue.attributes[item];
                             const id = cValue.attributes[oID];
-                            options.push({ name: `${name}`, id: id });
+                            options.push({ name:`${name}`, id:id });
                         });
                     } catch (error) {
                         console.error(`Error: _ambito/queryTask execute => ${error.name} - ${error.message}`);
@@ -646,7 +417,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     store: stateStore,
                     autoComplete: false,
                     searchAttr: "name",
-                    style: { width: '100%', fontSize: '13px' }
+                    style: { width:'100%', fontSize:'13px' }
                 });
         
                 tableContainer.addChild(filteringSelect);
@@ -657,8 +428,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             }
         },
         _ambitoUpdate: function(htmlPHAlter, order, oID, item, svr, queryWhere) {
-            /* Actualización del SELECTOR dependiente y no dependiente */
-            try {
+            try { /* Actualización del SELECTOR dependiente y no dependiente */
                 let options = [];
                 const queryTask = new QueryTask(svr);
                 const querySQL = new Query();
@@ -678,14 +448,13 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                         console.error(`Error: _ambitoUpdate/queryTask execute => ${error.name} - ${error.message}`);
                     }
                 });                
-                return new Memory({data: options });
+                return new Memory({ data:options });
             } catch (error) {
                 console.error(`Error: _ambitoUpdate => ${error.name} - ${error.message}`);
             }
         },
         _loadLayer: function(objectID, srv, renderColor, lbl) {
-            /* Carga de capa al mapa principal */
-            try {
+            try { /* Carga de capa al mapa principal */
                 let layer = new FeatureLayer(srv, {
                     mode: FeatureLayer.MODE_SELECTION,
                     outFields: [objectID]
@@ -709,8 +478,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             }
         },
         _fillLineColor: function(fill1,line1,line2,line3,color) {
-            /* Retorno del color de borde del polígono */
-            try {
+            try { /* Retorno del color de borde del polígono */
                 return (
                         new SimpleRenderer(
                             new SimpleFillSymbol(
@@ -725,19 +493,18 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             }
         },
         _lineColor: function(color) {
-            /* Retorno del borde de color */
-            try {
-                if(color == null)
+            try { /* Retorno del borde de color */
+                if(color == null) {
                     return color;
-                else
+                } else {
                     return (color = new Color(color));
+                }
             } catch (error) {
                 console.error(`Error: _lineColor => ${error.name} - ${error.message}`);
             }
         },
         _zoomLayer: function(lyr, id) {
-            /* Acercamiento a la capas seleccionadas del SELECTOR */
-            try {
+            try { /* Acercamiento a la capas seleccionadas del SELECTOR */
                 id = id || 0; 
                 let query = new Query();
                 query.objectIds = [id];
@@ -745,8 +512,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
-                            localStorage.setItem("geometryIntersect", this.geometryIntersect);
-                            this.geometryIntersect  = cValue.geometry;
+                            localStorage.setItem("geometryIntersect", cValue.geometry);
                             this.map.setExtent(cValue.geometry.getExtent().expand(1.4));
                         }.bind(this));
                     } catch (error) {
@@ -757,9 +523,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _zoomLayer => ${error.name} - ${error.message}`);
             }
         },
-        _validateSelect: function(objSelect){
-            /* Validar la selección del ámbito */
-            try {
+        _validateSelect: function(objSelect) {
+            try { /* Validar la selección del ámbito */
                 const VALUE_SELECT = { '00': true, '000': true, '': true };
                 VALUE_SELECT_DEFAULT = false;
                 return VALUE_SELECT[objSelect.get('value')] || VALUE_SELECT_DEFAULT;
@@ -768,23 +533,19 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             }
         },
         _intersectLayer: function(GPL) {
-            /* Intersección de las capas operativas */
-            try {
+            try { /* Intersección de las capas operativas */
                 let [id, srv] = GPL;
                 let query = new Query(); query.objectIds = [id];
                 const lyr = new FeatureLayer(srv, { mode: FeatureLayer.MODE_SELECTION });
                 let itemRandom = this._getRandom();
-                this.randomDiagnosis = itemRandom;
-                
+                this.randomDiagnosis = itemRandom;                
                 if(this.deferredDiagnosis && (this.deferredDiagnosis > 0)) {
                     this.deferredDiagnosis.cancel();
                 }
-
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
-                            window.geometryIntersect = this.geometryIntersect = cValue.geometry;
-                            console.log(itemRandom);
+                            this.geometryIntersect = cValue.geometry;
                             this._jsonTravelTree(this.confDiagnosis, itemRandom);
                         }.bind(this));
                     } catch (error) {
@@ -796,8 +557,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             }
         },
         _jsonTravelTree: function(json, _random, _name="") {
-            /* Recorre un arból de n hijos */
-            try {
+            try { /* Recorre un arból de n hijos */
                 let type; let resul;
                 for (var i=0; i < json.length; i++) {
                     type = typeof json[i].srv;
@@ -815,8 +575,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
         },
         _queryTask: function(lyr, srv, _random) {
             try {
-                //this.ID_Table_Count.style.display = "none";
-                //this.ID_Load.style.display = "block";
+                /*this.ID_Table_Count.style.display = "none";
+                this.ID_Load.style.display = "block";*/
                 let queryTask = new QueryTask(srv);
                 let query = new Query();
                 query.outFields = lyr.fields.map(x => x.field);
@@ -880,28 +640,220 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             } catch (error) { 
                 console.error(`Error: _queryTask => ${error.name} - ${error.message}`); 
             }
-            /*
-            this.queryTaskDeferred = queryTask.execute(query);
-            this.queryTaskDeferred.then(
-                (response) => { console.log(response); }
-            ).catch(
-                (error) => { console.error(`Error: Oops! Es tu servidor esta desconectado => ${error.name} - ${error.message}`); }
-            ).always(lang.hitch(this, function() { console.log("Always"); }));
-            */
         },
-
         _loadTime: function(_item) {
-            /* Tiempo de carga */
-            try {
+            try { /* Tiempo de carga */
                 return `Procesado al ${Math.round((_item*100)/this.lyrTotal)} %`;
             } catch (error) { 
                 console.error(`Error: _loadTime => ${error.name} - ${error.message}`); 
             }
         },
+        _analysis: function() {
+            try {                
+                this.ID_Table_Analysis.style.display = "none";
+                this.ID_Load_Buffer.style.display = "block";
+                //this.lyrGraphics.map((currentValue) => { this.map.graphics.remove(currentValue); });
 
+                /*
+                if(this.queryTaskDeferred_1k && (this.queryTaskDeferred_1k > 0)) {
+                    this.queryTaskDeferred_1k.cancel();
+                }
+
+                if(this.queryTaskDeferred_1000k && (this.queryTaskDeferred_1000k > 0)) {
+                    this.queryTaskDeferred_1000k.cancel();
+                }
+                */
+
+                this.countAnalysis_Cantidad = 0;
+                this.countAnalysis_Km = 0;
+                this.lyrGraphics = [];       
+                /* Asigna en un solo nivel a confAnalysis_Temp */
+                this._analysisJson(this.confAnalysis, this.confAnalysis_Temp);
+                /* Se limpia la tabla */
+                this._elementById(`${this.IDTableAnalysis_Name}_Tbody`).innerHTML = "";
+                /* Recorreo el JSON */
+                this.confAnalysis_Temp.map(function(lyr, index) {
+                    let polylineLength = 0;
+                    let queryTask = new QueryTask(lyr.url);
+                    let query = new Query();
+                    query.outFields = lyr.fields.map(x => x.field);
+                    query.geometry = this.geometryIntersect;
+                    query.SpatialRelationship = "esriSpatialRelIntersects";
+                    query.geometryType = "esriGeometryEnvelope";
+                    query.returnGeometry = false;
+
+                    let fragment = document.createDocumentFragment();
+                    let row = document.createElement("tr");
+                    let cell_0 = document.createElement("td");
+                    cell_0.style.width = "70%";
+                    cell_0.innerHTML = lyr.name;
+                    let cell_1 = document.createElement("td");
+                    cell_1.id = `ID_1_${lyr.id}`;
+                    cell_1.style.width = "20%";
+                    cell_1.style.textAlign = "right";
+                    let cell_2 = document.createElement("td");
+                    let cellText_2 = document.createTextNode(0);
+                    cell_2.id = `ID_2_${lyr.id}`;
+                    cell_2.appendChild(cellText_2);
+                    row.appendChild(cell_0);
+                    row.appendChild(cell_1);
+                    row.appendChild(cell_2);
+                    fragment.appendChild(row);
+                    this._elementById(`${this.IDTableAnalysis_Name}_Tbody`).appendChild(fragment);
+                    let _paramCount = 0;
+                    queryTask.executeForCount(query).then(
+                        (count) => {
+                            _paramCount = count;
+                            this.countAnalysis_Cantidad = this.countAnalysis_Cantidad + count;
+                            this._elementById(`ID_1_${lyr.id}`).innerText = count;
+                        },
+                        (error) => {  
+                            console.error(`Error: Analisis - Oops! executeForCount => ${error.name} - ${error.message}`); 
+                        }
+                    ).always(lang.hitch(this, function() {
+                        /* Total */
+                        this._elementById(`${this.IDTableAnalysis_Name}_Cantidad`).innerText = this.countAnalysis_Cantidad;
+                        
+                        if(_paramCount > 1000) { /* Paginación */
+                            const sizeFeature = Math.ceil(_paramCount/500);
+                            let queryTask_1 = new QueryTask(lyr.url);
+                            let query_1 = new Query();
+                            query_1.outFields = lyr.fields.map(x => x.field);
+                            query_1.geometry = this.geometryIntersect;
+                            query_1.SpatialRelationship = "esriSpatialRelIntersects";
+                            query_1.geometryType = "esriGeometryEnvelope";
+                            query_1.returnGeometry = true;
+
+                            for (let H = 0; H < sizeFeature; H++) {
+                                query_1.num = 500;
+                                query_1.start = (H*500);
+                                console.log(query_1);
+                                queryTask_1.execute(query_1).then(
+                                    (response) => {
+                                        response.features.map(function(feature) {
+                                            /*lyr.cantidad = polylineLength;*/
+                                            if(feature.geometry.type == "polyline") {
+                                                polylineLength = polylineLength + geometryEngine.geodesicLength(feature.geometry, "kilometers");
+                                            }
+                                        }.bind(this));
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Analisis - Oops! 1 => ${error.name} - ${error.message}`);                                
+                                    }
+                                ).always(lang.hitch(this, function() {
+                                    this.ID_Load_Buffer.style.display = "none";
+                                    this.ID_Table_Analysis.style.display = "block";
+                                    this._elementById(`ID_2_${lyr.id}`).innerText = polylineLength.toFixed(3);                                    
+                                    this.countAnalysis_Km = parseFloat(this.countAnalysis_Km) + polylineLength.toFixed(3);
+                                    this._elementById(`${this.IDTableAnalysis_Name}_Km`).innerText = parseFloat(this.countAnalysis_Km);
+                                }.bind(this)));
+                            }
+                        } else {
+                            /* Sin Paginación */
+                            if(_paramCount !== 0) {
+                                let queryTask_2 = new QueryTask(lyr.url);
+                                let query_2 = new Query();
+                                query_2.outFields = lyr.fields.map(x => x.field);
+                                query_2.geometry = this.geometryIntersect;
+                                query_2.SpatialRelationship = "esriSpatialRelIntersects";
+                                query_2.geometryType = "esriGeometryEnvelope";
+                                query_2.returnGeometry = true;
+                                queryTask_2.execute(query_2).then(
+                                    (response) => {
+                                        response.features.map(function(feature) {
+                                            /*lyr.cantidad = polylineLength;*/
+                                            if(feature.geometry.type == "polyline") {
+                                                polylineLength = polylineLength + geometryEngine.geodesicLength(feature.geometry, "kilometers");
+                                            }
+                                        }.bind(this));
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Analisis - Oops! 2 => ${error.name} - ${error.message}`);                                
+                                    }
+                                ).always(lang.hitch(this, () => {
+                                    this.ID_Load_Buffer.style.display = "none";
+                                    this.ID_Table_Analysis.style.display = "block";
+                                    this._elementById(`ID_2_${lyr.id}`).innerText = polylineLength.toFixed(3);
+                                    this.countAnalysis_Km = parseFloat(this.countAnalysis_Km) + polylineLength.toFixed(3);
+                                    this._elementById(`${this.IDTableAnalysis_Name}_Km`).innerText = parseFloat(this.countAnalysis_Km);
+                                }));
+                            }
+                        }
+                    }.bind(this)));  
+                    /*
+                    queryTask.execute(query).then(
+                        (results) => {
+                            results.features.map(function(feature) {
+                                ramos = ramos + geometryEngine.geodesicLength(feature.geometry, "kilometers");
+                                lyr.cantidad = ramos;
+                            });
+                        },
+                        (error) => {
+                            console.error(`Error: Analisis - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);                                
+                        }
+                    ).always(lang.hitch(this, function() {
+                        console.log("this.confAnalysis_Temp");
+                        console.log(this.confAnalysis_Temp);
+                    }.bind(this)));
+                    */
+                    /************************************/
+                }.bind(this));
+            } catch (error) {
+                console.error(`Error: _analysis => ${error.name} - ${error.message}`);
+            }
+        },
+        _analysisJson: function(json, _conf,_name = "") {
+            try { /* Recorre un arból de n hijos */
+                let type; let resul; let layer;
+                for (var i=0; i < json.length; i++) {
+                    type = typeof json[i].srv;
+                    if (type == "undefined") {
+                        resul = true;
+                        layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+                        _conf.push({ name:layer , url:json[i].url , fields:json[i].fields, id:json[i].id });
+                    } else {
+                        resul += this._analysisJson(json[i].srv, _conf, _name || json[i].name);
+                    }
+                }            
+                return resul;
+            } catch (error) {
+                console.error(`Error: _analysisJson => ${error.name} - ${error.message}`);
+            }
+        },
+        _showBuffer: function(bufferedGeometries) {
+            let symbol = new SimpleFillSymbol(
+                SimpleFillSymbol.STYLE_SOLID,
+                new SimpleLineSymbol(
+                    SimpleLineSymbol.STYLE_SOLID,
+                    new Color([255,0,0,0.65]),
+                    2
+                ),
+                new Color([255,0,0,0.35])
+            );
+                    console.log(bufferedGeometries);
+            /*
+            array.forEach(bufferedGeometries, function(geometry) {
+              var graphic = new Graphic(geometry, symbol);
+              this.map.graphics.add(graphic);
+            }.bind(this));  
+            */
+            bufferedGeometries.map((currentValue) => {
+                try {
+                    if (typeof(currentValue) !== 'undefined') {
+                        this.map.graphics.add(new Graphic(currentValue, symbol));    
+                    }
+                } catch (error) {
+                    console.error(`Error: bufferedGeometries => ${error.name} - ${error.message}`);
+                }
+            });
+            /*
+            let symbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASH, new Color([255,0,0]), 1);
+            let graphic = new Graphic(currValue.geometry, symbol);
+            this.map.graphics.add(graphic);
+            */
+        }, 
         _jsonTravelTree_Temp: function(json, _name = "") {
-            /* Recorre un arból de n hijos */
-            try {
+            try { /* Recorre un arból de n hijos */
                 let type; let resul; let layer;
                 for (var i=0; i < json.length; i++) {
                     type = typeof json[i].srv;
@@ -918,7 +870,6 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _jsonTravelTree_Temp => ${error.name} - ${error.message}`);
             }
         },
-
         _jsonTravelTree_2: function(json) {
                 let type; let resul; let abc = 0;
                 for (var i=0; i < json.length; i++) {
@@ -953,8 +904,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             }
         },
         _sortJSON: function(data, key, orden) {
-            /* Ordenando el json de capas */
-            try {
+            try { /* Ordenando el json de capas */
                 return data.sort(function (a, b) {
                     var x = a[key], y = b[key];
             
@@ -967,8 +917,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             }
         },
         _htmlTable: function(ID_Table) {
-            /* Se crea la tabla de resumen */
-            try {
+            try { /* Se crea la tabla de resumen */
                 const idTable = ID_Table.getAttribute("data-dojo-attach-point"); 
                 const tbl = document.createElement("table");
                 tbl.className = "tbl";
@@ -1025,9 +974,76 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _htmlTable => ${error.name} - ${error.message}`);
             }
         },
+        _htmlTableAnalysis: function(ID_Table) {
+            try { /* Se crea la tabla de resumen */
+                const idTable = ID_Table.getAttribute("data-dojo-attach-point"); 
+                const tbl = document.createElement("table");
+                tbl.className = "tbl";
+                /* Head */
+                const tblHead = document.createElement("thead");
+                const rowHead = document.createElement("tr");
+                const rowHeadTH_Item = document.createElement("th");
+                
+                const rowHeadTH_Name = document.createElement("th");
+                const rowHeadTH_NameNode = document.createTextNode("Capas / Temáticas");
+                rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
+                const rowHeadTH_Count = document.createElement("th");
+                const rowHeadTH_CountSize = document.createTextNode("Cant.");
+                rowHeadTH_Count.appendChild(rowHeadTH_CountSize);
+                const rowHeadTH_ItemNode = document.createTextNode("Km.");
+                rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
+                rowHead.appendChild(rowHeadTH_Name);
+                rowHead.appendChild(rowHeadTH_Count);
+                rowHead.appendChild(rowHeadTH_Item);
+                tblHead.appendChild(rowHead);
+                /* Body */
+                const tblBody = document.createElement("tbody");
+                tblBody.id = `${idTable}_Tbody`;
+                const row = document.createElement("tr");
+                const rowTD = document.createElement("td");
+                rowTD.colSpan = "3";
+                rowTD.style.textAlign = "center";
+                const rowTD_Node = document.createTextNode("Sin Coincidencias");
+                rowTD.appendChild(rowTD_Node);
+                row.appendChild(rowTD);
+                tblBody.appendChild(row);
+                tbl.appendChild(tblHead);
+                tbl.appendChild(tblBody);
+                /* Foot */
+                const tblFoot = document.createElement("tfoot");
+                const rowFoot = document.createElement("tr");
+                const rowFootTD = document.createElement("td");
+                /*rowFootTD.colSpan = "2";*/
+                rowFootTD.style.textAlign = "right";
+                rowFootTD.style.fontWeight = "800";
+                const rowFootTD_Text = document.createTextNode("Total");
+                rowFootTD.appendChild(rowFootTD_Text);
+                
+                const rowFootTDCant = document.createElement("td");
+                rowFootTDCant.style.textAlign = "right";
+                const rowFootTD_Cant = document.createTextNode("0");
+                rowFootTDCant.id = `${idTable}_Cantidad`;
+                rowFootTDCant.appendChild(rowFootTD_Cant);
+                
+                const rowFootTDKm = document.createElement("td");
+                rowFootTDKm.style.textAlign = "right";
+                const rowFootTD_Km = document.createTextNode("0");
+                rowFootTDKm.id = `${idTable}_Km`;
+                rowFootTDKm.appendChild(rowFootTD_Km);
+
+                rowFoot.appendChild(rowFootTD);
+                rowFoot.appendChild(rowFootTDCant);
+                rowFoot.appendChild(rowFootTDKm);
+                tblFoot.appendChild(rowFoot);
+                tbl.appendChild(tblFoot);
+                /* ID */
+                ID_Table.appendChild(tbl);
+            } catch (error) {
+                console.error(`Error: _htmlTableAnalysis => ${error.name} - ${error.message}`);
+            }
+        },
         _removeChild: function(listDiv, divCount) {
-            /* Se limpia la estructura */
-            try {
+            try { /* Se limpia la estructura */
                 divCount.innerText = "0";
                 while(listDiv.firstChild) {
                     listDiv.removeChild(listDiv.firstChild);
@@ -1036,20 +1052,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _removeChild => ${error.name} - ${error.message}`);
             } 
         },
-        _hola: function(lyrList) {
-            if(lyrList.hasOwnProperty('srv')) {
-                lyrList.map(function(cValue) {
-                    console.log(cValue.name);
-                    console.log(cValue.url);
-                }.bind(this));
-                return this._prueba(cValue.srv);
-            } else {
-                console.log(cValue.url);
-            }
-        },
         _elementById: function (paramId) {
-            /* Se valida el ID */
-            try {
+            try { /* Se valida el ID */
                 let id = document.getElementById(paramId);
                 if(id !== null && id !== undefined)
                     return id;
@@ -1060,8 +1064,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             }
         },
         _getRandom() {
-            /* Get Random - Deferred */
-            try {
+            try { /* Get Random - Deferred */
                 return Math.floor(Math.random() * 5000000);
             } catch(error) {
                 console.error(`__getRandomInt => ${error.name} - ${error.message}`);
