@@ -68,7 +68,7 @@
 }  
 /** Filter **/
 .hdrm_dt .tab-content {
-  padding: 10px;
+  padding: 5px;
 }
 .hdrm_dt .form-filter {
   height: 35px;
@@ -174,7 +174,8 @@
 /*****************/
 .hdrm_dt .form-scroll {
   max-height: 350px;
-  overflow-y: scroll;
+  /*margin-top: 10px;*/
+  overflow-y: scroll;  
 }
 .hdrm_dt .form-scroll {
   border: 1px solid #aaa;    
@@ -220,7 +221,7 @@
 }
 /** CARD **/  
 .hdrm_dt .form-count {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 .hdrm_dt .form-count .form-count-count:nth-child(1) {
   width: 100%;
@@ -389,7 +390,7 @@
 .hdrm_dt .tab-content .load-time {
   text-align: center;
   width: 100%;
-  padding: 15px 0;
+  padding: 5px 0;
   font-weight: bold;
 }
 /* Botones de resultado */
@@ -406,27 +407,28 @@
 }  
 /* Analisis */
 .hdrm_dt .buffer {
-  margin-top: -7px;
+  margin-top: -4px;
   background-color: rgba(0,0,0,0.5);
   color: white;
   margin-bottom: 10px;
 }
 .hdrm_dt .form-Analysis {    
-  padding: 10px;
+  padding: 10px 0px;
   font-size: 13px;
 }
 .hdrm_dt .form-Analysis input[type='number'],
-.hdrm_dt .form-Analysis p {
+.hdrm_dt .form-Analysis p,
+.hdrm_dt .form-Analysis button { 
   display: inline-block;
   vertical-align: top;
   margin: 0;
 }
 .hdrm_dt .form-Analysis .analysis-text {
-  width: 50%;
+  width: 110px;
   text-align: right;
-  padding-right: 10px;
-  margin-right: 5px;
-  border-right: 2px solid white;
+  padding-right: 5px;
+  margin-right: 0px;
+  
 }
 .hdrm_dt .form-Analysis input[type='number'] {
   background-color: rgba(0, 0, 0, 0.25) !important;
@@ -435,13 +437,23 @@
   border: 1px solid rgba(255, 255, 255, 0.5) !important;
   height: 26px !important;
   line-height: 26px;
-  width: 15%;
+  width: 30px;
 }
 .hdrm_dt .form-Analysis .analysis-unit {
   margin-top: 2px;
   line-height: 26px;
-  width: 20%;
+  width: 50px;
+  border-right: 2px solid white;
+  padding-right: 5px;
+  margin-right: 0px;
 }  
+.hdrm_dt .form-Analysis button { 
+  height: 30px;
+  width: 80px;
+
+}
+
+
 .hdrm_dt .leyend { 
   margin-top: 10px;
   padding: 5px;
@@ -470,5 +482,5 @@
 .hdrm_dt #ID_Table_Count {
   overflow-y: auto;
   max-height: 500px;
-  margin-top: 10px;
+  
 }

@@ -143,6 +143,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
             this._htmlTable(this.ID_Table_Count);
+            this._htmlTable(this.ID_Table_Report);
             this._htmlTableAnalysis(this.ID_Table_Analysis);
                  
             this.IDTableCount_Name     = this.ID_Table_Count.getAttribute("data-dojo-attach-point");
@@ -280,6 +281,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                         return false;
                     }
                     /* Open TAB - REPORT */
+                    console.log(JSON.parse(localStorage.getItem("geometryIntersect")));
+                    
                     window.open('http://localhost/GitHub/Visor/CENEPRED/Avance_03/', '_blank');
                 } catch (error) {
                     console.error(`Error: button/ID_Report (click) => ${error.name} - ${error.message}`);
@@ -512,7 +515,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
-                            localStorage.setItem("geometryIntersect", cValue.geometry);
+                            console.log(cValue.geometry);
+                            localStorage.setItem("geometryIntersect", JSON.stringify(cValue.geometry));
                             this.map.setExtent(cValue.geometry.getExtent().expand(1.4));
                         }.bind(this));
                     } catch (error) {
@@ -581,7 +585,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 let query = new Query();
                 query.outFields = lyr.fields.map(x => x.field);
                 query.geometry = this.geometryIntersect;
-                query.SpatialRelationship = "esriSpatialRelIntersects";
+                query.spatialRelationship = "esriSpatialRelIntersects";
                 query.geometryType = "esriGeometryEnvelope";
                 this.deferredDiagnosis = queryTask.executeForCount(query)
                 this.deferredDiagnosis.then(
