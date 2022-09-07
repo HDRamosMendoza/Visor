@@ -111,6 +111,15 @@ define([
         randomDiagnosis: null,
         IDTableCount_Name: "",
         IDTableAnalysis_Name: "",
+        Ramos: new SimpleFillSymbol(
+            SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(
+              SimpleLineSymbol.STYLE_SHORTDASHDOTDOT,
+              new Color([239,184,16]),
+              2
+            ),
+            new Color([239,184,16,0.1])
+        ),
         /* RED VIAL */
 /*
 let symbolRedVial = new SimpleFillSymbol(
@@ -678,11 +687,13 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 /* Recorreo el JSON */
                 this.confAnalysis_Temp.map(function(lyr, index) {
                     let polylineLength = 0;
+                    let unionGeometry = [];
+                    let unionGeometryGeneral = [];
                     let queryTask = new QueryTask(lyr.url);
                     let query = new Query();
                     query.outFields = lyr.fields.map(x => x.field);
                     query.geometry = this.geometryIntersect;
-                    query.SpatialRelationship = "esriSpatialRelIntersects";
+                    query.spatialRelationship = "esriSpatialRelIntersects";
                     query.geometryType = "esriGeometryEnvelope";
                     query.returnGeometry = false;
 
@@ -737,6 +748,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                         response.features.map(function(feature) {
                                             /*lyr.cantidad = polylineLength;*/
                                             if(feature.geometry.type == "polyline") {
+                                                unionGeometry.push(feature.geometry);
                                                 polylineLength = polylineLength + geometryEngine.geodesicLength(feature.geometry, "kilometers");
                                             }
                                         }.bind(this));
@@ -750,6 +762,21 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                     this._elementById(`ID_2_${lyr.id}`).innerText = polylineLength.toFixed(3);                                    
                                     this.countAnalysis_Km = parseFloat(this.countAnalysis_Km) + polylineLength.toFixed(3);
                                     this._elementById(`${this.IDTableAnalysis_Name}_Km`).innerText = parseFloat(this.countAnalysis_Km);
+                                    unionGeometryGeneral.concat(unionGeometry);
+
+                                    let union = geometryEngine.union(unionGeometryGeneral);
+                                    union.id = `HDRamosMendoza_Polyline_${H}`;
+
+                                    console.log("geometryEngine.union: %o", union);
+
+                                    this.map.graphics.map((currentValue) => { 
+                                        console.log(currentValue);
+                                        /*this.map.graphics.remove(currentValue);*/
+                                    });
+
+                                    var graphic = new Graphic(union, this.Ramos);
+                                    this.map.graphics.add(graphic);
+                                    
                                 }.bind(this)));
                             }
                         } else {
@@ -767,6 +794,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                         response.features.map(function(feature) {
                                             /*lyr.cantidad = polylineLength;*/
                                             if(feature.geometry.type == "polyline") {
+                                                unionGeometry.push(feature.geometry);
                                                 polylineLength = polylineLength + geometryEngine.geodesicLength(feature.geometry, "kilometers");
                                             }
                                         }.bind(this));
@@ -780,6 +808,14 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                     this._elementById(`ID_2_${lyr.id}`).innerText = polylineLength.toFixed(3);
                                     this.countAnalysis_Km = parseFloat(this.countAnalysis_Km) + polylineLength.toFixed(3);
                                     this._elementById(`${this.IDTableAnalysis_Name}_Km`).innerText = parseFloat(this.countAnalysis_Km);
+
+                                    let union = geometryEngine.union(unionGeometry);
+
+                                    console.log("geometryEngine.union: %o", union);
+                                    let qqq = geometryEngine.geodesicBuffer(union, [1], "meters", true);
+
+                                    var graphic = new Graphic(qqq, this.Ramos);
+                                    this.map.graphics.add(graphic);
                                 }));
                             }
                         }
