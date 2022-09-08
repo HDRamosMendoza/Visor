@@ -335,23 +335,35 @@
                 { 
                     "id": "ID_RedFerroviaria",
                     "name": "Red Ferroviaria",
+                    "long": "longitud",
                     "fields":[
                         {
                             "alias": "Nombre",
                             "field": "nombre"
+                        },
+                        {
+                            "alias": "Longitud",
+                            "field": "longitud"
                         }
                     ],
+                    "color": [239, 184, 16],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060200"
                 },
                 { 
                     "id": "ID_RedVial",
-                    "name": "Red vial",
+                    "name": "Red víal",
+                    "long": "longitud",
                     "fields":[
                         {
                             "alias": "Nombre",
                             "field": "nombre"
+                        },
+                        {
+                            "alias": "Longitud",
+                            "field": "longitud"
                         }
                     ],
+                    "color": [57,153,0],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060300"
                 }
             ]

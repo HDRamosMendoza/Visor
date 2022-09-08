@@ -23,7 +23,10 @@ define([
 
     "esri/geometry/normalizeUtils",
     "esri/tasks/GeometryService",
+    
     "esri/tasks/BufferParameters",
+    "esri/SpatialReference",
+
     "esri/toolbars/draw",
     "esri/symbols/SimpleMarkerSymbol",
 
@@ -68,6 +71,8 @@ define([
     normalizeUtils,
     GeometryService,
     BufferParameters,
+    SpatialReference,
+
     Draw,
     SimpleMarkerSymbol,
 
@@ -93,7 +98,6 @@ define([
         widgetsInTemplate: true,
         templateString: drawTemplate,
         baseClass: 'hdrm_dt',
-        lyrGraphics: [],
         lyrTotal: 0,
         confDiagnosis: [],
         confDiagnosis_Temp: [],
@@ -101,10 +105,17 @@ define([
         confAnalysis_Temp: [],
         confReport: [],
         confReport_Temp: [],
+        reportItemCount: 1,
+        reportItemTotal: 0,
+        reportItemRandom: null,
+        reportItemResult: 0,
+        
+        reportGeometryIntersect: null,
+        
         countItem: 1,
         countResult: 0,
         countAnalysis_Cantidad: 0,
-        countAnalysis_Km: 0,
+        countAnalysis_Km: [],
         textAmbito: "",
         geometryIntersect: "",
         geometrySRV: null,
@@ -145,18 +156,22 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
 );
 */
         
+        
         postCreate: function () {
             this.inherited(arguments);
             /* Servicio de Geometria */
+            /* https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer */
             this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
             this._htmlTable(this.ID_Table_Count);
             this._htmlTable(this.ID_Table_Report);
             this._htmlTableAnalysis(this.ID_Table_Analysis);
-                 
-            this.IDTableCount_Name     = this.ID_Table_Count.getAttribute("data-dojo-attach-point");
-            this.IDTableAnalysis_Name  = this.ID_Table_Analysis.getAttribute("data-dojo-attach-point");
+            
+            this.IDTableCount_Name    = this.ID_Table_Count.getAttribute("data-dojo-attach-point");
+            this.IDTableAnalysis_Name = this.ID_Table_Analysis.getAttribute("data-dojo-attach-point");
+            this.IDTableReport_Name   = this.ID_Table_Report.getAttribute("data-dojo-attach-point");
+            
             /* Setup DEPARTAMENTO */
             const lyrDep = config.lyrFilter[0];
             const srvDep = lyrDep.srv[0];
@@ -172,6 +187,10 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             this.confAnalysis = config.lyrAnalysis;
             /* Setup List Layer REPORT */
             this.confReport = config.lyrReport;
+            /* Asigna en un solo nivel a confAnalysis_Temp */
+            this._analysisJson(this.confAnalysis, this.confAnalysis_Temp);
+            /* Asigna en un solo nivel a confReport_Temp */
+            this._reportJson(this.confReport, this.confReport_Temp);
             /* Cuenta las capas */
             this._jsonCountLayer(this.confDiagnosis);
             /* Load DEPARTAMENTO */
@@ -349,12 +368,34 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 }
             })));
 
-            this.own(on(this.ID_Button_Buffer, 'click', lang.hitch(this, () => {
+            this.own(on(this.ID_Button_BufferUpdate, 'click', lang.hitch(this, () => {
                 /* Button (click) - ID_Buffer */
                 try {                    
                     if(this.ID_Buffer.value < 1) { return };
+
+                    if(this.deferredReport && (this.deferredReport > 0)) {
+                        this.deferredReport.cancel();
+                    }
+
                     /* Buffer Analysis */
-                    this._analysis();
+                    if(this.reportGeometryIntersect !== null) {
+                        this.map.graphics.remove(this.reportGeometryIntersect);
+                    }
+                    
+                    this._reportBuffer();
+                    /*
+                    this._elementById(`${this.IDTableReport_Name}_Tbody`).innerHTML = "";
+                    let colorSimpleFillSymbol = this._getColorSimpleFillSymbol(lyr.color[0],lyr.color[1],lyr.color[2]);
+                    
+                    let geometryBuffer = geometryEngine.geodesicBuffer(this.reportGeometryUnion, [this.ID_Buffer.value], GeometryService.UNIT_KILOMETER, true);
+                    
+                    let graphicBuffer = new Graphic(geometryBuffer, colorSimpleFillSymbol);
+                    this.reportGeometryIntersect = graphicBuffer;
+                    this.map.graphics.add(graphicBuffer);
+                    let _random = this._getRandom();
+                    this.reportItemRandom = _random;
+                    this._report(geometryBuffer, _random);
+                    */
                 } catch (error) {
                     console.error(`Error: button/ID_Buffer (click) => ${error.name} - ${error.message}`);
                 }
@@ -524,7 +565,6 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
-                            console.log(cValue.geometry);
                             localStorage.setItem("geometryIntersect", JSON.stringify(cValue.geometry));
                             this.map.setExtent(cValue.geometry.getExtent().expand(1.4));
                         }.bind(this));
@@ -610,23 +650,22 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                 this.ID_Percentage.innerHTML = this._loadTime(this.countItem -1);
                             }
                         } catch (error) {
-                            console.error(`Error: _queryTask/queryTask.executeForCount response => ${error.name} - ${error.message}`);
+                            console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
                         }                    
                     },
                     (error) => {  
-                        console.error(`Error: _queryTask/queryTask.executeForCount - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
+                        console.error(`Error: _queryTask ERROR - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
                     }
                 ).always(lang.hitch(this, function() {
                     try {
                         //this.ID_Percentage.innerHTML = this._loadTime(this.countItem -1);
                         if(((this.countItem - 1) == this.lyrTotal) && (this.randomDiagnosis == _random)) {
                             this.ID_Load.style.display = "none";
-                            this.ID_Table_Count.style.display = "block";
-                            this.countItem = 1;
-                            /* Recorrer el JSON y asignamos a un nuevo array - this.confDiagnosis_Temp*/
+                            this.ID_Table_Count.style.display = "block";                            
+                            /* Recorrer el JSON y asignamos a un nuevo array - this.confDiagnosis_Temp */
                             this._jsonTravelTree_Temp(this.confDiagnosis);
                             /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
-                            this._sortJSON(this.confDiagnosis_Temp,'cantidad','desc'); 
+                            this._sortJSON(this.confDiagnosis_Temp, 'cantidad','desc'); 
                             /* Inserta a la tabla */
                             this.confDiagnosis_Temp.map(function(cValue, index){
                                 let fragment = document.createDocumentFragment();
@@ -663,30 +702,16 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
         },
         _analysis: function() {
             try {                
-                this.ID_Table_Analysis.style.display = "none";
-                this.ID_Load_Buffer.style.display = "block";
-                //this.lyrGraphics.map((currentValue) => { this.map.graphics.remove(currentValue); });
-
-                /*
-                if(this.queryTaskDeferred_1k && (this.queryTaskDeferred_1k > 0)) {
-                    this.queryTaskDeferred_1k.cancel();
-                }
-
-                if(this.queryTaskDeferred_1000k && (this.queryTaskDeferred_1000k > 0)) {
-                    this.queryTaskDeferred_1000k.cancel();
-                }
-                */
-
-                this.countAnalysis_Cantidad = 0;
-                this.countAnalysis_Km = 0;
-                this.lyrGraphics = [];       
-                /* Asigna en un solo nivel a confAnalysis_Temp */
-                this._analysisJson(this.confAnalysis, this.confAnalysis_Temp);
-                /* Se limpia la tabla */
                 this._elementById(`${this.IDTableAnalysis_Name}_Tbody`).innerHTML = "";
+                this.ID_Table_Analysis.style.display = "none";
+                this.ID_Load_Buffer.style.display = "block";                
+                let analysisTotal = [];
+                this.countAnalysis_Cantidad = 0;
+                this.countAnalysis_Km = [];           
                 /* Recorreo el JSON */
-                this.confAnalysis_Temp.map(function(lyr, index) {
-                    let polylineLength = 0;
+                this.confAnalysis_Temp.map(function(lyr) {
+                    analysisTotal.push({id: lyr.id, long: 0});
+                    let countPagination = 0;
                     let unionGeometry = [];
                     let unionGeometryGeneral = [];
                     let queryTask = new QueryTask(lyr.url);
@@ -696,7 +721,6 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     query.spatialRelationship = "esriSpatialRelIntersects";
                     query.geometryType = "esriGeometryEnvelope";
                     query.returnGeometry = false;
-
                     let fragment = document.createDocumentFragment();
                     let row = document.createElement("tr");
                     let cell_0 = document.createElement("td");
@@ -728,8 +752,11 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     ).always(lang.hitch(this, function() {
                         /* Total */
                         this._elementById(`${this.IDTableAnalysis_Name}_Cantidad`).innerText = this.countAnalysis_Cantidad;
+                        /* Get Color Symbol */
+                        
                         
                         if(_paramCount > 1000) { /* Paginación */
+                            
                             const sizeFeature = Math.ceil(_paramCount/500);
                             let queryTask_1 = new QueryTask(lyr.url);
                             let query_1 = new Query();
@@ -738,18 +765,16 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                             query_1.SpatialRelationship = "esriSpatialRelIntersects";
                             query_1.geometryType = "esriGeometryEnvelope";
                             query_1.returnGeometry = true;
-
+                            countPagination = sizeFeature-1;
+                            let arrLength = []
                             for (let H = 0; H < sizeFeature; H++) {
                                 query_1.num = 500;
                                 query_1.start = (H*500);
-                                console.log(query_1);
                                 queryTask_1.execute(query_1).then(
                                     (response) => {
                                         response.features.map(function(feature) {
-                                            /*lyr.cantidad = polylineLength;*/
                                             if(feature.geometry.type == "polyline") {
-                                                unionGeometry.push(feature.geometry);
-                                                polylineLength = polylineLength + geometryEngine.geodesicLength(feature.geometry, "kilometers");
+                                                arrLength.push(feature.attributes[lyr.long]);
                                             }
                                         }.bind(this));
                                     },
@@ -757,31 +782,46 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                         console.error(`Error: Analisis - Oops! 1 => ${error.name} - ${error.message}`);                                
                                     }
                                 ).always(lang.hitch(this, function() {
-                                    this.ID_Load_Buffer.style.display = "none";
-                                    this.ID_Table_Analysis.style.display = "block";
-                                    this._elementById(`ID_2_${lyr.id}`).innerText = polylineLength.toFixed(3);                                    
-                                    this.countAnalysis_Km = parseFloat(this.countAnalysis_Km) + polylineLength.toFixed(3);
-                                    this._elementById(`${this.IDTableAnalysis_Name}_Km`).innerText = parseFloat(this.countAnalysis_Km);
-                                    unionGeometryGeneral.concat(unionGeometry);
-
-                                    let union = geometryEngine.union(unionGeometryGeneral);
-                                    union.id = `HDRamosMendoza_Polyline_${H}`;
-
-                                    console.log("geometryEngine.union: %o", union);
-
-                                    this.map.graphics.map((currentValue) => { 
-                                        console.log(currentValue);
-                                        /*this.map.graphics.remove(currentValue);*/
+                                    let totalKm = arrLength.reduce((a, b) => a + b, 0);
+                                    this._elementById(`ID_2_${lyr.id}`).innerText = parseFloat(totalKm).toFixed(3);
+                                    
+                                    analysisTotal.forEach(function(_arr) {
+                                        if(_arr.id == lyr.id) {
+                                            _arr.long = parseFloat(totalKm).toFixed(3)
+                                        }
                                     });
 
-                                    var graphic = new Graphic(union, this.Ramos);
-                                    this.map.graphics.add(graphic);
+                                    let _countTemp = 0;
+                                    analysisTotal.forEach(function(_arr) {
+                                        _countTemp = _countTemp + parseFloat(_arr.long);
+                                        this._elementById(`${this.IDTableAnalysis_Name}_Km`).innerText = _countTemp;
+                                    }.bind(this));
                                     
+                                    if(countPagination == H) {
+                                        this.ID_Load_Buffer.style.display = "none";
+                                        this.ID_Table_Analysis.style.display = "block";
+                                    }
+                                    /*
+                                    if(countPagination == H) {
+                                        let geometryUnion = geometryEngine.union(unionGeometry);
+                                        console.log("Entro para graficar");
+                                        // Geometry Buffer
+                                        let geometryBuffer = geometryEngine.geodesicBuffer(geometryUnion, [this.ID_Buffer.value], GeometryService.UNIT_METER, true);
+                                        console.log(geometryBuffer);
+                                        // Geometry Graphic
+                                        let graphicBuffer = new Graphic(geometryBuffer, colorSimpleFillSymbol);
+                                        this.map.graphics.add(graphicBuffer);                                    
+                                        this.ID_Load_Buffer.style.display = "none";
+                                        this.ID_Table_Analysis.style.display = "block";
+                                    }                                    
+                                    */
                                 }.bind(this)));
                             }
                         } else {
                             /* Sin Paginación */
                             if(_paramCount !== 0) {
+                                let arrLength = [];
+                                
                                 let queryTask_2 = new QueryTask(lyr.url);
                                 let query_2 = new Query();
                                 query_2.outFields = lyr.fields.map(x => x.field);
@@ -792,30 +832,54 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                 queryTask_2.execute(query_2).then(
                                     (response) => {
                                         response.features.map(function(feature) {
-                                            /*lyr.cantidad = polylineLength;*/
                                             if(feature.geometry.type == "polyline") {
-                                                unionGeometry.push(feature.geometry);
-                                                polylineLength = polylineLength + geometryEngine.geodesicLength(feature.geometry, "kilometers");
+                                                arrLength.push(feature.attributes[lyr.long]);
                                             }
                                         }.bind(this));
                                     },
                                     (error) => {
                                         console.error(`Error: Analisis - Oops! 2 => ${error.name} - ${error.message}`);                                
                                     }
-                                ).always(lang.hitch(this, () => {
+                                ).always(lang.hitch(this, () => {                                    
+                                    let totalKm = arrLength.reduce((a, b) => a + b, 0);
+                                    this._elementById(`ID_2_${lyr.id}`).innerText = parseFloat(totalKm).toFixed(3);
+
+                                    analysisTotal.forEach(function(_arr) {
+                                        if(_arr.id == lyr.id) {
+                                            _arr.long = parseFloat(totalKm).toFixed(3)
+                                        }
+                                    });
+
+                                    let _countTemp = 0;
+                                    analysisTotal.forEach(function(_arr) {
+                                        _countTemp = _countTemp + parseFloat(_arr.long);
+                                        this._elementById(`${this.IDTableAnalysis_Name}_Km`).innerText = _countTemp;
+                                    }.bind(this));                                    
+                                    
+                                    
+                                    /* Bloque LOAD */
                                     this.ID_Load_Buffer.style.display = "none";
-                                    this.ID_Table_Analysis.style.display = "block";
-                                    this._elementById(`ID_2_${lyr.id}`).innerText = polylineLength.toFixed(3);
-                                    this.countAnalysis_Km = parseFloat(this.countAnalysis_Km) + polylineLength.toFixed(3);
-                                    this._elementById(`${this.IDTableAnalysis_Name}_Km`).innerText = parseFloat(this.countAnalysis_Km);
-
-                                    let union = geometryEngine.union(unionGeometry);
-
-                                    console.log("geometryEngine.union: %o", union);
-                                    let qqq = geometryEngine.geodesicBuffer(union, [1], "meters", true);
-
-                                    var graphic = new Graphic(qqq, this.Ramos);
-                                    this.map.graphics.add(graphic);
+                                    /* Bloque TABLE */
+                                    this.ID_Table_Analysis.style.display = "block";  
+                                    
+                                    this._reportBuffer();
+                                    /*
+                                    geometryEngine.union(unionGeometryGeneral);
+                                    let params = new BufferParameters();
+                                    params.distances = [this.ID_Buffer.value];
+                                    params.outSpatialReference = this.map.spatialReference;
+                                    params.outSpatialReference = unionGeometry[0].spatialReference;
+                                    params.unit = GeometryService.UNIT_METER;
+                                    params.geometries = union;
+                                    params.bufferSpatialReference = new SpatialReference({wkid: 4326});
+                                    //params.outSpatialReference = new SpatialReference({wkid: 4326});
+                                    //102100
+                                    this.geometrySRV.buffer(params, (bufferGeometries) => {
+                                        console.log(bufferGeometries);
+                                        let graphic = new Graphic(bufferGeometries, this.Ramos);
+                                        this.map.graphics.add(graphic);
+                                    });
+                                    */
                                 }));
                             }
                         }
@@ -842,6 +906,21 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _analysis => ${error.name} - ${error.message}`);
             }
         },
+        _getColorSimpleFillSymbol: function(_R,_G,_B) {
+            try { /* Obtiene el color */
+                return new SimpleFillSymbol(
+                    SimpleFillSymbol.STYLE_SOLID,
+                    new SimpleLineSymbol(
+                        SimpleLineSymbol.STYLE_SHORTDASHDOTDOT,
+                        new Color([_R,_G,_B]),
+                        2
+                    ),
+                    new Color([_R,_G,_B,0.1])
+                )
+            } catch (error) {
+                console.error(`Error: _getColorSimpleFillSymbol => ${error.name} - ${error.message}`);
+            }
+        },
         _analysisJson: function(json, _conf,_name = "") {
             try { /* Recorre un arból de n hijos */
                 let type; let resul; let layer;
@@ -850,7 +929,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     if (type == "undefined") {
                         resul = true;
                         layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
-                        _conf.push({ name:layer , url:json[i].url , fields:json[i].fields, id:json[i].id });
+                        _conf.push({ name:layer , url:json[i].url , fields:json[i].fields, id:json[i].id, color:json[i].color, long:json[i].long });
                     } else {
                         resul += this._analysisJson(json[i].srv, _conf, _name || json[i].name);
                     }
@@ -1109,6 +1188,289 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             } catch(error) {
                 console.error(`__getRandomInt => ${error.name} - ${error.message}`);
             }
+        },
+        _reportBuffer: function() {
+            try {
+                this.reportItemResult = 0;
+                this.reportItemCount = 1;
+                /* Bloque LOAD */
+                this.ID_Load_Report.style.display = "block";
+                /* Bloque TABLE */
+                this.ID_Table_Report.style.display = "none";
+                
+                
+
+                
+
+
+
+                /* Recorreo el JSON */
+                this.confAnalysis_Temp.map(function(lyr) {
+                    let _paramCount = 0;
+                    let queryTask = new QueryTask(lyr.url);
+                    let query = new Query();
+                    query.outFields = lyr.fields.map(x => x.field);
+                    query.geometry = this.geometryIntersect;
+                    query.spatialRelationship = "esriSpatialRelIntersects";
+                    query.geometryType = "esriGeometryEnvelope";
+                    query.returnGeometry = false;
+
+                    queryTask.executeForCount(query).then(
+                        (count) => {
+                            _paramCount = count;
+                        },
+                        (error) => {  
+                            console.error(`Error: Analisis - Oops! executeForCount => ${error.name} - ${error.message}`); 
+                        }
+                    ).always(lang.hitch(this, function() {
+                        /* Get Color Symbol */
+                        let colorSimpleFillSymbol = this._getColorSimpleFillSymbol(lyr.color[0],lyr.color[1],lyr.color[2]);
+                        if(_paramCount > 1000) { /* Paginación */
+                            unionGeometry = [];
+                            const sizeFeature = Math.ceil(_paramCount/500);
+                            let queryTask_1 = new QueryTask(lyr.url);
+                            let query_1 = new Query();
+                            query_1.outFields = lyr.fields.map(x => x.field);
+                            query_1.geometry = this.geometryIntersect;
+                            query_1.SpatialRelationship = "esriSpatialRelIntersects";
+                            query_1.geometryType = "esriGeometryEnvelope";
+                            query_1.returnGeometry = true;
+                            countPagination = sizeFeature-1;
+                            for (let H = 0; H < sizeFeature; H++) {
+                                query_1.num = 500;
+                                query_1.start = (H*500);
+                                queryTask_1.execute(query_1).then(
+                                    (response) => {
+                                        response.features.map(function(feature) {
+                                            if(feature.geometry.type == "polyline") {
+                                                unionGeometry.push(feature.geometry);
+                                            }
+                                        }.bind(this));
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Analisis - Oops! 1 => ${error.name} - ${error.message}`);                                
+                                    }
+                                ).always(lang.hitch(this, function() {
+                                    if(countPagination == H) {
+                                        this.ID_Load_Buffer.style.display = "none";
+                                        this.ID_Table_Analysis.style.display = "block";
+                                    }
+                                    /*
+                                    if(countPagination == H) {
+                                        let geometryUnion = geometryEngine.union(unionGeometry);
+                                        console.log("Entro para graficar");
+                                        // Geometry Buffer
+                                        let geometryBuffer = geometryEngine.geodesicBuffer(geometryUnion, [this.ID_Buffer.value], GeometryService.UNIT_METER, true);
+                                        console.log(geometryBuffer);
+                                        // Geometry Graphic
+                                        let graphicBuffer = new Graphic(geometryBuffer, colorSimpleFillSymbol);
+                                        this.map.graphics.add(graphicBuffer);                                    
+                                        this.ID_Load_Buffer.style.display = "none";
+                                        this.ID_Table_Analysis.style.display = "block";
+                                    }                                    
+                                    */
+                                }.bind(this)));
+                            }
+                        } else {
+                            /* Sin Paginación */
+                            if(_paramCount !== 0) {
+                                let unionGeometry = [];
+                                let queryTask_2 = new QueryTask(lyr.url);
+                                let query_2 = new Query();
+                                query_2.outFields = lyr.fields.map(x => x.field);
+                                query_2.geometry = this.geometryIntersect;
+                                query_2.SpatialRelationship = "esriSpatialRelIntersects";
+                                query_2.geometryType = "esriGeometryEnvelope";
+                                query_2.returnGeometry = true;
+                                queryTask_2.execute(query_2).then(
+                                    (response) => {
+                                        response.features.map(function(feature) {
+                                            if(feature.geometry.type == "polyline") {
+                                                unionGeometry.push(feature.geometry);
+                                            }
+                                        }.bind(this));
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Analisis - Oops! 2 => ${error.name} - ${error.message}`);                                
+                                    }
+                                ).always(lang.hitch(this, () => {
+                                    /*
+                                    if(typeof this.reportGeometryIntersect !== null) {
+                                        console.log("NULL");
+                                        this.map.graphics.remove(this.reportGeometryIntersect);
+                                    } */                                   
+                                    /* Geometry Union */
+                                    let geometryUnion = geometryEngine.union(unionGeometry);
+                                    this.reportGeometryUnion = geometryUnion;
+                                    /* Geometry Buffer */                                    
+                                    let geometryBuffer = geometryEngine.geodesicBuffer(geometryUnion, [this.ID_Buffer.value], GeometryService.UNIT_KILOMETER, true);/* UNIT_KILOMETER, UNIT_METER */
+                                    /* Geometry Graphic */
+                                    let graphicBuffer = new Graphic(geometryBuffer, colorSimpleFillSymbol);
+                                    this.reportGeometryIntersect = graphicBuffer;
+                                    this.map.graphics.add(graphicBuffer);                                    
+                                    let _random = this._getRandom();
+                                    this.reportItemRandom = _random;
+                                    this._report(geometryBuffer, _random);
+                                }));
+                            }
+                        }
+                    }.bind(this)));  
+                }.bind(this));
+            } catch (error) {
+                console.error(`Error: _reportBuffer => ${error.name} - ${error.message}`);
+            }
+        },
+        //_report: function(_bufferRadio, _geometryIntersect, _random) {
+        _report: function(_geometryBuffer, _random) {
+            this._elementById(`${this.IDTableReport_Name}_Tbody`).innerHTML = "";
+            setTimeout(() => {
+                /* Recorreo el JSON */
+                this.confReport_Temp.map(function(lyr) {
+                    try {
+                        let queryTask = new QueryTask(lyr.url);
+                        let query = new Query();
+                        query.outFields = lyr.fields.map(x => x.field);
+                        query.geometry = _geometryBuffer;
+                        //query.geometry = this.geometryIntersect;
+                        query.SpatialRelationship = "esriSpatialRelIntersects";
+                        query.geometryType = "esriGeometryEnvelope";
+                        query.returnGeometry = false;
+                        this.deferredReport = queryTask.executeForCount(query)
+                        this.deferredReport.then(
+                            (count) => {
+                                try {
+                                    if (this.reportItemRandom == _random) {
+                                        this.reportItemCount++;
+                                        lyr.cantidad = count;
+                                        this.reportItemResult = this.reportItemResult + count;
+                                        this._elementById(`${this.IDTableReport_Name}_Total`).innerText = this.reportItemResult;
+                                    }
+                                } catch (error) {
+                                    console.error(`Error: _queryTaskReport - count => ${error.name} - ${error.message}`);
+                                }                    
+                            },
+                            (error) => {  
+                                console.error(`Error: _queryTaskReport - error => ${error.name} - ${error.message}`);
+                            }
+                        ).always(lang.hitch(this, function() {
+                            try {
+                                if(((this.reportItemCount - 1) == this.reportItemTotal) && (this.reportItemRandom == _random)) {
+                                    this.ID_Load_Report.style.display = "none";
+                                    this.ID_Table_Report.style.display = "block";
+
+                                    this._sortJSON(this.confReport_Temp,'cantidad','desc');
+
+                                    this.confReport_Temp.map(function(cValue, index){
+                                        let fragment = document.createDocumentFragment();
+                                        let row = document.createElement("tr");
+                                        let cell_0 = document.createElement("td");
+                                        let cellText_0 = document.createTextNode(index + 1);
+                                        cell_0.appendChild(cellText_0);
+                                        let cell_1 = document.createElement("td");
+                                        cell_1.innerHTML = cValue.name;
+                                        let cell_2 = document.createElement("td");
+                                        let cellText_2 = document.createTextNode(cValue.cantidad || 0);
+                                        cell_2.appendChild(cellText_2);
+                                        row.appendChild(cell_0);
+                                        row.appendChild(cell_1);
+                                        row.appendChild(cell_2);
+                                        fragment.appendChild(row);
+                                        this._elementById(`${this.IDTableReport_Name}_Tbody`).appendChild(fragment);
+                                    }.bind(this));   
+                                }
+                            } catch (error) {
+                                console.error(`Error: always => ${error.name} - ${error.message}`);
+                            } 
+                        }.bind(this)));
+                    } catch (error) {
+                        console.error(`Error: confReport_Temp => ${error.name} - ${error.message}`);
+                    }
+                }.bind(this));                
+            }, 5000)
+        },
+        _reportJson: function(json, _conf,_name = "") {
+            try { /* Recorre un arból de n hijos */
+                let type; let resul; let layer;
+                for (var i=0; i < json.length; i++) {
+                    type = typeof json[i].srv;
+                    if (type == "undefined") {
+                        this.reportItemTotal = this.reportItemTotal + 1;
+                        resul = true;
+                        layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+                        _conf.push({ name:layer , url:json[i].url , fields:json[i].fields });
+                    } else {
+                        resul += this._reportJson(json[i].srv, _conf, _name || json[i].name);
+                    }
+                }            
+                return resul;
+            } catch (error) {
+                console.error(`Error: _reportJson => ${error.name} - ${error.message}`);
+            }
+        },
+        _queryTaskReport: function(lyr, srv, _geometryIntersect, _random){
+            try {
+                /*
+                if(this.deferredReport && (this.deferredReport > 0)) {
+                    this.deferredReport.cancel();
+                }
+                */
+                let queryTask = new QueryTask(srv);
+                let query = new Query();
+                query.outFields = lyr.fields.map(x => x.field);
+                query.geometry = _geometryIntersect;
+                query.spatialRelationship = "esriSpatialRelIntersects";
+                query.geometryType = "esriGeometryEnvelope";
+                this.deferredReport = queryTask.executeForCount(query)
+                this.deferredReport.then(
+                    (count) => {
+                        try {
+                            if (this.randomDiagnosis == _random) {
+                                lyr.cantidad = count;
+                            }
+                        } catch (error) {
+                            console.error(`Error: _queryTaskReport - count => ${error.name} - ${error.message}`);
+                        }                    
+                    },
+                    (error) => {  
+                        console.error(`Error: _queryTaskReport - error => ${error.name} - ${error.message}`);
+                    }
+                ).always(lang.hitch(this, function() {
+                    try {
+                        
+                        if(((this.countItem - 1) == this.lyrTotal) && (this.randomDiagnosis == _random)) {
+                            
+                        
+                            /* Recorrer el JSON y asignamos a un nuevo array - this.confDiagnosis_Temp*/
+                            this._jsonTravelTree_Temp(this.confDiagnosis);
+                            /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
+                            this._sortJSON(this.confDiagnosis_Temp,'cantidad','desc'); 
+                            /* Inserta a la tabla */
+                            this.confDiagnosis_Temp.map(function(cValue, index){
+                                let fragment = document.createDocumentFragment();
+                                let row = document.createElement("tr");
+                                let cell_0 = document.createElement("td");
+                                let cellText_0 = document.createTextNode(index + 1);
+                                cell_0.appendChild(cellText_0);
+                                let cell_1 = document.createElement("td");
+                                cell_1.innerHTML = cValue.layer;
+                                let cell_2 = document.createElement("td");
+                                let cellText_2 = document.createTextNode(cValue.cantidad || 0);
+                                cell_2.appendChild(cellText_2);
+                                row.appendChild(cell_0);
+                                row.appendChild(cell_1);
+                                row.appendChild(cell_2);
+                                fragment.appendChild(row);
+                                this._elementById(`${this.IDTableReport_Name}_Tbody`).appendChild(fragment);
+                            }.bind(this));   
+                        }
+                    } catch (error) {
+                        console.error(`Error: _queryTask/queryTask always => ${error.name} - ${error.message}`);
+                    } 
+                }.bind(this)));
+            } catch (error) {
+                console.error(`Error: _report => ${error.name} - ${error.message}`);
+            }
         }
+
     });
 });
