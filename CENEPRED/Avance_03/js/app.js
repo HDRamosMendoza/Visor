@@ -22,6 +22,10 @@ require([
   FeatureLayer, FeatureTable, Extent, graphicsUtils, Query, QueryTask, PictureMarkerSymbol,
   Map, configJSON,lang, dom, parser, ready, on, ContentPane, BorderContainer
 ) {
+  const config = JSON.parse(configJSON);
+  let configReport = config.lyrReport;
+  let configReport_Temp = [];
+  
   /* First map */
   /* map = new Map("map", {center: [-76, -10],zoom: 8,basemap: "topo"}); */
   /* Second map */
@@ -29,8 +33,6 @@ require([
     //basemap: "dark-gray-vector"
     basemap: "topo"
   });
-
-  
 
   //Extent object JSON.
   var extent = new Extent({
@@ -143,6 +145,170 @@ require([
     myFeatureTable.on("refresh", function(evt){
       console.log("refresh event - ", evt);
     });
+
+
+    const data = {
+      labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
+      datasets: [
+        {
+          label: 'Dataset 1',
+          data: [4,5,4,7,8],
+          backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)'
+          ],
+        }
+      ]
+    };
+  
+    new Chart('ID_TABLE_Graphic', { 
+      type: 'pie',
+      data,
+      options: {
+        responsive: false,
+        plugins: {
+          legend: {
+            position: 'left',
+          },
+          title: {
+            display: false,
+            text: 'Chart.js Pie Chart'
+          }
+        }
+      }
+    });
+    
+    let _queryTask = function(lyr, srv, _ambito, _) {
+      try {
+        /*
+        console.log(lyr.name);
+        console.log(srv);
+        console.log(lyr.fields);
+        */
+        
+          let queryTask = new QueryTask(srv);
+          let query = new Query();
+          query.outFields = lyr.fields.map(x => x.field);
+          //query.geometry = _ambito;
+          query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+          query.returnGeometry = true;
+          query.where ="1=1";
+          queryTask.executeForCount(query, function(count){
+            
+            let fragment = document.createDocumentFragment();
+            let row = document.createElement("tr");
+            let cell_0 = document.createElement("td");
+            //cell_0.innerHTML = lyr.name;
+            let cell_1 = document.createElement("td");
+            cell_1.innerHTML = lyr.name;
+            let cell_2 = document.createElement("td");
+            let cellText_2 = document.createTextNode(count);
+            cell_2.appendChild(cellText_2);
+            row.appendChild(cell_0);
+            row.appendChild(cell_1);
+            row.appendChild(cell_2);
+            fragment.appendChild(row);
+            lyr.cantidad = count;
+            _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
+
+          }, function(error) {
+            console.log(error);
+  
+          });
+          /*.then(
+              (count) => {
+                  try {
+                    //console.log(lyr.name);
+                    console.log(count);
+                  } catch (error) {
+                      console.error(`Error: response => ${error.name} - ${error.message}`);
+                  }                    
+              },
+              (error) => {  
+                console.log(error);
+                  console.error(`Error: Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
+              }
+          ).always(lang.hitch(this, function() {
+             
+          }.bind(this)));
+        */
+      } catch (error) { 
+          console.error(`Error: _queryTask => ${error.name} - ${error.message}`); 
+      }
+      /*
+      this.queryTaskDeferred = queryTask.execute(query);
+      this.queryTaskDeferred.then(
+          (response) => { console.log(response); }
+      ).catch(
+          (error) => { console.error(`Error: Oops! Es tu servidor esta desconectado => ${error.name} - ${error.message}`); }
+      ).always(lang.hitch(this, function() { console.log("Always"); }));
+      */
+    };
+    let countItem = 0;
+    let _jsonTravelTree = function(json) {
+      /* Recorre un arból de n hijos */
+      try {
+        let type; let resul;
+        for (var i=0; i < json.length; i++) {
+            type = typeof json[i].srv;
+            if (type == "undefined") {
+                resul = true;
+                let abc = JSON.parse(localStorage.getItem("geometryIntersect"));
+                _queryTask(json[i], json[i].url, abc, countItem);
+            } else {
+                resul += _jsonTravelTree(json[i].srv);
+            }
+        }            
+        return resul;
+      } catch (error) {
+          console.error(`Error: _jsonTravelTree => ${error.name} - ${error.message}`);
+      }
+    };
+  
+  
+    let _summaryGeneral = function(_ambito) {
+      try {
+        console.log(_ambito);
+        if(typeof _ambito === 'undefined') {
+          _elementById("ID_Alert").style.display = "block";
+        } else {
+          //const config = JSON.parse(configJSON);
+          _analysisJson(configReport, configReport_Temp);
+          
+          //_jsonTravelTree(configReport);
+
+          _elementById("ID_Alert").style.display = "none";
+        }
+      } catch(error) {
+          console.error(`_summaryGeneral: ${error.name} - ${error.message}`);
+      }
+    };
+    
+    _summaryGeneral(JSON.parse(localStorage.getItem("geometryIntersect")));
+
+
+    let _analysisJson = function(json, _conf, _name = "") {
+      try { /* Recorre un arból de n hijos */
+          let type; let resul; let layer;
+          for (var i=0; i < json.length; i++) {
+              type = typeof json[i].srv;
+              if (type == "undefined") {
+                  resul = true;
+                  layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+                  _conf.push({ name:layer , url:json[i].url , fields:json[i].fields, id:json[i].id });
+              } else {
+                  resul += this._analysisJson(json[i].srv, _conf, _name || json[i].name);
+              }
+          }            
+          return resul;
+      } catch (error) {
+          console.error(`Error: _analysisJson => ${error.name} - ${error.message}`);
+      }
+    };
+    
   }
 
   map.on("load", loadTable);      
@@ -205,110 +371,5 @@ require([
   });
   */
 
-  const data = {
-    labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
-    datasets: [
-      {
-        label: 'Dataset 1',
-        data: [4,5,4,7,8],
-        backgroundColor: [
-          'rgb(255, 99, 132)',
-          'rgb(255, 159, 64)',
-          'rgb(255, 205, 86)',
-          'rgb(75, 192, 192)',
-          'rgb(54, 162, 235)'
-        ],
-      }
-    ]
-  };
-
-  new Chart('ID_TABLE_Graphic', { 
-    type: 'pie',
-    data,
-    options: {
-      responsive: false,
-      plugins: {
-        legend: {
-          position: 'left',
-        },
-        title: {
-          display: false,
-          text: 'Chart.js Pie Chart'
-        }
-      }
-    }
-  });
-  
-  let _queryTask = function(lyr, srv) {
-    try {
-        let queryTask = new QueryTask(srv);
-        let query = new Query();
-        query.outFields = lyr.fields.map(x => x.field);
-        query.geometry = Window.geometryAmbito;
-        query.SpatialRelationship = "esriSpatialRelIntersects";
-        query.geometryType = "esriGeometryEnvelope";
-        queryTask.executeForCount(query).then(
-            (count) => {
-                try {
-                    console.log(count);
-                } catch (error) {
-                    console.error(`Error: _queryTask/queryTask.executeForCount response => ${error.name} - ${error.message}`);
-                }                    
-            },
-            (error) => {  
-                console.error(`Error: _queryTask/queryTask.executeForCount - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
-            }
-        ).always(lang.hitch(this, function() {
-           
-        }.bind(this)));
-    } catch (error) { 
-        console.error(`Error: _queryTask => ${error.name} - ${error.message}`); 
-    }
-    /*
-    this.queryTaskDeferred = queryTask.execute(query);
-    this.queryTaskDeferred.then(
-        (response) => { console.log(response); }
-    ).catch(
-        (error) => { console.error(`Error: Oops! Es tu servidor esta desconectado => ${error.name} - ${error.message}`); }
-    ).always(lang.hitch(this, function() { console.log("Always"); }));
-    */
-  };
-
-  let _jsonTravelTree = function(json) {
-    /* Recorre un arból de n hijos */
-    try {
-      let type; let resul;
-      for (var i=0; i < json.length; i++) {
-          type = typeof json[i].srv;
-          if (type == "undefined") {
-              resul = true;
-              _queryTask(json[i], json[i].url);
-          } else {
-              resul += _jsonTravelTree(json[i].srv);
-          }
-      }            
-      return resul;
-    } catch (error) {
-        console.error(`Error: _jsonTravelTree => ${error.name} - ${error.message}`);
-    }
-  };
-
-
-  let _summaryGeneral = function(_ambito) {
-    try {
-      console.log(_ambito);
-      if(typeof _ambito === 'undefined') {
-        _elementById("ID_Alert").style.display = "block";
-      } else {
-        const config = JSON.parse(configJSON);
-        _jsonTravelTree(config.lyrList);
-        _elementById("ID_Alert").style.display = "none";
-      }
-    } catch(error) {
-        console.error(`_summaryGeneral: ${error.name} - ${error.message}`);
-    }
-  };
-  
-  _summaryGeneral(localStorage.getItem("geometryIntersect"));
-
+ 
 });

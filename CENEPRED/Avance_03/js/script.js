@@ -237,7 +237,7 @@ let _htmlTable = function(ID_Table) {
 };
 
 _htmlTable(_elementById("ID_TABLE_Resumen"));
-
+/*
 let jsonData = [
 	{ 
 		"name": "Centros Poblados",
@@ -536,7 +536,7 @@ let jsonData = [
 
 
 	let _jsonTravelTree = function(json, _name = "") {
-		/* Recorre un arból de n hijos */
+	
 		try {
 			let type; let resul;
 			for (var i=0; i < json.length; i++) {
@@ -564,7 +564,7 @@ let jsonData = [
 					_elementById("ID_TAB_Content").appendChild(fragmentContent);
 
 				} else {
-					//console.log("GROUP: " + i + json[i].name);
+					
 					resul += _jsonTravelTree(json[i].srv, _name || json[i].name);
 				}
 			}            
@@ -574,8 +574,33 @@ let jsonData = [
 			console.error(`Error: _jsonTravelTree => ${error.name} - ${error.message}`);
 		}
 	};
-
 	_jsonTravelTree(jsonData);
+	*/
+
+	let _analysisJson = function(json, _conf, _name = "") {
+		try { 
+			let type; let resul; let layer;
+			for (var i=0; i < json.length; i++) {
+				type = typeof json[i].srv;
+				if (type == "undefined") {
+					resul = true;
+					layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+					_conf.push({ name:layer , url:json[i].url , fields:json[i].fields, id:json[i].id });
+				} else {
+					resul += this._analysisJson(json[i].srv, _conf, _name || json[i].name);
+				}
+			}            
+			return resul;
+		} catch (error) {
+			console.error(`Error: _analysisJson => ${error.name} - ${error.message}`);
+		}
+	};
+	let confAnalysis_Temp = [];
+	_analysisJson(jsonData, confAnalysis_Temp);
+
+	console.log(confAnalysis_Temp);
+
+	
 
 	
 	_elementById("ID_TAB_Header").childNodes[3].className = "active";
