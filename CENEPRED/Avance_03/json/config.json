@@ -336,6 +336,7 @@
                     "id": "ID_RedFerroviaria",
                     "name": "Red Ferroviaria",
                     "long": "longitud",
+                    "default": "active",
                     "fields":[
                         {
                             "alias": "Nombre",
@@ -374,6 +375,7 @@
             "name": "Información CENEPRED",
             "srv": [
                 { 
+                    "default": "active",
                     "name": "Planes PPRRD",
                     "fields":[
                         {

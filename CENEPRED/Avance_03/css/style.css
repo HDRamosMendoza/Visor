@@ -6,7 +6,6 @@ html, body, header { margin: 0; padding: 0; }
   height: 150px;
   width: 100%;
 }
-
 body { background-color: #f6f6f6; position: relative;}
 .report-main .report-aside label.report-title-resumen {
   color: rgb(102, 100, 100);
@@ -25,11 +24,10 @@ body { background-color: #f6f6f6; position: relative;}
   background-color: #2c6975;
   color: #FFFFFF;
   padding: 1px 15px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 .report-main .report-title h2 {
   font-size: 15px;
-  
 }
 .report-main .report-subtitle {
   font-size: 13px;
@@ -87,14 +85,12 @@ body { background-color: #f6f6f6; position: relative;}
   color: #555555;
   width: 650%;
 }
-
 .tbl tbody tr > td:nth-child(3) {
   background-color: rgba(0,0,0,0.1);
   color: #555555;
   text-align: right;    
   width: 30%;
 }
-
 .tbl tfoot tr {
   background-color: rgba(0,0,0,0.1);
   color: #555555;
@@ -103,37 +99,29 @@ body { background-color: #f6f6f6; position: relative;}
 .esri-feature-table {
   font-family: verdana;
   font-size: 12px;
+  margin-top: 10px;
   height: 450px;
   width: 100% !important;
 }
-
-.report-table {
+.report-main .report-table {
   display: block;
-  position: relative;
+  
+  position: absolute;
   z-index: 2000;
   width: 100% !important;
 }
-
 /************************/
-
-
-
 main {
   width: 100%;
   margin: 0 auto;
   background: #fff;
 }
-
 main section {
-  display: none;
-  
-  
+  display: none;   
 }
-
 input {
   display: none;
 }
-
 main label {
   display: inline-block;
   margin: 0 0 -1px;
@@ -144,13 +132,11 @@ main label {
   color: #bbb;
   border: 1px solid transparent;
 }
-
 main label:before {
   font-family: fontawesome;
   font-weight: normal;
   margin-right: 10px;
 }
-
 main label[for*='1']:before {
   content: '\f080';
 }
@@ -176,12 +162,10 @@ input.tabs:checked + label {
 #tab4:checked ~ #content4 {
   display: block;
 }
-
 @media screen and (max-width: 650px) {
   label {
     font-size: 0;
   }
-
   label:before {
     margin: 0;
     font-size: 18px;
@@ -192,14 +176,10 @@ input.tabs:checked + label {
     padding: 15px;
   }
 }
-
 /**** Pagination */
-.pagination {
-  
-  display: inline-block;
-  
+.pagination {  
+  display: inline-block;  
 }
-
 .pagination a {
   color: black;
   float: left;
@@ -210,13 +190,11 @@ input.tabs:checked + label {
   border-radius: 50%;
   margin: 0 4px;
 }
-
 .pagination a:first-child,
 .pagination a:last-child {
   border-radius: 25% !important;
   font-weight: bold;
 }
-
 .pagination a.active {
   background-color: #e5e5e5;
   border: 1px solid #e5e5e5;
@@ -228,7 +206,6 @@ input.tabs:checked + label {
   vertical-align: top;
   box-sizing: border-box;
 }
-
 .report-pagination div:first-child {
   padding: 7px 0;
   font-size: 13px;
@@ -237,7 +214,6 @@ input.tabs:checked + label {
   float: right;
   font-size: 12px;
 }
-
 .tabs {
   /*position: absolute;*/
   position: relative;
@@ -292,31 +268,27 @@ input.tabs:checked + label {
   position: relative;
   height: 100%;
   overflow: hidden;
-
 }
 .tabs .tab-header > div > i {
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    background-color: #555;
-    color: #F5F5F5;
-    font-size: 25px;
-    text-align: center;
-    line-height: 50px;
-    border-radius: 50px;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background-color: #555;
+  color: #F5F5F5;
+  font-size: 25px;
+  text-align: center;
+  line-height: 50px;
+  border-radius: 50px;
 }
-
 .tabs .tab-content > div {
   position: absolute;
   text-align: center;
   padding: 15px;
   top: -200%;
-
   transition: all 500ms ease-in-out;
 }
 .tabs .tab-content > div.active {
   top: 0px;
-
 }
 .tabs .tab-indicator {
   position: absolute;
@@ -327,17 +299,13 @@ input.tabs:checked + label {
   top: 80px;
   transition: all 500ms ease-in-out;
 }
-
 .tabs .tab-content .div-hr {
   border-bottom: 2px solid #2c6975;
   margin: 10px 0px;
   width: 50px;
 }
-
 /*****************/
-
-.tabs .form-scroll {
-  
+.tabs .form-scroll {  
   box-sizing: border-box;
   overflow-y: scroll;
 }
@@ -362,9 +330,7 @@ input.tabs:checked + label {
 .tabs .form-scroll::-webkit-scrollbar-track {
   border-radius: 10px;  
 }
-
 /**********************************************/
-
 .popup-alert {
   position: fixed;
   z-index: 40000;
@@ -409,17 +375,13 @@ input.tabs:checked + label {
   padding: 0px 20px;  
   width: 60%;
 }
-
-
 .form-scroll-resumen {
   max-height: 250px !important;
-  /*margin-top: 10px;*/
   overflow-y: scroll;  
   border: 1px solid #aaa;    
   margin-top: 5px;
   overflow: auto;
   box-sizing: border-box;
-  /*padding:0 1rem;*/
 }
 .form-scroll-resumen::-webkit-scrollbar {
   -webkit-appearance: none;

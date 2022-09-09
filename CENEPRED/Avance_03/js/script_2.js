@@ -57,7 +57,7 @@ require([
         try {
             console.log(JSON.parse(localStorage.getItem("reportAmbito")));
             _elementById("ID_ReportTitle").innerHTML = "";
-            _elementById("ID_ReportTitle").innerHTML = `<i class="fa fa-pie-chart" aria-hidden="true"></i>&nbsp; ${_title || ''}`;
+            _elementById("ID_ReportTitle").innerHTML = `<i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp; ${_title || ''}`;
         } catch (error) {
             console.error(`Error: _title => ${error.name} - ${error.message}`);
         }
@@ -220,66 +220,10 @@ require([
         }
     };
     */
-
-    // _analysisJson
-    let _reportJson = function(json, _conf, _name = "") {
-        try { /* Recorre un arból de n hijos */
-            let type; let resul; let layer;
-            for (var i=0; i < json.length; i++) {
-                type = typeof json[i].srv;
-                if (type == "undefined") {
-                    reportItemTotal = reportItemTotal + 1;
-                    resul = true;
-                    layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
-                    _conf.push({ name:layer , url:json[i].url , fields:json[i].fields });
-                } else {
-                    resul += _reportJson(json[i].srv, _conf, _name || json[i].name);
-                }
-            }            
-            return resul;
-        } catch (error) {
-            console.error(`Error: _reportJson => ${error.name} - ${error.message}`);
-        }
-    };    
-  
-    let _summaryGeneral = function(_ambito) {
-        try {
-            console.log(_ambito);
-            if(typeof _ambito === 'undefined') {
-                _elementById("ID_Alert").style.display = "block";
-            } else {
-                _elementById("ID_Alert").style.display = "none";
-                _reportJson(configReport, configReport_Temp);                
-                //console.log(configReport_Temp);
-                //_jsonTravelTree(configReport);                
-                //let itemRandom = _getRandom();
-                //reportItemRandom = itemRandom;
-                let geometryIntersect = JSON.parse(localStorage.getItem("geometryIntersect"));
-                configReport_Temp.map(function(lyr, index) {
-                    //_queryTask(lyr, geometryIntersect, index, itemRandom);
-                    _queryTask(lyr, geometryIntersect, index);
-                });
-
-                
-            }
-        } catch(error) {
-            console.error(`_summaryGeneral: ${error.name} - ${error.message}`);
-        }
-    };    
-    _summaryGeneral(JSON.parse(localStorage.getItem("geometryIntersect")));
-
-    /*
-    const updateChartData = (chartId, data, label) => {
-        const chart = Chart.getChart(chartId)
-        chart.data.datasets[0].data = data
-        chart.data.datasets[0].label = label
-        chart.update()
-    }
-    */
-    let _featureTable = function(_idTable, _lyr) {
-        try {
-            
-            let myFeatureLayer = new FeatureLayer(_lyr.url, {
+    let _featureTable = function(srv) {
+        try {            
+            let _idTable = "ID_TableDetail";
+            let myFeatureLayer = new FeatureLayer(srv, {
                 mode: FeatureLayer.MODE_ONDEMAND,
                 outFields: ["*"],
                 visible: true,
@@ -365,8 +309,8 @@ require([
                         myFeatureTable.refresh();
                     }
                 }]
-              }, _idTable);
-          
+            }, _idTable);
+              
             myFeatureTable.startup();
           
               // listen to refresh event 
@@ -378,6 +322,65 @@ require([
             console.error(`_featureTable: ${error.name} - ${error.message}`);
         }
     };
+
+    // _analysisJson
+    let _reportJson = function(json, _conf, _name = "") {
+        try { /* Recorre un arból de n hijos */
+            let type; let resul; let layer;
+            for (var i=0; i < json.length; i++) {
+                type = typeof json[i].srv;
+                if (type == "undefined") {
+                    reportItemTotal = reportItemTotal + 1;
+                    resul = true;
+                    layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+
+                    _conf.push({ name:layer , url:json[i].url , fields:json[i].fields , default:typeof json[i].default !== "undefined" ? true: false });
+
+                } else {
+                    resul += _reportJson(json[i].srv, _conf, _name || json[i].name);
+                }
+            }            
+            return resul;
+        } catch (error) {
+            console.error(`Error: _reportJson => ${error.name} - ${error.message}`);
+        }
+    };    
+  
+    let _summaryGeneral = function(_ambito) {
+        try {
+            console.log(_ambito);
+            if(typeof _ambito === 'undefined') {
+                _elementById("ID_Alert").style.display = "block";
+            } else {
+                _elementById("ID_Alert").style.display = "none";
+                _reportJson(configReport, configReport_Temp);                
+                //console.log(configReport_Temp);
+                //_jsonTravelTree(configReport);                
+                //let itemRandom = _getRandom();
+                //reportItemRandom = itemRandom;
+                let geometryIntersect = JSON.parse(localStorage.getItem("geometryIntersect"));
+                configReport_Temp.map(function(lyr, index) {
+                    _queryTask(lyr, geometryIntersect, index);
+                    !lyr.default || _featureTable(lyr.url);                    
+                });
+            }
+        } catch(error) {
+            console.error(`_summaryGeneral: ${error.name} - ${error.message}`);
+        }
+    };    
+    _summaryGeneral(JSON.parse(localStorage.getItem("geometryIntersect")));
+
+    /*
+    const updateChartData = (chartId, data, label) => {
+        const chart = Chart.getChart(chartId)
+        chart.data.datasets[0].data = data
+        chart.data.datasets[0].label = label
+        chart.update()
+    }
+    */
+    
+
+    
 /*
     configReport_Temp.map(function(cValue, index){
         
@@ -415,7 +418,7 @@ require([
                         },
                         title: {
                             display: false,
-                            text: 'Chart.js Pie Chart'
+                            text: 'GRÁFICO DE RESUMEN'
                         }
                     }
                 }
@@ -427,92 +430,41 @@ require([
 
     let _jsonTravelTree = function(_json, _name = "") {
 		try {
-            
             _json.map(function(lyr, index) {
-                let fragmentHeader = document.createDocumentFragment();
-                resul = true;
-
                 const divHeader = document.createElement("div");
-                //divHeader.innerHTML = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
                 divHeader.innerHTML = lyr.name;
-                fragmentHeader.appendChild(divHeader);
+                divHeader.className = !lyr.default || "active";
+                let fragmentHeader = document.createDocumentFragment();
+                fragmentHeader.appendChild(divHeader);                
                 _elementById("ID_TAB_Header").appendChild(fragmentHeader);
-
-                let fragmentContent = document.createDocumentFragment();
-                const divContent = document.createElement("div");
                 
+                const divContent = document.createElement("div");
+                divContent.className = !lyr.default || "active";
                 const divTitle = document.createElement("section");
                 divTitle.innerHTML = lyr.name;
                 const divHR = document.createElement("section");
                 divHR.className = "div-hr";
                 const divAside = document.createElement("section");
                 divAside.className = "report-table";
-                /*divAside.style.width = "100%";*/
                 divAside.id = `IDTable_${index}`;
                 divContent.appendChild(divTitle);
                 divContent.appendChild(divHR);
                 divContent.appendChild(divAside);
+                let fragmentContent = document.createDocumentFragment();
                 fragmentContent.appendChild(divContent);
-                
-                
 
                 _elementById("ID_TAB_Content").appendChild(fragmentContent);
-                //_featureTable(`IDTable_${index}`, lyr);
             }.bind(this));
-    
-            /*
-			let type; let resul;
-			for (var i=0; i < json.length; i++) {
-				
-				type = typeof json[i].srv;
-				if (type == "undefined") {
-					let fragmentHeader = document.createDocumentFragment();
-					resul = true;
-
-					const divHeader = document.createElement("div");
-					divHeader.innerHTML = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
-					fragmentHeader.appendChild(divHeader);
-					_elementById("ID_TAB_Header").appendChild(fragmentHeader);
-
-					let fragmentContent = document.createDocumentFragment();
-					const divContent = document.createElement("div");
-					divContent.className = "tab-group";
-					const divTitle = document.createElement("div");
-					divTitle.innerHTML = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
-					const divHR = document.createElement("div");
-					divHR.className = "div-hr";
-                    const divAside = document.createElement("div");
-                    divAside.className = "report-table";
-					divAside.id = `IDTable_${i}`;
-					divContent.appendChild(divTitle);
-					divContent.appendChild(divHR);
-                    divContent.appendChild(divAside);
-					fragmentContent.appendChild(divContent);
-                    
-                    
-
-					_elementById("ID_TAB_Content").appendChild(fragmentContent);
-
-                    _featureTable(`IDTable_${i}`, json[i]);
-				} else {
-					resul += _jsonTravelTree(json[i].srv, _name || json[i].name);
-				}
-			}            
-			return resul;
-            */
-		
 		} catch (error) {
 			console.error(`Error: _jsonTravelTree => ${error.name} - ${error.message}`);
 		}
 	};
 	_jsonTravelTree(configReport_Temp);
 
-    _elementById("ID_TAB_Header").childNodes[3].className = "active";
-	_elementById("ID_TAB_Content").childNodes[3].className = "active";
-	
-	let _class = function(name) { 
-		return document.getElementsByClassName(name);
-	}	
+    /*_elementById("ID_TAB_Header").childNodes[3].className = "active";
+	_elementById("ID_TAB_Content").childNodes[3].className = "active";*/
+    
+    let _class = function(name) { return document.getElementsByClassName(name); };
 	let tabPanes = _class("tab-header")[0].getElementsByTagName("div");	
 	for(let i=0;i<tabPanes.length;i++) {
 		tabPanes[i].addEventListener("click", function() {		
@@ -525,6 +477,5 @@ require([
 	}
 
     let loadTable = function() { _graphicPie(); }
-    map.on("load", loadTable);
- 
+    map.on("load", loadTable); 
 });
