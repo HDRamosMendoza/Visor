@@ -359,6 +359,7 @@ require([
             myFeatureTable.on("refresh", function(evt) {
                 console.log("refresh event - ", evt);
             });
+
         } catch(error) {
             console.error(`_featureTable: ${error.name} - ${error.message}`);
         }
@@ -412,7 +413,7 @@ require([
     let _jsonTravelTree = function(_json, _name = "") {
 		try {
             
-            _json.map(function(lyr, index){
+            _json.map(function(lyr, index) {
                 let fragmentHeader = document.createDocumentFragment();
                 resul = true;
 
