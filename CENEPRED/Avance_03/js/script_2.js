@@ -50,6 +50,20 @@ require([
     };
     _elementById("ID_Alert").style.display = "none";
 
+
+    //JSON.parse(localStorage.getItem("geometryIntersect"))
+
+    let _title = function(_title) {
+        try {
+            console.log(JSON.parse(localStorage.getItem("reportAmbito")));
+            _elementById("ID_ReportTitle").innerHTML = "";
+            _elementById("ID_ReportTitle").innerHTML = `<i class="fa fa-pie-chart" aria-hidden="true"></i>&nbsp; ${_title || ''}`;
+        } catch (error) {
+            console.error(`Error: _title => ${error.name} - ${error.message}`);
+        }
+    };
+    _title(JSON.parse(localStorage.getItem("reportTitle")));
+
     let _htmlTable = function(ID_Table) {
         try { /* Se crea la tabla de resumen */
             const idTable = ID_Table.getAttribute("id"); 
@@ -396,6 +410,7 @@ require([
                     responsive: false,
                     plugins: {
                         legend: {
+                            display: false,
                             position: 'left',
                         },
                         title: {
@@ -425,14 +440,14 @@ require([
 
                 let fragmentContent = document.createDocumentFragment();
                 const divContent = document.createElement("div");
-                divContent.className = "tab-group";
-                const divTitle = document.createElement("div");
+                
+                const divTitle = document.createElement("section");
                 divTitle.innerHTML = lyr.name;
-                const divHR = document.createElement("div");
+                const divHR = document.createElement("section");
                 divHR.className = "div-hr";
-                const divAside = document.createElement("div");
+                const divAside = document.createElement("section");
                 divAside.className = "report-table";
-                divAside.style.width = "100%";
+                /*divAside.style.width = "100%";*/
                 divAside.id = `IDTable_${index}`;
                 divContent.appendChild(divTitle);
                 divContent.appendChild(divHR);
@@ -442,7 +457,7 @@ require([
                 
 
                 _elementById("ID_TAB_Content").appendChild(fragmentContent);
-                _featureTable(`IDTable_${index}`, lyr);
+                //_featureTable(`IDTable_${index}`, lyr);
             }.bind(this));
     
             /*
@@ -505,9 +520,7 @@ require([
 			tabPanes[i].classList.add("active");			
 			/*_class("tab-indicator")[0].style.top = `calc(80px + ${i*50}px)`;*/			
 			_class("tab-content")[0].getElementsByClassName("active")[0].classList.remove("active");
-			/*_class("tab-content")[0].getElementsByTagName("div")[i].classList.add("active");*/
-			_class("tab-content")[0].getElementsByClassName("tab-group")[i].classList.add("active");
-			
+			_class("tab-content")[0].getElementsByTagName("div")[i].classList.add("active");
 		});
 	}
 

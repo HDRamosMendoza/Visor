@@ -22,7 +22,7 @@ body { background-color: #f6f6f6; position: relative;}
   position: relative;
 }
 .report-main .report-title{
-  background-color: #4999b0;
+  background-color: #2c6975;
   color: #FFFFFF;
   padding: 1px 15px;
   margin-bottom: 15px;
@@ -44,21 +44,17 @@ body { background-color: #f6f6f6; position: relative;}
   display: flex;
   margin-bottom: 10px;
 }
-
 /* CONTENT */
 .report-main main section .report-content > .report-aside {
   box-sizing: border-box;
   width: 50%;
 }
-
 .report-main .report-content .report-aside {
   box-sizing: border-box;
   vertical-align: top;
   display: inline-block !important;
   width: 49.5%;
 }
-
-
 /* SUMMARY */
 .tbl {
   border-collapse: collapse;
@@ -73,7 +69,7 @@ body { background-color: #f6f6f6; position: relative;}
   font-size: 12px !important;
 }
 .tbl thead {
-  background-color: rgba(0,0,0,0.4);
+  background-color: #2c6975;
   color: #FFFFFF;
 }
 .tbl thead tr > th {
@@ -158,27 +154,22 @@ main label:before {
 main label[for*='1']:before {
   content: '\f080';
 }
-
 main label[for*='2']:before {
   content: '\f080';
 }
-
 main label[for*='3']:before {
   content: '\f080';
 }
-
 main label:hover {
   color: #888;
   cursor: pointer;
 }
-
 input.tabs:checked + label {
   color: #555;
   border: 1px solid #ddd;
   border-top: 2px solid orange;
   border-bottom: 1px solid #fff;
 }
-
 #tab1:checked ~ #content1,
 #tab2:checked ~ #content2,
 #tab3:checked ~ #content3,
@@ -276,7 +267,6 @@ input.tabs:checked + label {
   height: 100%;
   border-right: 1px solid #ccc;
   padding: 0px 0px 5px;
-  
 }
 .tabs .tab-header > div {
   /*height: 50px;*/
@@ -291,7 +281,7 @@ input.tabs:checked + label {
 .tabs .tab-header > div:hover,
 .tabs .tab-header > div.active {
   color: white;
-  background-color: #4999b0;
+  background-color: #2c6975;
 }
 .tabs .tab-header div i {
   display: inline-block;
@@ -339,9 +329,9 @@ input.tabs:checked + label {
 }
 
 .tabs .tab-content .div-hr {
-  border-bottom: 2px solid #797979;
+  border-bottom: 2px solid #2c6975;
   margin: 10px 0px;
-  width: 30px;
+  width: 50px;
 }
 
 /*****************/

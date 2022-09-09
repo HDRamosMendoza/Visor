@@ -546,7 +546,7 @@ define([
                 type: 'titlePane',
                 canFloat: true,
                 path: 'gis/dijit/DiagnosticoTerritorial',
-                title: "Dignóstico y Reporte Territorial",
+                title: "Diagnóstico y Reporte Territorial",
                 iconClass: 'fa-archive',
                 open: false,
                 position: 100,

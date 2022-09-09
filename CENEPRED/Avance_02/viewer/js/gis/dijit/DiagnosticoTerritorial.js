@@ -308,9 +308,20 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                         setTimeout(() => { disp.style.display = "none"; }, 3000);
                         return false;
                     }
+                    let _textAmbito = "";
+                    /* Texto de Ámbito */
+                    _textAmbito = _textAmbito.concat(`${selDep.get('displayedValue')} (departamento)`);
+                    _textAmbito = this._validateSelect(selPro) ? _textAmbito.concat("") : _textAmbito.concat(`/${selPro.get('displayedValue')} (provincia)`);
+                    _textAmbito = this._validateSelect(selDis) ? _textAmbito.concat("") : _textAmbito.concat(`/${selDis.get('displayedValue')} (distrito)`);
+                    let textAmbito_Temp = _textAmbito.split("/");
+                    textAmbito_Temp[textAmbito_Temp.length-1] = `${textAmbito_Temp[textAmbito_Temp.length-1]}`;
+                    textAmbito_Temp = textAmbito_Temp.join(" / ");
+                    _textAmbito = `${textAmbito_Temp}`;
+                    console.log(objectLiteral);
+                    localStorage.clear();
+                    localStorage.setItem("reportTitle", JSON.stringify(_textAmbito));
+                    localStorage.setItem("reportAmbito", JSON.stringify(objectLiteral));
                     /* Open TAB - REPORT */
-                    console.log(JSON.parse(localStorage.getItem("geometryIntersect")));
-                    
                     window.open('http://localhost/GitHub/Visor/CENEPRED/Avance_03/', '_blank');
                 } catch (error) {
                     console.error(`Error: button/ID_Report (click) => ${error.name} - ${error.message}`);
@@ -334,7 +345,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     /* Texto de Ámbito */
                     this.textAmbito = this.textAmbito.concat(`${selDep.get('displayedValue')} (departamento)`);
                     this.textAmbito = this._validateSelect(selPro) ? this.textAmbito.concat("") : this.textAmbito.concat(`/${selPro.get('displayedValue')} (provincia)`);
-                    this.textAmbito = this._validateSelect(selDis) ? this.textAmbito.concat("") : this.textAmbito.concat(`/${selDis.get('displayedValue')} (distrital)`);                    
+                    this.textAmbito = this._validateSelect(selDis) ? this.textAmbito.concat("") : this.textAmbito.concat(`/${selDis.get('displayedValue')} (distrito)`);                    
                     let textAmbito_Temp = this.textAmbito.split("/");
                     textAmbito_Temp[textAmbito_Temp.length-1] = `<span style="padding: 5px 5px;color:#555555;font-weight:800;">${textAmbito_Temp[textAmbito_Temp.length-1]}</span>`;
                     textAmbito_Temp = textAmbito_Temp.join(" / ");
