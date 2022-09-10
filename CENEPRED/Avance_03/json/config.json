@@ -376,6 +376,7 @@
             "srv": [
                 { 
                     "default": "active",
+                    "objectid": "id_documento",
                     "name": "Planes PPRRD",
                     "fields":[
                         {
@@ -404,6 +405,7 @@
             "srv": [
                 {
                     "name": "Evaluaciones de Riesgo",
+                    "objectid": "id_documento",
                     "fields":[
                         {
                             "alias": "Nombre",
@@ -418,6 +420,7 @@
                 },
                 { 
                     "name": "Zonas de Riesgo No Mitigables",
+                    "objectid": "objectid",
                     "fields":[
                         {
                             "alias": "Predio",
@@ -448,6 +451,7 @@
                     "srv": [
                         {
                             "name": "Inventario",
+                            "objectid": "objectid_1",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -458,6 +462,7 @@
                         },
                         {
                             "name": "Puntos Críticos",
+                            "objectid": "objectid_12",
                             "fields":[
                                 {
                                     "alias": "objectid_12",
@@ -468,6 +473,7 @@
                         },
                         {
                             "name": "Áreas de Exposición",
+                            "objectid": "objectid",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -478,6 +484,7 @@
                         },
                         {
                             "name": "Fajas Marginales",
+                            "objectid": "objectid",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -493,6 +500,7 @@
                     "srv": [
                         {
                             "name": "Inventario",
+                            "objectid": "objectid_1",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -503,16 +511,18 @@
                         },
                         {
                             "name": "Zonas Críticas",
+                            "objectid": "objectid_1",
                             "fields":[
                                 {
-                                    "alias": "gid",
-                                    "field": "gid"
+                                    "alias": "objectid_1",
+                                    "field": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500"
                         },
                         {
                             "name": "Áreas de Exposición",
+                            "objectid": "objectid",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -528,6 +538,7 @@
                     "srv": [
                         {
                             "name": "Áreas de Exposición a Tsunami",
+                            "objectid": "objectid",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -538,6 +549,7 @@
                         },
                         {
                             "name": "Zonificación del Riesgo",
+                            "objectid": "objectid_1",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -551,6 +563,7 @@
                             "srv": [
                                 {
                                     "name": "IGP",
+                                    "objectid": "objectid",
                                     "fields":[
                                         {
                                             "alias": "objectid",
@@ -561,6 +574,7 @@
                                 },
                                 {
                                     "name": "CISMID",
+                                    "objectid": "objectid",
                                     "fields":[
                                         {
                                             "alias": "objectid",
@@ -571,6 +585,7 @@
                                 },
                                 {
                                     "name": "MVCS",
+                                    "objectid": "objectid",
                                     "fields":[
                                         {
                                             "alias": "objectid",
@@ -588,6 +603,7 @@
                     "srv": [
                         {
                             "name": "Caídas de Ceniza y Pómez",
+                            "objectid": "objectid_1",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -603,6 +619,7 @@
                     "srv": [
                         {
                             "name": "Inventario",
+                            "objectid": "objectid",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -613,6 +630,7 @@
                         },
                         {
                             "name": "Áreas de Exposición",
+                            "objectid": "objectid",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -628,6 +646,7 @@
                     "srv": [
                         {
                             "name": "Pasivos Ambientales Mineros",
+                            "objectid": "objectid",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -638,6 +657,7 @@
                         },
                         {
                             "name": "Áreas Deforestadas",
+                            "objectid": "objectid",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -648,6 +668,7 @@
                         },
                         {
                             "name": "Inventario de Incendios Forestales",
+                            "objectid": "objectid",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -663,6 +684,7 @@
                     "srv": [
                         {
                             "name": "Poblados Afectados",
+                            "objectid": "objectid_1",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -673,6 +695,7 @@
                         },
                         {
                             "name": "Tramos de Carreteras Afectadas",
+                            "objectid": "objectid_1",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -683,6 +706,7 @@
                         },
                         {
                             "name": "Obras de Infraestructura Afectadas",
+                            "objectid": "objectid_1",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -693,6 +717,7 @@
                         },
                         {
                             "name": "Áreas de Cultivo Afectadas",
+                            "objectid": "objectid_1",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -705,6 +730,7 @@
                 },
                 {
                     "name": "Imágenes de RPAS",
+                    "objectid": "id",
                     "fields":[
                         {
                             "alias": "id",
@@ -715,6 +741,7 @@
                 },
                 {
                     "name": "Programas de Ciudades Sostenibles Estudios",
+                    "objectid": "id_documento",
                     "srv": [
                         {
                             "name": "Estudios",

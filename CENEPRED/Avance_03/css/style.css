@@ -104,11 +104,10 @@ body { background-color: #f6f6f6; position: relative;}
   width: 100% !important;
 }
 .report-main .report-table {
-  display: block;
-  
-  position: absolute;
-  z-index: 2000;
+  position: relative;
   width: 100% !important;
+  padding: 0;
+  /*box-sizing: border-box;*/
 }
 /************************/
 main {
@@ -340,7 +339,7 @@ input.tabs:checked + label {
   right: 0;
   top: 0;
   bottom: 0;
-  /*display: none;*/
+  display: none;
 }
 .popup-alert .popup-message {
   background-color: white;
