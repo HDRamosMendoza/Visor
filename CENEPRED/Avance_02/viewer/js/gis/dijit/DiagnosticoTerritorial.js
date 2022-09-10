@@ -14,7 +14,6 @@ define([
     "dojo/_base/array",
     'dojo/text!./DiagnosticoTerritorial/config.json',
     'dojo/aspect',
-    'dojo/_base/lang',
     'dojo/dom-construct',
     "esri/config",
     "esri/graphic",
@@ -61,7 +60,6 @@ define([
     array,
     configJSON,    
     aspect,
-    lang,
     domConstruct,
     esriConfig,
     Graphic,
@@ -109,7 +107,7 @@ define([
         reportItemTotal: 0,
         reportItemRandom: null,
         reportItemResult: 0,
-        
+        reportGeometry: null,
         reportGeometryIntersect: null,
         
         countItem: 1,
@@ -321,6 +319,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     localStorage.clear();
                     localStorage.setItem("reportTitle", JSON.stringify(_textAmbito));
                     localStorage.setItem("reportAmbito", JSON.stringify(objectLiteral));
+                    localStorage.setItem("reportGeometry", JSON.stringify(this.reportGeometry));
+                    
                     /* Open TAB - REPORT */
                     window.open('http://localhost/GitHub/Visor/CENEPRED/Avance_03/', '_blank');
                 } catch (error) {
@@ -576,7 +576,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
-                            localStorage.setItem("geometryIntersect", JSON.stringify(cValue.geometry));
+                            this.reportGeometry = cValue.geometry;
                             this.map.setExtent(cValue.geometry.getExtent().expand(1.4));
                         }.bind(this));
                     } catch (error) {
