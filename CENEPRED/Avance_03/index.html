@@ -5,7 +5,7 @@
     <link rel="icon" type="images/png" href="./img/heber-daniel-ramos-mendoza-tab.ico"/>
 
     <!-- TITLE -->
-    <title>Reporte - SIGRID</title>
+    <title>Reporte | SIGRID - CENEPRED </title>
     
     <!-- META -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -26,7 +26,6 @@
     <div class="popup-alert" id="ID_Alert">
       <div class="popup-message">
         <div class="popup-text">
-          <!--<img src="./images/message-100.png" width="100">-->
         </div>
         <div class="popup-text">
           <h1>Advertencia</h1>
@@ -44,26 +43,21 @@
         </h2>
       </div>
       <!-- /Sub Title -->
-
-      <!-- Content 
-      <div class="report-content">        
-        <div class="report-aside report-summary" id="ID_TABLE_Resumen"></div>
-        <div class="report-aside report-graphic">dsdsd</div>        
-      </div>
-      /Content -->
       <div class="report-content">
-  
+        <!-- Gráfico -->
         <div class="report-aside report-graphic" >    
           <center>
           <canvas id="ID_TABLE_Graphic"  height="275" width="400"></canvas>
           </center>
         </div>
-
+        <!-- /Gráfico -->
+        <!-- Cuadro de resumen-->
         <div class="report-aside report-summary ">
           <label class="report-title-resumen">» CUADRO DE RESUMEN</label>
           <div class=" form-scroll-resumen"  id="ID_TABLE_Resumen" >
           </div>
         </div>
+        <!-- /Cuadro de resumen-->
       </div>
 
       <div class="tabs"> 
@@ -107,8 +101,6 @@
         
         <section id="content1">
           <div>
-            
-
 
             <div class="report-content">
               
@@ -118,19 +110,8 @@
               <div class="report-aside report-summary" id="ID_TableSummary" >
               </div>
             </div>
- 
-
-
-
-
-
-            
-            <!-- FeatureTable
-            <aside class="report-table" id="ID_TableDetail"></aside>-->
-            <!-- /FeatureTable -->
 
             <!-- Pagination -->
-            
             <div class="report-pagination">
               <div class="pagination-text">
                 Mostrando 20 de 2000 información disponibles
@@ -149,10 +130,8 @@
                   <i class="fa fa-chevron-right" aria-hidden="true"></i>
                 </a>
               </div>
-            </div>
-            
+            </div>            
             <!-- /Pagination -->
-
           </div>
         </section>
           
@@ -166,20 +145,15 @@
           <div>
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
           </div>
-        </section>
-         
-          
+        </section>          
       </main>
-
     </section>
 
-    <section class="map" id="map" style="display: none;">
-    </section>
+    <section class="map" id="map" style="display: none;"></section>
   </body>
   
   <!-- JS -->  
   <script src="https://js.arcgis.com/3.41/"></script>
-  <!-- <script src="./js/script.js"></script>
-  <script src="./js/app.js"></script> -->
   <script src="./js/script_2.js"></script>
+
 </html>
