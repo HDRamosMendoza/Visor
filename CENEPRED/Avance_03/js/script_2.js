@@ -137,7 +137,7 @@ require([
         try {
             let queryTask = new QueryTask(lyr.url);
             let query = new Query();
-            query.outFields = lyr.fields.map(x => x.field);
+            query.outFields = lyr.fields.map(x => x.name);
             query.geometry = new Polygon(_ambito)
             query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
             query.returnGeometry = false;
@@ -193,7 +193,7 @@ require([
         }
     };
     
-    let _featureTable = function(srv,objectid) {
+    let _featureTable = function(srv,objectid,fields) {
         try {   
             const idTable = _elementById("ID_TableDetail");
             const tbl = document.createElement("div");
@@ -249,28 +249,8 @@ require([
                             timeEnabled: true,
                             timePattern: 'H:mm',
                         },
-                        fieldInfos: [
-                            {
-                                name: 'callnumber', 
-                                alias: 'Call Number', 
-                                editable: false //disable editing on this field 
-                            },
-                            {
-                                name: 'speed', 
-                                alias: 'Current Speed', 
-                                format: {
-                                    template: "${value} mph" //add mph at the of the value
-                                }
-                            },
-                            {
-                                name: 'type', 
-                                alias: 'Vehicle Type'
-                            },
-                            {
-                                name: 'unitname', 
-                                alias: 'Unit Name'
-                            }
-                        ],
+                        outFields: fields.map(x => x.name),
+                        fieldInfos: fields,
                         // add custom menu functions to the 'Options' drop-down Menu 
                         menuFunctions: [
                         {
@@ -334,7 +314,7 @@ require([
                 _elementById("ID_Alert").style.display = "none";
                 _reportJson(configReport, configReport_Temp);
                 configReport_Temp.map(function(lyr, index) {
-                    !lyr.default || _featureTable(lyr.url,lyr.objectid);
+                    !lyr.default || _featureTable(lyr.url,lyr.objectid,lyr.fields);
                     _queryTask(lyr, _ambito, index);
                 });
             }
@@ -392,6 +372,7 @@ require([
                 divHeader.innerHTML = lyr.name;
                 divHeader.dataset.url = lyr.url,
                 divHeader.dataset.objectid = lyr.objectid,
+                divHeader.dataset.fields = JSON.stringify(lyr.fields),
                 divHeader.className = !lyr.default || "active";
                 let fragmentHeader = document.createDocumentFragment();
                 fragmentHeader.appendChild(divHeader);                
@@ -431,7 +412,7 @@ require([
 			_class("tab-content")[0].getElementsByClassName("active")[0].classList.remove("active");
 			_class("tab-content")[0].getElementsByTagName("div")[i].classList.add("active");
             featureTable.destroy();
-            _featureTable(tabPanes[i].getAttribute("data-url"), tabPanes[i].getAttribute("data-objectid"));
+            _featureTable(tabPanes[i].getAttribute("data-url"), tabPanes[i].getAttribute("data-objectid"), JSON.parse(tabPanes[i].getAttribute("data-fields")));
 		});
 	}
     let loadTable = function() { _graphicPie(); }
