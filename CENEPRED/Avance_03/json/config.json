@@ -52,324 +52,6 @@
             ]
         }
     ],
-    "lyrDiagnosis": [
-        { 
-            "name": "Centros Poblados",
-            "fields":[
-                {
-                    "alias": "objectid_1",
-                    "field": "objectid_1"
-                }
-            ],
-            
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2110002"
-        },
-        { 
-            "name": "Establecimientos de Salud",
-            "fields":[
-                {
-                    "alias": "objectid",
-                    "field": "objectid"
-                }
-            ],
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2020000"
-        },
-        { 
-            "name": "Instituciones Educativas",
-            "fields":[
-                {
-                    "alias": "objectid",
-                    "field": "objectid"
-                }
-            ],
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2030000"
-        },
-        { 
-            "name": "Recursos Para Respuesta",
-            "fields":[
-                {
-                    "alias": "objectid",
-                    "field": "objectid"
-                }
-            ],
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2040000"
-        },
-        { 
-            "name": "Penitenciarias",
-            "fields":[
-                {
-                    "alias": "objectid",
-                    "field": "objectid"
-                }
-            ],
-            
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2050000"
-        },
-        { 
-            "name": "Infraestructura Vial y Transporte",
-            "srv":[
-                { 
-                    "name": "Transporte",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060100"
-                },
-                { 
-                    "name": "Red Ferroviaria",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060200"
-                },
-                { 
-                    "name": "Red Vial",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060300"
-                },
-                { 
-                    "name": "Otra Infraestructura",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060400"
-                }
-            ]
-        },
-        { 
-            "name": "Infraestructura Eléctrica y Sanitaria",
-            "srv":[
-                { 
-                    "name": "Infraestructura Eléctrica",
-                    "srv":[
-                        { 
-                            "name": "Línea de Transmisión",
-                            "fields":[
-                                {
-                                    "alias": "Objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070101"
-                        },
-                        { 
-                            "name": "Central Hidraúlica",
-                            "fields":[
-                                {
-                                    "alias": "Objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070102"
-                        },
-                        { 
-                            "name": "Central Térmica",
-                            "fields":[
-                                {
-                                    "alias": "Objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070103"
-                        }
-                    ]
-                },
-                { 
-                    "name": "Infraestructura Sanitaria",
-                    "fields":[
-                        {
-                            "alias": "ObjectID",
-                            "field": "objectid"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070200"
-                }
-            ]
-        },
-        { 
-            "name": "Infraestructura Hídrica",
-            "srv":[
-                { 
-                    "name": "Pozos, Presas y Bocatomas",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080100"
-                },
-                { 
-                    "name": "Canales",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080200"
-                },
-                { 
-                    "name": "Reservorios",
-                    "fields":[
-                        {
-                            "alias": "objectid_1",
-                            "field": "objectid_1"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080300"
-                },
-                { 
-                    "name": "Infraestructura de Prevención y/o Reducción",
-                    "fields":[
-                        {
-                            "alias": "objectid_1",
-                            "field": "objectid_1"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080400"
-                }
-            ]
-        },
-        { 
-            "name": "Infraestructura para Hidrocarburos",
-            "srv":[
-                { 
-                    "name": "Refinerias",
-                    "fields":[
-                        {
-                            "alias": "objectid_1",
-                            "field": "objectid_1"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090100"
-                },
-                { 
-                    "name": "Establecimientos",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090200"
-                },
-                { 
-                    "name": "Plantas de Abastecimiento de Combustibles Líquidos",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid_1"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090300"
-                },
-                { 
-                    "name": "Planta Envasadora de GLP",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid_1"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090400"
-                },
-                { 
-                    "name": "Gasoducto, Oleoducto y Poliducto",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090500"
-                }
-            ]
-        },
-        { 
-            "name": "Predios Urbanos y Rurales ",
-            "srv":[
-                { 
-                    "name": "Manzanas Referenciales 2017 01",
-                    "fields":[
-                        {
-                            "alias": "objectid_1",
-                            "field": "objectid_1"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300"
-                },
-                { 
-                    "name": "Manzanas Referenciales 2017 02",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100400"
-                }
-            ]
-        }
-    ],
-    "lyrAnalysis": [
-        {
-            "name": "Infraestructura vial y transporte",
-            "srv": [
-                { 
-                    "id": "ID_RedFerroviaria",
-                    "name": "Red Ferroviaria",
-                    "long": "longitud",
-                    "default": "active",
-                    "fields":[
-                        {
-                            "alias": "Nombre",
-                            "field": "nombre"
-                        },
-                        {
-                            "alias": "Longitud",
-                            "field": "longitud"
-                        }
-                    ],
-                    "color": [239, 184, 16],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060200"
-                },
-                { 
-                    "id": "ID_RedVial",
-                    "name": "Red víal",
-                    "long": "longitud",
-                    "fields":[
-                        {
-                            "alias": "Nombre",
-                            "field": "nombre"
-                        },
-                        {
-                            "alias": "Longitud",
-                            "field": "longitud"
-                        }
-                    ],
-                    "color": [57,153,0],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060300"
-                }
-            ]
-        }
-    ],
     "lyrReport" : [
         { 
             "name": "Información CENEPRED",
@@ -381,19 +63,19 @@
                     "fields":[
                         {
                             "alias": "Nombre",
-                            "field": "nombre"
+                            "name": "nombre"
                         },
                         {
                             "alias": "Descripción",
-                            "field": "descripcion"
+                            "name": "descripcion"
                         },
                         {
                             "alias": "Ámbito",
-                            "field": "ambito"
+                            "name": "ambito"
                         },
                         {		
                             "alias": "Autor Corporativo",
-                            "field": "autor_corporativo"
+                            "name": "autor_corporativo"
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000"
@@ -409,11 +91,11 @@
                     "fields":[
                         {
                             "alias": "Nombre",
-                            "field": "nombre"
+                            "name": "nombre"
                         },
                         {
                             "alias": "Descripción",
-                            "field": "descripcion"
+                            "name": "descripcion"
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4010000"
@@ -424,19 +106,19 @@
                     "fields":[
                         {
                             "alias": "Predio",
-                            "field": "nom_predio"
+                            "name": "nom_predio"
                         },
                         {
                             "alias": "Fecha Doc.",
-                            "field": "fecha_doc"
+                            "name": "fecha_doc"
                         },
                         {
                             "alias": "Información",
-                            "field": "bdcenepred_informacion_compleme"
+                            "name": "bdcenepred_informacion_compleme"
                         },
                         {
                             "alias": "Parte Registral",
-                            "field": "part_regis"
+                            "name": "part_regis"
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4020000"
@@ -455,7 +137,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_1",
-                                    "field": "objectid_1"
+                                    "name": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010100"
@@ -466,7 +148,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_12",
-                                    "field": "objectid_12"
+                                    "name": "objectid_12"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010200"
@@ -477,7 +159,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid",
-                                    "field": "objectid"
+                                    "name": "objectid"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010300"
@@ -488,7 +170,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid",
-                                    "field": "objectid"
+                                    "name": "objectid"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010400"
@@ -504,7 +186,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_1",
-                                    "field": "objectid_1"
+                                    "name": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020100"
@@ -515,7 +197,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_1",
-                                    "field": "objectid_1"
+                                    "name": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500"
@@ -526,7 +208,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid",
-                                    "field": "objectid"
+                                    "name": "objectid"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020200"
@@ -542,7 +224,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid",
-                                    "field": "objectid"
+                                    "name": "objectid"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030100"
@@ -553,7 +235,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_1",
-                                    "field": "objectid_1"
+                                    "name": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030301"
@@ -567,7 +249,7 @@
                                     "fields":[
                                         {
                                             "alias": "objectid",
-                                            "field": "objectid"
+                                            "name": "objectid"
                                         }
                                     ],
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030401"
@@ -578,7 +260,7 @@
                                     "fields":[
                                         {
                                             "alias": "objectid",
-                                            "field": "objectid"
+                                            "name": "objectid"
                                         }
                                     ],
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030402"
@@ -589,7 +271,7 @@
                                     "fields":[
                                         {
                                             "alias": "objectid",
-                                            "field": "objectid"
+                                            "name": "objectid"
                                         }
                                     ],
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030403"                                    
@@ -607,7 +289,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_1",
-                                    "field": "objectid_1"
+                                    "name": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050203"                            
@@ -623,7 +305,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid",
-                                    "field": "objectid"
+                                    "name": "objectid"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080100"
@@ -634,7 +316,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid",
-                                    "field": "objectid"
+                                    "name": "objectid"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080200"
@@ -650,7 +332,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid",
-                                    "field": "objectid"
+                                    "name": "objectid"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090100"
@@ -661,7 +343,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid",
-                                    "field": "objectid"
+                                    "name": "objectid"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090200"
@@ -672,7 +354,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid",
-                                    "field": "objectid"
+                                    "name": "objectid"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090300"
@@ -688,7 +370,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_1",
-                                    "field": "objectid_1"
+                                    "name": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200"
@@ -699,7 +381,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_1",
-                                    "field": "objectid_1"
+                                    "name": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300"
@@ -710,7 +392,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_1",
-                                    "field": "objectid_1"
+                                    "name": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400"
@@ -721,7 +403,7 @@
                             "fields":[
                                 {
                                     "alias": "objectid_1",
-                                    "field": "objectid_1"
+                                    "name": "objectid_1"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010500"
@@ -734,7 +416,7 @@
                     "fields":[
                         {
                             "alias": "id",
-                            "field": "id"
+                            "name": "id"
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6070000"
@@ -748,7 +430,7 @@
                             "fields":[
                                 {
                                     "alias": "id_documento",
-                                    "field": "id_documento"
+                                    "name": "id_documento"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6090100"
