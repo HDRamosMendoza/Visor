@@ -76,6 +76,17 @@
                         {		
                             "alias": "Autor Corporativo",
                             "name": "autor_corporativo"
+                        },
+                        {		
+                            "alias": "Año",
+                            "name": "anio"
+                        },                        
+                        {		
+                            "alias": "Documento",
+                            "name": "id_documento",
+                            "format": {
+                                "template": "<center><a href=\"https://sigrid.cenepred.gob.pe/sigridv3/documento/${value}\" target=\"_blank\"><i class=\"fa fa-cloud-download\" style=\"font-size:18px\"></i> Descargar</a></center>"
+                            }
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000"
