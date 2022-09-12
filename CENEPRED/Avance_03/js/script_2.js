@@ -181,8 +181,6 @@ require([
                     /* Se lista capas */
                     configReport_Temp.map(function(cValue, index){
                         if(cValue.cantidad) {
-                            
-                            //_elementById("ID_TAB_Header").childNodes[3]
                             let fragment = document.createDocumentFragment();
                             let row = document.createElement("tr");
                             let cell_0 = document.createElement("td");
@@ -199,9 +197,6 @@ require([
                             fragment.appendChild(row);
                             _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
                         }
-                        /* if(typeof cValue.cantidad !== undefined && typeof cValue.name !== undefined) {
-                            updateChartData("ID_TABLE_Graphic", configReport_Temp.map(x=>x.cantidad),configReport_Temp.map(x=>x.name));
-                        } */
                     }.bind(this)); 
                 } catch (error) {
                     console.error(`Error: _queryTask always => ${error.name} - ${error.message}`);
@@ -253,7 +248,6 @@ require([
                     featureLayer.setDefinitionExpression(`${objectid} IN (${_idQueryTask})`);
                     featureTable = new FeatureTable({
                         featureLayer : featureLayer,
-                        //map : map,
                         showAttachments: false,
                         showDataTypes: false,
                         showFeatureCount: true,
@@ -297,7 +291,6 @@ require([
                     console.error(`Error: _queryTask/queryTask always => ${error.name} - ${error.message}`);
                 } 
             }.bind(this)));
-            /* featureTable.on("refresh", function(evt) { console.log("refresh event - ", evt); }); */
         } catch(error) {
             console.error(`_featureTable: ${error.name} - ${error.message}`);
         }
@@ -306,15 +299,18 @@ require([
     let _reportJson = function(json, _conf, _name = "") {
         try { /* Recorre un arból de n hijos */
             let type; let resul; let layer;
+             
             for (var i=0; i < json.length; i++) {
                 type = typeof json[i].srv;
                 if (type == "undefined") {
                     reportItemTotal = reportItemTotal + 1;
                     resul = true;
-                    layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+                    //layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
+                    layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} <strong>${json[i].name}</strong>`;
                     _conf.push({ name:layer , url:json[i].url , fields:json[i].fields , objectid:json[i].objectid , rgb:json[i].rgb ,default:typeof json[i].default !== "undefined" ? true: false });
                 } else {
-                    resul += _reportJson(json[i].srv, _conf, _name || json[i].name);
+                    resul += _reportJson(json[i].srv, _conf, _name.concat(json[i].name + " / "));
+                    //resul += _reportJson(json[i].srv, _conf, _name || json[i].name);
                 }
             }            
             return resul;
@@ -371,8 +367,7 @@ require([
                 divHeader.className = !lyr.default || "active";
                 let fragmentHeader = document.createDocumentFragment();
                 fragmentHeader.appendChild(divHeader);                
-                _elementById("ID_TAB_Header").appendChild(fragmentHeader);
-                
+                _elementById("ID_TAB_Header").appendChild(fragmentHeader);                
                 const divContent = document.createElement("div");
                 divContent.className = !lyr.default || "active";
                 const divTitle = document.createElement("section");
@@ -387,7 +382,6 @@ require([
                 divContent.appendChild(divAside);
                 let fragmentContent = document.createDocumentFragment();
                 fragmentContent.appendChild(divContent);
-
                 _elementById("ID_TAB_Content").appendChild(fragmentContent);
             }.bind(this));
 		} catch (error) {
@@ -412,3 +406,4 @@ require([
 	}    
     map.on("load", () => { _graphicPie(); });
 });
+//https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca/6495_img.jpg
