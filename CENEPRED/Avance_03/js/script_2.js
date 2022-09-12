@@ -148,6 +148,10 @@ require([
                         reportItemResult = reportItemResult + count;
                         _elementById(`ID_TABLE_Resumen_Total`).innerText = reportItemResult;
                         lyr.cantidad = count;
+                        if(count === 0) {
+                            _elementById("ID_TAB_Header").childNodes[3+_index].style.display="none";
+                            _elementById("ID_TAB_Content").childNodes[3+_index].style.display="none";
+                        }
                     } catch (error) {
                         console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
                     }
@@ -164,6 +168,8 @@ require([
                     /* Se lista capas */
                     configReport_Temp.map(function(cValue, index){
                         if(cValue.cantidad) {
+                            
+                            //_elementById("ID_TAB_Header").childNodes[3]
                             let fragment = document.createDocumentFragment();
                             let row = document.createElement("tr");
                             let cell_0 = document.createElement("td");
@@ -235,8 +241,8 @@ require([
                     featureTable = new FeatureTable({
                         featureLayer : featureLayer,
                         //map : map,
-                        showAttachments: true,
-                        showDataTypes: true,
+                        showAttachments: false,
+                        showDataTypes: false,
                         showFeatureCount: true,
                         showGridHeader: true,
                         showGridMenu: true,
@@ -259,7 +265,6 @@ require([
                                 // set definition expression on the layer
                                 // show only available emergency vehicles 
                                 featureLayer.setDefinitionExpression("status = 0");
-                
                                 // call FeatureTable.refresh() method to re-fetch features
                                 // from the layer. Table will only show records that meet 
                                 // layer's definition expression creteria.  
@@ -413,7 +418,6 @@ require([
             featureTable.destroy();
             _featureTable(tabPanes[i].getAttribute("data-url"), tabPanes[i].getAttribute("data-objectid"), JSON.parse(tabPanes[i].getAttribute("data-fields")));
 		});
-	}
-    
+	}    
     map.on("load", () => { _graphicPie(); });
 });
