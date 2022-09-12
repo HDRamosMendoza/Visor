@@ -210,7 +210,6 @@ require([
                 visible: false,
                 id: `ID_FL${_idTable}`
             });
-            map.addLayer(featureLayer);
 
             let queryTask = new QueryTask(srv);
             let _idQueryTask = null;
@@ -235,7 +234,7 @@ require([
                     featureLayer.setDefinitionExpression(`${objectid} IN (${_idQueryTask})`);
                     featureTable = new FeatureTable({
                         featureLayer : featureLayer,
-                        map : map,
+                        //map : map,
                         showAttachments: true,
                         showDataTypes: true,
                         showFeatureCount: true,
@@ -415,6 +414,6 @@ require([
             _featureTable(tabPanes[i].getAttribute("data-url"), tabPanes[i].getAttribute("data-objectid"), JSON.parse(tabPanes[i].getAttribute("data-fields")));
 		});
 	}
-    let loadTable = function() { _graphicPie(); }
-    map.on("load", loadTable); 
+    
+    map.on("load", () => { _graphicPie(); });
 });
