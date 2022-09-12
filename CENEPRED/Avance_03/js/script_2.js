@@ -33,6 +33,10 @@ require([
     let configReport_Temp = [];
     let reportItemTotal = 0;
     let reportItemResult = 0;
+    let chartLabel = [];
+    let chartData = [];
+    let chartBackgroundColor = [];
+    let chartID = "ID_TABLE_Graphic";
     
     map = new Map("map", { center: [-76, -10], zoom: 6, basemap: "topo" });
 
@@ -148,9 +152,18 @@ require([
                         reportItemResult = reportItemResult + count;
                         _elementById(`ID_TABLE_Resumen_Total`).innerText = reportItemResult;
                         lyr.cantidad = count;
-                        if(count === 0) {
+                        if(count === 0) {                            
                             _elementById("ID_TAB_Header").childNodes[3+_index].style.display="none";
                             _elementById("ID_TAB_Content").childNodes[3+_index].style.display="none";
+                        } else {
+                            const chart = Chart.getChart(chartID);
+                            chartData.push(lyr.cantidad);
+                            chartLabel.push(lyr.name.replace(/<[^>]+>/g, ''));
+                            chartBackgroundColor.push(lyr.rgb);
+                            chart.data.datasets[0].data = chartData;
+                            chart.data.datasets[0].backgroundColor = chartBackgroundColor;
+                            chart.data.labels = chartLabel;
+                            chart.update();
                         }
                     } catch (error) {
                         console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
@@ -299,7 +312,7 @@ require([
                     reportItemTotal = reportItemTotal + 1;
                     resul = true;
                     layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
-                    _conf.push({ name:layer , url:json[i].url , fields:json[i].fields , objectid:json[i].objectid , default:typeof json[i].default !== "undefined" ? true: false });
+                    _conf.push({ name:layer , url:json[i].url , fields:json[i].fields , objectid:json[i].objectid , rgb:json[i].rgb ,default:typeof json[i].default !== "undefined" ? true: false });
                 } else {
                     resul += _reportJson(json[i].srv, _conf, _name || json[i].name);
                 }
@@ -330,37 +343,15 @@ require([
 
     let _graphicPie = function() {
         try {
-            const data = {
-                labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
-                datasets: [
-                    {
-                        label: 'Dataset 1',
-                        data: [4,5,4,7,8],
-                        backgroundColor: [
-                            'rgb(255, 99, 132)',
-                            'rgb(255, 159, 64)',
-                            'rgb(255, 205, 86)',
-                            'rgb(75, 192, 192)',
-                            'rgb(54, 162, 235)'
-                        ],
-                    }
-                ]
-            };
-    
-            new Chart('ID_TABLE_Graphic', { 
+            const data = { labels:[], datasets:[{ data:[], backgroundColor:[] }] };
+            new Chart(chartID, { 
                 type: 'pie',
                 data,
                 options: {
                     responsive: false,
                     plugins: {
-                        legend: {
-                            display: false,
-                            position: 'left',
-                        },
-                        title: {
-                            display: false,
-                            text: 'GRÁFICO DE RESUMEN'
-                        }
+                        legend: { display:false, position:'bottom' },
+                        title: { display:false, text:'GRÁFICO DE RESUMEN' }
                     }
                 }
             });
