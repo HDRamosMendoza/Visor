@@ -1,57 +1,4 @@
 {
-    "lyrFilter": [
-        {
-            "htmlID": "ID_Departamento",
-            "htmlLBL": "Departamento ",
-            "htmlPH" : "Seleccione Departamento",
-            "htmlPH_Alias" : "Elija Departamento",
-            "srv": [
-                {
-                    "objectID": "objectid",
-                    "depID": "iddpto",
-                    "depName": "nombdpto",
-                    "item": "nombdpto",
-                    "order": "nombdpto",
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6020100"
-                }
-            ]
-        },
-        {
-            "htmlID": "ID_Provincia",
-            "htmlLBL": "Provincia ",
-            "htmlPH" : "Seleccione Provincia",            
-            "htmlPH_Alias" : "Elija Provincia",
-            "srv": [
-                {
-                    "objectID": "objectid_1",
-                    "depName": "nomdpto",
-                    "proID": "idprov",
-                    "proName": "nombprov",
-                    "item": "nombprov",
-                    "order": "nombprov",
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6020200"
-                }
-            ]
-        },
-        {
-            "htmlID": "ID_Distrito",
-            "htmlLBL": "Distrito ",
-            "htmlPH" : "Seleccione Distrito",
-            "htmlPH_Alias" : "Elija Distrito",
-            "srv": [
-                {
-                    "objectID": "objectid_1",
-                    "depName": "nombdpto",
-                    "proName": "nombprov",                    
-                    "disID": "iddist",
-                    "disName": "nombdist",
-                    "item": "nombdist",
-                    "order": "nombdist",
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6020300"
-                }
-            ]
-        }
-    ],
     "lyrReport" : [
         { 
             "name": "Información CENEPRED",
@@ -60,6 +7,7 @@
                     "default": "active",
                     "objectid": "id_documento",
                     "name": "Planes PPRRD",
+                    "rgb": "rgb(88,24,69)",
                     "fields":[
                         {
                             "alias": "Nombre",
@@ -99,6 +47,7 @@
                 {
                     "name": "Evaluaciones de Riesgo",
                     "objectid": "id_documento",
+                    "rgb": "rgb(144,12,63)",
                     "fields":[
                         {
                             "alias": "Nombre",
@@ -114,6 +63,7 @@
                 { 
                     "name": "Zonas de Riesgo No Mitigables",
                     "objectid": "objectid",
+                    "rgb": "rgb(199,0,57)",
                     "fields":[
                         {
                             "alias": "Predio",
@@ -145,6 +95,7 @@
                         {
                             "name": "Inventario",
                             "objectid": "objectid_1",
+                            "rgb": "rgb(255,87,51)",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -156,6 +107,7 @@
                         {
                             "name": "Puntos Críticos",
                             "objectid": "objectid_12",
+                            "rgb": "rgb(255,195,0)",
                             "fields":[
                                 {
                                     "alias": "objectid_12",
@@ -167,6 +119,7 @@
                         {
                             "name": "Áreas de Exposición",
                             "objectid": "objectid",
+                            "rgb": "rgb(218,247,166)",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -178,6 +131,7 @@
                         {
                             "name": "Fajas Marginales",
                             "objectid": "objectid",
+                            "rgb": "rgb(44,62,80)",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -194,6 +148,7 @@
                         {
                             "name": "Inventario",
                             "objectid": "objectid_1",
+                            "rgb": "rgb(52,73,94)",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -205,6 +160,7 @@
                         {
                             "name": "Zonas Críticas",
                             "objectid": "objectid_1",
+                            "rgb": "rgb(127,140,141)",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -216,6 +172,7 @@
                         {
                             "name": "Áreas de Exposición",
                             "objectid": "objectid",
+                            "rgb": "rgb(149,165,166)",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -232,6 +189,7 @@
                         {
                             "name": "Áreas de Exposición a Tsunami",
                             "objectid": "objectid",
+                            "rgb": "rgb(189,195,199)",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -243,6 +201,7 @@
                         {
                             "name": "Zonificación del Riesgo",
                             "objectid": "objectid_1",
+                            "rgb": "rgb(236,240,241)",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -257,6 +216,7 @@
                                 {
                                     "name": "IGP",
                                     "objectid": "objectid",
+                                    "rgb": "rgb(211,84,0)",
                                     "fields":[
                                         {
                                             "alias": "objectid",
@@ -268,6 +228,7 @@
                                 {
                                     "name": "CISMID",
                                     "objectid": "objectid",
+                                    "rgb": "rgb(230,126,34)",
                                     "fields":[
                                         {
                                             "alias": "objectid",
@@ -279,6 +240,7 @@
                                 {
                                     "name": "MVCS",
                                     "objectid": "objectid",
+                                    "rgb": "rgb(243,156,18)",
                                     "fields":[
                                         {
                                             "alias": "objectid",
@@ -297,6 +259,7 @@
                         {
                             "name": "Caídas de Ceniza y Pómez",
                             "objectid": "objectid_1",
+                            "rgb": "rgb(241,196,15)",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -313,6 +276,7 @@
                         {
                             "name": "Inventario",
                             "objectid": "objectid",
+                            "rgb": "rgb(46,204,113)",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -324,6 +288,7 @@
                         {
                             "name": "Áreas de Exposición",
                             "objectid": "objectid",
+                            "rgb": "rgb(39,174,96)",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -340,6 +305,7 @@
                         {
                             "name": "Pasivos Ambientales Mineros",
                             "objectid": "objectid",
+                            "rgb": "rgb(22,160,133)",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -351,6 +317,7 @@
                         {
                             "name": "Áreas Deforestadas",
                             "objectid": "objectid",
+                            "rgb": "rgb(26,188,156)",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -362,6 +329,7 @@
                         {
                             "name": "Inventario de Incendios Forestales",
                             "objectid": "objectid",
+                            "rgb": "rgb(52,152,219)",
                             "fields":[
                                 {
                                     "alias": "objectid",
@@ -378,6 +346,7 @@
                         {
                             "name": "Poblados Afectados",
                             "objectid": "objectid_1",
+                            "rgb": "rgb(41,128,185)",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -389,6 +358,7 @@
                         {
                             "name": "Tramos de Carreteras Afectadas",
                             "objectid": "objectid_1",
+                            "rgb": "rgb(142,68,173)",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -400,6 +370,7 @@
                         {
                             "name": "Obras de Infraestructura Afectadas",
                             "objectid": "objectid_1",
+                            "rgb": "rgb(155,89,182)",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -411,6 +382,7 @@
                         {
                             "name": "Áreas de Cultivo Afectadas",
                             "objectid": "objectid_1",
+                            "rgb": "rgb(231,76,60)",
                             "fields":[
                                 {
                                     "alias": "objectid_1",
@@ -424,6 +396,7 @@
                 {
                     "name": "Imágenes de RPAS",
                     "objectid": "id",
+                    "rgb": "rgb(192,57,43)",
                     "fields":[
                         {
                             "alias": "id",
@@ -438,6 +411,7 @@
                     "srv": [
                         {
                             "name": "Estudios",
+                            "rgb": "rgb(151,154,154)",
                             "fields":[
                                 {
                                     "alias": "id_documento",
