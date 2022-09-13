@@ -110,6 +110,7 @@ body { background-color: #f6f6f6; position: relative;}
   /*box-sizing: border-box;*/
 }
 /************************/
+/*
 main {
   width: 100%;
   margin: 0 auto;
@@ -121,6 +122,7 @@ main section {
 input {
   display: none;
 }
+
 main label {
   display: inline-block;
   margin: 0 0 -1px;
@@ -149,6 +151,7 @@ main label:hover {
   color: #888;
   cursor: pointer;
 }
+*/
 input.tabs:checked + label {
   color: #555;
   border: 1px solid #ddd;
@@ -198,6 +201,7 @@ input.tabs:checked + label {
   background-color: #e5e5e5;
   border: 1px solid #e5e5e5;
 }
+/*
 .report-pagination div {
   display: inline-block;
   
@@ -213,29 +217,17 @@ input.tabs:checked + label {
   float: right;
   font-size: 12px;
 }
-.tabs {
-  /*position: absolute;*/
+*/
+
+.tabs { 
   position: relative;
-  /*top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);*/
   width: 100%;
   height: 500px;
   padding: 0px;
   background-color: #F5F5F5;
   margin-top: 10px;
-  /*box-shadow: 5px 5px 10px 5px #ccc;*/
   overflow: hidden;
 }
-/*
-.tabs {
-  position: relative;
-  width: 590px;
-  padding: 5px;
-  background-color: #F5F5F5;
-  overflow: hidden;
-}
-*/
 .tabs .tab-header {
   float:  left;
   width: 210px;
@@ -257,6 +249,7 @@ input.tabs:checked + label {
 .tabs .tab-header > div.active {
   color: white;
   background-color: #2c6975;
+  border-top: 4px solid #68B2A0;
 }
 .tabs .tab-header div i {
   display: inline-block;
