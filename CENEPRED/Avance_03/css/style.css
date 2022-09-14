@@ -250,6 +250,7 @@ input.tabs:checked + label {
   border-top: 0px solid #2c6975 !important;
   color: #ffa500 !important;
   font-weight: 700 !important;
+  cursor: default;
   padding: 15px 10px;  
 }
 .tabs .tab-header > div:hover,
