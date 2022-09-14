@@ -1,4 +1,34 @@
 {
+    "download": [
+        {
+            "option": "XLS",
+            "value": "XLS"
+        },
+        {
+            "option": "CSV",
+            "value": "CSV"
+        },
+        {
+            "option": "JSON",
+            "value": "JSON"
+        },
+        {
+            "option": "SHP (.zip)",
+            "value": "SHP (.zip)"
+        },
+        {
+            "option": "KMZ",
+            "value": "KMZ"
+        },
+        {
+            "option": "GeoJSON",
+            "value": "GeoJSON"
+        },
+        {
+            "option": "WKT",
+            "value": "WKT"
+        }
+    ],
     "lyrFilter": [
         {
             "htmlID": "ID_Departamento",
