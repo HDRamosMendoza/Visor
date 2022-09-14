@@ -93,22 +93,12 @@
 
                     <div class="form-result-button">
                         <button type="button" class="btn-float" data-dojo-attach-point="ID_Analisis">
-                            <i class="fa fa-reorder" aria-hidden="true"></i>
-                            Análisis
+                            <i class="fa fa-reorder" aria-hidden="true"></i> Análisis
                         </button>
                         <span>
-                            <select>
-                                <option value="">XLS</option>
-                                <option value="">CSV</option>
-                                <option value="">JSON</option>
-                                <option value="">SHP (.zip)</option>
-                                <option value="">KMZ</option>
-                                <option value="">GeoJSON</option>
-                                <option value="">WKT</option>
-                            </select>  
-                            <button type="button" data-dojo-attach-point="ID_Download_Result">
-                                <i class="fa fa-download" aria-hidden="true"></i>
-                                Descargar
+                            <select data-dojo-attach-point="ID_Diagnosis_Format"></select>
+                            <button type="button" data-dojo-attach-point="ID_Diagnosis_Download">
+                                <i class="fa fa-download" aria-hidden="true"></i> Descargar
                             </button>    
                         </span>                    
                     </div>
@@ -124,8 +114,7 @@
                         <input type="number" value="1" placeholder="##" min="1" max="30" data-dojo-attach-point="ID_Buffer">    
                         <p class="analysis-unit">Km.</p>
                         <button type="button" data-dojo-attach-point="ID_Button_BufferUpdate">
-                            <i class="fa fa-refresh" aria-hidden="true"></i>
-                            Actualizar
+                            <i class="fa fa-refresh" aria-hidden="true"></i> Actualizar
                         </button> 
                         
                         <div class="leyend" style="display: none;">
@@ -137,12 +126,10 @@
                     <div class="lds-facebook" data-dojo-attach-point="ID_Load_Buffer"><div></div><div></div><div></div></div>
                     <!-- Table Analysis -->
                     <div data-dojo-attach-point="ID_Table_Analysis"></div>
-
+                    <!-- SubTitle -->
                     <div class="form-Analysis">
-                        <!-- SubTitle -->
                         <label class="subTitle">Resumen de Análisis:</label>
-                    </div>
-                    
+                    </div>                    
                     <!-- CSS Load -->
                     <div class="lds-facebook" data-dojo-attach-point="ID_Load_Report"><div></div><div></div><div></div></div>
                     <!-- Table Report -->
@@ -177,18 +164,9 @@
 
                     <div class="form-result-button">
                         <span>
-                            <select>
-                                <option value="">XLS</option>
-                                <option value="">CSV</option>
-                                <option value="">JSON</option>
-                                <option value="">SHP (.zip)</option>
-                                <option value="">KMZ</option>
-                                <option value="">GeoJSON</option>
-                                <option value="">WKT</option>
-                            </select>  
-                            <button type="button">
-                                <i class="fa fa-download" aria-hidden="true"></i>
-                                Descargar
+                            <select data-dojo-attach-point="ID_Analysis_Format"></select>
+                            <button type="button" data-dojo-attach-point="ID_Analysis_Download">
+                                <i class="fa fa-download" aria-hidden="true"></i> Descargar
                             </button>    
                         </span>                    
                     </div>
@@ -198,7 +176,5 @@
             </section>
         </main>
         
-        
-
     </div>
 </div>

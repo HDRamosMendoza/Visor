@@ -109,17 +109,21 @@ define([
         reportItemResult: 0,
         reportGeometry: null,
         reportGeometryIntersect: null,
+
+        diagnosisCount: 1,
+        diagnosisTotal: 0,
+        diagnosisRandom: null,
+        diagnosisResult: 0,
         
-        countItem: 1,
-        countResult: 0,
         countAnalysis_Cantidad: 0,
         countAnalysis_Km: [],
         textAmbito: "",
         geometryIntersect: "",
         geometrySRV: null,
-        randomDiagnosis: null,
+        
         IDTableCount_Name: "",
         IDTableAnalysis_Name: "",
+        /*
         Ramos: new SimpleFillSymbol(
             SimpleFillSymbol.STYLE_SOLID,
             new SimpleLineSymbol(
@@ -129,6 +133,7 @@ define([
             ),
             new Color([239,184,16,0.1])
         ),
+        */
         /* RED VIAL */
 /*
 let symbolRedVial = new SimpleFillSymbol(
@@ -171,6 +176,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             this.IDTableReport_Name   = this.ID_Table_Report.getAttribute("data-dojo-attach-point");
             
             /* Setup DEPARTAMENTO */
+            const selDownload = config.download;
+            /* Setup DEPARTAMENTO */
             const lyrDep = config.lyrFilter[0];
             const srvDep = lyrDep.srv[0];
             /* Setup PROVINCIA */
@@ -185,6 +192,9 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             this.confAnalysis = config.lyrAnalysis;
             /* Setup List Layer REPORT */
             this.confReport = config.lyrReport;
+            /* DownLoad Data */ 
+            this._loadSelect(this.ID_Diagnosis_Format, selDownload);
+            this._loadSelect(this.ID_Analysis_Format, selDownload);
             /* Asigna en un solo nivel a confAnalysis_Temp */
             this._analysisJson(this.confAnalysis, this.confAnalysis_Temp);
             /* Asigna en un solo nivel a confReport_Temp */
@@ -351,8 +361,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     textAmbito_Temp = textAmbito_Temp.join(" / ");
                     this.textAmbito = `<p style="line-height:20px;background-color:rgba(0,0,0,0.1);padding:5px;">${textAmbito_Temp}</p>`;                    
                     /* Reinicia contador */
-                    this.countItem = 1;
-                    this.countResult = 0;
+                    this.diagnosisCount = 1;
+                    this.diagnosisResult = 0;
                     /* Reinicia el grupo de capas */
                     this.confDiagnosis_Temp = [];
                     /* Muestra la pestaña RESULTADO (segunda pestaña) */
@@ -374,6 +384,24 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     this._elementById("ID_Tab_Analysis").click();
                     /* Buffer Analysis */
                     this._analysis();
+                } catch (error) {
+                    console.error(`Error: button/ID_Analisis (click) => ${error.name} - ${error.message}`);
+                }
+            })));
+            
+            this.own(on(this.ID_Diagnosis_Download, 'click', lang.hitch(this, () => {
+                /* Button (click) - ID_Diagnosis_Download. Descargar información de DIAGNOSTICO */
+                try {
+                    console.log("DESCARGANDO");
+                } catch (error) {
+                    console.error(`Error: button/ID_Analisis (click) => ${error.name} - ${error.message}`);
+                }
+            })));
+
+            this.own(on(this.ID_Analysis_Download, 'click', lang.hitch(this, () => {
+                /* Button (click) - ID_Analysis_Download. Descargar información de ANALISIS */
+                try {
+                    console.log("DESCARGANDO");
                 } catch (error) {
                     console.error(`Error: button/ID_Analisis (click) => ${error.name} - ${error.message}`);
                 }
@@ -414,6 +442,21 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
         },
         startup: function() {
             console.log("in startup");
+        },
+        _loadSelect(formatId, formatOption) {
+            try {
+                formatOption.map(function(item) {
+                    let fragment = document.createDocumentFragment();
+                    let row = document.createElement("option");
+                    row.value = item.value;
+                    let optionText = document.createTextNode(item.option);
+                    row.appendChild(optionText);
+                    fragment.appendChild(row);
+                    formatId.appendChild(fragment);
+                });
+            } catch (error) {
+                console.error(`Error: _loadSelect => ${error.name} - ${error.message}`);
+            }
         },
         _jsonCountLayer: function(json) {
             /* Contador de servicio */
@@ -602,7 +645,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 let query = new Query(); query.objectIds = [id];
                 const lyr = new FeatureLayer(srv, { mode: FeatureLayer.MODE_SELECTION });
                 let itemRandom = this._getRandom();
-                this.randomDiagnosis = itemRandom;                
+                this.diagnosisRandom = itemRandom;                
                 if(this.deferredDiagnosis && (this.deferredDiagnosis > 0)) {
                     this.deferredDiagnosis.cancel();
                 }
@@ -651,14 +694,14 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 this.deferredDiagnosis.then(
                     (count) => {
                         try {
-                            if (this.randomDiagnosis == _random) {
-                                this.countResult = this.countResult + count;
-                                this.ID_Count.innerText = this.countResult;
+                            if (this.diagnosisRandom == _random) {
+                                this.diagnosisResult = this.diagnosisResult + count;
+                                this.ID_Count.innerText = this.diagnosisResult;
                                 this.ID_CountText.innerHTML = this.textAmbito;
-                                this._elementById(`${this.IDTableCount_Name}_Total`).innerText = this.countResult;
-                                this.countItem++;
+                                this._elementById(`${this.IDTableCount_Name}_Total`).innerText = this.diagnosisResult;
+                                this.diagnosisCount++;
                                 lyr.cantidad = count;
-                                this.ID_Percentage.innerHTML = this._loadTime(this.countItem -1);
+                                this.ID_Percentage.innerHTML = this._loadTime(this.diagnosisCount -1);
                             }
                         } catch (error) {
                             console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
@@ -669,8 +712,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     }
                 ).always(lang.hitch(this, function() {
                     try {
-                        //this.ID_Percentage.innerHTML = this._loadTime(this.countItem -1);
-                        if(((this.countItem - 1) == this.lyrTotal) && (this.randomDiagnosis == _random)) {
+                        //this.ID_Percentage.innerHTML = this._loadTime(this.diagnosisCount -1);
+                        if(((this.diagnosisCount - 1) == this.lyrTotal) && (this.diagnosisRandom == _random)) {
                             this.ID_Load.style.display = "none";
                             this.ID_Table_Count.style.display = "block";                            
                             /* Recorrer el JSON y asignamos a un nuevo array - this.confDiagnosis_Temp */
@@ -678,22 +721,24 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                             /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
                             this._sortJSON(this.confDiagnosis_Temp, 'cantidad','desc'); 
                             /* Inserta a la tabla */
-                            this.confDiagnosis_Temp.map(function(cValue, index){
-                                let fragment = document.createDocumentFragment();
-                                let row = document.createElement("tr");
-                                let cell_0 = document.createElement("td");
-                                let cellText_0 = document.createTextNode(index + 1);
-                                cell_0.appendChild(cellText_0);
-                                let cell_1 = document.createElement("td");
-                                cell_1.innerHTML = cValue.layer;
-                                let cell_2 = document.createElement("td");
-                                let cellText_2 = document.createTextNode(cValue.cantidad || 0);
-                                cell_2.appendChild(cellText_2);
-                                row.appendChild(cell_0);
-                                row.appendChild(cell_1);
-                                row.appendChild(cell_2);
-                                fragment.appendChild(row);
-                                this._elementById(`${this.IDTableCount_Name}_Tbody`).appendChild(fragment);
+                            this.confDiagnosis_Temp.map(function(cValue, index) {
+                                if(cValue.cantidad > 0) {
+                                    let fragment = document.createDocumentFragment();
+                                    let row = document.createElement("tr");
+                                    let cell_0 = document.createElement("td");
+                                    let cellText_0 = document.createTextNode(index + 1);
+                                    cell_0.appendChild(cellText_0);
+                                    let cell_1 = document.createElement("td");
+                                    cell_1.innerHTML = cValue.layer;
+                                    let cell_2 = document.createElement("td");
+                                    let cellText_2 = document.createTextNode(cValue.cantidad || 0);
+                                    cell_2.appendChild(cellText_2);
+                                    row.appendChild(cell_0);
+                                    row.appendChild(cell_1);
+                                    row.appendChild(cell_2);
+                                    fragment.appendChild(row);
+                                    this._elementById(`${this.IDTableCount_Name}_Tbody`).appendChild(fragment);
+                                }                                
                             }.bind(this));   
                         }
                     } catch (error) {
@@ -1435,7 +1480,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 this.deferredReport.then(
                     (count) => {
                         try {
-                            if (this.randomDiagnosis == _random) {
+                            if (this.diagnosisRandom == _random) {
                                 lyr.cantidad = count;
                             }
                         } catch (error) {
@@ -1448,7 +1493,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 ).always(lang.hitch(this, function() {
                     try {
                         
-                        if(((this.countItem - 1) == this.lyrTotal) && (this.randomDiagnosis == _random)) {
+                        if(((this.diagnosisCount - 1) == this.lyrTotal) && (this.diagnosisRandom == _random)) {
                             
                         
                             /* Recorrer el JSON y asignamos a un nuevo array - this.confDiagnosis_Temp*/
