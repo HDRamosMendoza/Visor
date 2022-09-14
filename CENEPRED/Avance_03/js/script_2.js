@@ -1,18 +1,19 @@
 let map; let featureTable;
 require([
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js',
-  "esri/layers/FeatureLayer",
-  "esri/dijit/FeatureTable",
-  "esri/geometry/Polygon",
-  "esri/tasks/query",
-  "esri/tasks/QueryTask",
-  "esri/map",
-  "dojo/text!./json/config.json",
+  'esri/layers/FeatureLayer',
+  'esri/dijit/FeatureTable',
+  'esri/geometry/Polygon',
+  'esri/tasks/query',
+  'esri/tasks/QueryTask',
+  'esri/config',
+  'esri/map',
+  'dojo/text!./json/config.json',
   'dojo/_base/lang',
-  "dojo/parser",
-  "dojo/ready",
-  "dojo/on",
-  "dojo/domReady!"
+  'dojo/parser',
+  'dojo/ready',
+  'dojo/on',
+  'dojo/domReady!'
 ], function(
     Chart,
     FeatureLayer,
@@ -20,6 +21,7 @@ require([
     Polygon,
     Query,
     QueryTask,
+    esriConfig,
     Map,
     configJSON,
     lang,
@@ -28,6 +30,9 @@ require([
     ready,
     on
 ) {
+    esriConfig.defaults.io.proxyUrl = 'proxy/proxy.ashx';
+    esriConfig.defaults.io.alwaysUseProxy = false;
+
     const config = JSON.parse(configJSON);
     let configReport = config.lyrReport;
     let configReport_Temp = [];
