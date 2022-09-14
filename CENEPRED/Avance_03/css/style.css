@@ -20,8 +20,8 @@ body { background-color: #f6f6f6; position: relative;}
   width: 1200px;
   position: relative;
 }
-.report-main .report-title{
-  background-color: #2c6975;
+.report-main .report-title {
+  background-color: #23545e;
   color: #FFFFFF;
   padding: 1px 15px;
   margin-bottom: 10px;
@@ -236,19 +236,26 @@ input.tabs:checked + label {
   padding: 0px 0px 5px;
 }
 .tabs .tab-header > div {
-  /*height: 50px;*/
-  /*line-height: 50px;*/
-  /*font-size: 16px;*/
-  font-size: 13px;
-  /*font-weight: 600;*/
+  background-color: rgba(246,246,246);
+  border-top: 4px solid rgba(205,224,201,0.0);
+  color: #555555;
   color: #181818;
   cursor: pointer;
+  font-size: 13px;
   padding: 8px 10px;
+}
+.tabs .tab-header .header-group
+{
+  background-color: #2c6975 !important;
+  border-top: 0px solid #2c6975 !important;
+  color: #ffa500 !important;
+  font-weight: 700 !important;
+  padding: 15px 10px;  
 }
 .tabs .tab-header > div:hover,
 .tabs .tab-header > div.active {
   color: white;
-  background-color: #2c6975;
+  background-color: #23545e;
   border-top: 4px solid #68B2A0;
 }
 .tabs .tab-header div i {
@@ -257,20 +264,22 @@ input.tabs:checked + label {
   margin-right: 5px;
 }
 .tabs .tab-content {
+  color: #555555;
+  background-color: rgba(246,246,246,0);
   position: relative;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden;  
 }
 .tabs .tab-header > div > i {
-  display: inline-block;
-  width: 50px;
-  height: 50px;
+  border-radius: 50px;
   background-color: #555;
   color: #F5F5F5;
+  display: inline-block;
+  height: 50px;
   font-size: 25px;
   text-align: center;
   line-height: 50px;
-  border-radius: 50px;
+  width: 50px;
 }
 .tabs .tab-content > div {
   position: absolute;
@@ -292,7 +301,7 @@ input.tabs:checked + label {
   transition: all 500ms ease-in-out;
 }
 .tabs .tab-content .div-hr {
-  border-bottom: 2px solid #2c6975;
+  border-bottom: 2px solid #23545E;
   margin: 10px 0px;
   width: 50px;
 }

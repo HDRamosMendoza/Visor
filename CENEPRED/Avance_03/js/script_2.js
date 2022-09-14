@@ -144,69 +144,71 @@ require([
 
     let _queryTask = function(lyr, _ambito, _index) {
         try {
-            let queryTask = new QueryTask(lyr.url);
-            let query = new Query();
-            query.outFields = lyr.fields.map(x => x.name);
-            query.geometry = new Polygon(_ambito)
-            query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
-            query.returnGeometry = false;
-            this.deferredReport = queryTask.executeForCount(query);
-            this.deferredReport.then(
-                (count) => {
-                    try {
-                        reportItemResult = reportItemResult + count;
-                        _elementById(`ID_TABLE_Resumen_Total`).innerText = reportItemResult;
-                        lyr.cantidad = count;
-                        if(count === 0) {                            
-                            _elementById("ID_TAB_Header").childNodes[3+_index].style.display="none";
-                            _elementById("ID_TAB_Content").childNodes[3+_index].style.display="none";
-                        } else {
-                            const chart = Chart.getChart(chartID);
-                            chartData.push(lyr.cantidad);
-                            chartLabel.push(lyr.name.replace(/<[^>]+>/g, ''));
-                            chartBackgroundColor.push(lyr.rgb);
-                            chart.data.datasets[0].data = chartData;
-                            chart.data.datasets[0].backgroundColor = chartBackgroundColor;
-                            chart.data.labels = chartLabel;
-                            chart.update();
+            if(Object.keys(lyr).length !== 1) { /* Se filtra para que no entre la cabeceras de grupos */
+                let queryTask = new QueryTask(lyr.url);
+                let query = new Query();
+                query.outFields = lyr.fields.map(x => x.name);
+                query.geometry = new Polygon(_ambito)
+                query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                query.returnGeometry = false;
+                this.deferredReport = queryTask.executeForCount(query);
+                this.deferredReport.then(
+                    (count) => {
+                        try {
+                            reportItemResult = reportItemResult + count;
+                            _elementById(`ID_TABLE_Resumen_Total`).innerText = reportItemResult;
+                            lyr.cantidad = count;
+                            if(count === 0) {                            
+                                _elementById("ID_TAB_Header").childNodes[3+_index].style.display="none";
+                                _elementById("ID_TAB_Content").childNodes[3+_index].style.display="none";
+                            } else {
+                                const chart = Chart.getChart(chartID);
+                                chartData.push(lyr.cantidad);
+                                chartLabel.push(lyr.name.replace(/<[^>]+>/g, ''));
+                                chartBackgroundColor.push(lyr.rgb);
+                                chart.data.datasets[0].data = chartData;
+                                chart.data.datasets[0].backgroundColor = chartBackgroundColor;
+                                chart.data.labels = chartLabel;
+                                chart.update();
+                            }
+                        } catch (error) {
+                            console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
                         }
-                    } catch (error) {
-                        console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
+                    },
+                    (error) => {  
+                        console.error(`Error: _queryTask ERROR - Oops! => ${error.name} - ${error.message}`);
                     }
-                },
-                (error) => {  
-                    console.error(`Error: _queryTask ERROR - Oops! => ${error.name} - ${error.message}`);
-                }
-            ).always(lang.hitch(this, function() {
-                try {
-                    /* Se limpiar TABLE */
-                    _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
-                    /* Se ordena JSON */
-                    _sortJSON(configReport_Temp, 'cantidad','desc'); 
-                    /* Se lista capas */
-                    configReport_Temp.map(function(cValue, index){
-                        if(cValue.cantidad) {
-                            let fragment = document.createDocumentFragment();
-                            let row = document.createElement("tr");
-                            let cell_0 = document.createElement("td");
-                            let cellText_0 = document.createTextNode(index + 1);
-                            cell_0.appendChild(cellText_0);
-                            let cell_1 = document.createElement("td");
-                            cell_1.innerHTML = cValue.name;
-                            let cell_2 = document.createElement("td");
-                            let cellText_2 = document.createTextNode(cValue.cantidad || 0);
-                            cell_2.appendChild(cellText_2);
-                            row.appendChild(cell_0);
-                            row.appendChild(cell_1);
-                            row.appendChild(cell_2);
-                            fragment.appendChild(row);
-                            _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
-                        }
-                    }.bind(this)); 
-                } catch (error) {
-                    console.error(`Error: _queryTask always => ${error.name} - ${error.message}`);
-                } 
-            }.bind(this)));
+                ).always(lang.hitch(this, function() {
+                    try {
+                        /* Se limpiar TABLE */
+                        _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
+                        /* Se ordena JSON */
+                        _sortJSON(configReport_Temp, 'cantidad','desc'); 
+                        /* Se lista capas */
+                        configReport_Temp.map(function(cValue, index){
+                            if(cValue.cantidad > 0 && typeof cValue.cantidad !== "undefined") {
+                                let fragment = document.createDocumentFragment();
+                                let row = document.createElement("tr");
+                                let cell_0 = document.createElement("td");
+                                let cellText_0 = document.createTextNode(index + 1);
+                                cell_0.appendChild(cellText_0);
+                                let cell_1 = document.createElement("td");
+                                cell_1.innerHTML = cValue.name;
+                                let cell_2 = document.createElement("td");
+                                let cellText_2 = document.createTextNode(cValue.cantidad || 0);
+                                cell_2.appendChild(cellText_2);
+                                row.appendChild(cell_0);
+                                row.appendChild(cell_1);
+                                row.appendChild(cell_2);
+                                fragment.appendChild(row);
+                                _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
+                            }
+                        }.bind(this)); 
+                    } catch (error) {
+                        console.error(`Error: _queryTask always => ${error.name} - ${error.message}`);
+                    } 
+                }.bind(this)));
+            }
         } catch (error) { 
             console.error(`Error: _queryTask => ${error.name} - ${error.message}`); 
         }
@@ -304,8 +306,7 @@ require([
 
     let _reportJson = function(json, _conf, _name = "") {
         try { /* Recorre un arból de n hijos */
-            let type; let resul; let layer;
-             
+            let type; let resul; let layer;             
             for (var i=0; i < json.length; i++) {
                 type = typeof json[i].srv;
                 if (type == "undefined") {
@@ -315,8 +316,10 @@ require([
                     layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} <strong>${json[i].name}</strong>`;
                     _conf.push({ name:layer , url:json[i].url , fields:json[i].fields , objectid:json[i].objectid , rgb:json[i].rgb ,default:typeof json[i].default !== "undefined" ? true: false });
                 } else {
+                    if(_name.length == 0) { /* Se filtra solo las cabeceras una vez */
+                        _conf.push({ name:json[i].name });
+                    }
                     resul += _reportJson(json[i].srv, _conf, _name.concat(json[i].name + " / "));
-                    //resul += _reportJson(json[i].srv, _conf, _name || json[i].name);
                 }
             }            
             return resul;
@@ -345,9 +348,9 @@ require([
 
     let _graphicPie = function() {
         try {
-            const data = { labels:[], datasets:[{ data:[], backgroundColor:[] }] };
+            const data = { labels:[], datasets:[{ data:[], backgroundColor:[],borderWidth: 1 }]};
             new Chart(chartID, { 
-                type: 'pie',
+                type: 'doughnut',
                 data,
                 options: {
                     responsive: false,
@@ -364,16 +367,24 @@ require([
 
     let _jsonTravelTree = function(_json, _name = "") {
 		try {
+            let _nameTemp = "";
             _json.map(function(lyr, index) {
                 const divHeader = document.createElement("div");
                 divHeader.innerHTML = lyr.name;
-                divHeader.dataset.url = lyr.url,
-                divHeader.dataset.objectid = lyr.objectid,
-                divHeader.dataset.fields = JSON.stringify(lyr.fields),
-                divHeader.className = !lyr.default || "active";
+                if(Object.keys(lyr).length === 1) {
+                    divHeader.className = "header-group";
+                    _nameTemp = lyr.name;
+                } else {
+                    divHeader.innerHTML = lyr.name.replace(_nameTemp + " /", "");
+                    divHeader.dataset.url = lyr.url,
+                    divHeader.dataset.objectid = lyr.objectid,
+                    divHeader.dataset.fields = JSON.stringify(lyr.fields),
+                    divHeader.className = !lyr.default || "active";
+                }                
                 let fragmentHeader = document.createDocumentFragment();
                 fragmentHeader.appendChild(divHeader);                
-                _elementById("ID_TAB_Header").appendChild(fragmentHeader);                
+                _elementById("ID_TAB_Header").appendChild(fragmentHeader);
+
                 const divContent = document.createElement("div");
                 divContent.className = !lyr.default || "active";
                 const divTitle = document.createElement("section");
@@ -389,14 +400,17 @@ require([
                 let fragmentContent = document.createDocumentFragment();
                 fragmentContent.appendChild(divContent);
                 _elementById("ID_TAB_Content").appendChild(fragmentContent);
+
             }.bind(this));
 		} catch (error) {
 			console.error(`Error: _jsonTravelTree => ${error.name} - ${error.message}`);
 		}
 	};
 	_jsonTravelTree(configReport_Temp);
+
     /*_elementById("ID_TAB_Header").childNodes[3].className = "active";
-	_elementById("ID_TAB_Content").childNodes[3].className = "active";*/    
+	_elementById("ID_TAB_Content").childNodes[3].className = "active";*/
+
     let _class = function(name) { return document.getElementsByClassName(name); };
 	let tabPanes = _class("tab-header")[0].getElementsByTagName("div");	
 	for(let i=0;i<tabPanes.length;i++) {
