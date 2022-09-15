@@ -1,31 +1,31 @@
 {
     "download": [
         {
-            "option": "XLS",
+            "name": "XLS",
             "value": "XLS"
         },
         {
-            "option": "CSV",
+            "name": "CSV",
             "value": "CSV"
         },
         {
-            "option": "JSON",
+            "name": "JSON",
             "value": "JSON"
         },
         {
-            "option": "SHP (.zip)",
+            "name": "SHP (.zip)",
             "value": "SHP (.zip)"
         },
         {
-            "option": "KMZ",
+            "name": "KMZ",
             "value": "KMZ"
         },
         {
-            "option": "GeoJSON",
+            "name": "GeoJSON",
             "value": "GeoJSON"
         },
         {
-            "option": "WKT",
+            "name": "WKT",
             "value": "WKT"
         }
     ],
@@ -358,7 +358,7 @@
             ]
         }
     ],
-    "lyrAnalysis": [
+    "lyrBuffer": [
         {
             "name": "Infraestructura vial y transporte",
             "srv": [
@@ -398,367 +398,6 @@
                 }
             ]
         }
-    ],
-    "lyrReport" : [
-        { 
-            "name": "Información CENEPRED",
-            "srv": [
-                { 
-                    "name": "Planes PPRRD",
-                    "fields":[
-                        {
-                            "alias": "Nombre",
-                            "field": "nombre"
-                        },
-                        {
-                            "alias": "Descripción",
-                            "field": "descripcion"
-                        },
-                        {
-                            "alias": "Ámbito",
-                            "field": "ambito"
-                        },
-                        {		
-                            "alias": "Autor Corporativo",
-                            "field": "autor_corporativo"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000"
-                }
-            ]
-        },
-        { 
-            "name": "Cartografía Riesgos",
-            "srv": [
-                {
-                    "name": "Evaluaciones de Riesgo",
-                    "fields":[
-                        {
-                            "alias": "Nombre",
-                            "field": "nombre"
-                        },
-                        {
-                            "alias": "Descripción",
-                            "field": "descripcion"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4010000"
-                },
-                { 
-                    "name": "Zonas de Riesgo No Mitigables",
-                    "fields":[
-                        {
-                            "alias": "Predio",
-                            "field": "nom_predio"
-                        },
-                        {
-                            "alias": "Fecha Doc.",
-                            "field": "fecha_doc"
-                        },
-                        {
-                            "alias": "Información",
-                            "field": "bdcenepred_informacion_compleme"
-                        },
-                        {
-                            "alias": "Parte Registral",
-                            "field": "part_regis"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4020000"
-                }
-            ]
-        },
-        {
-            "name": "Cartografía de Peligros",
-            "srv": [
-                {
-                    "name": "Inundacion",
-                    "srv": [
-                        {
-                            "name": "Inventario",
-                            "fields":[
-                                {
-                                    "alias": "objectid_1",
-                                    "field": "objectid_1"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010100"
-                        },
-                        {
-                            "name": "Puntos Críticos",
-                            "fields":[
-                                {
-                                    "alias": "objectid_12",
-                                    "field": "objectid_12"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010200"
-                        },
-                        {
-                            "name": "Áreas de Exposición",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010300"
-                        },
-                        {
-                            "name": "Fajas Marginales",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010400"
-                        }
-                    ]
-                },
-                {
-                    "name": "Movimientos en masa",
-                    "srv": [
-                        {
-                            "name": "Inventario",
-                            "fields":[
-                                {
-                                    "alias": "objectid_1",
-                                    "field": "objectid_1"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020100"
-                        },
-                        {
-                            "name": "Zonas Críticas",
-                            "fields":[
-                                {
-                                    "alias": "gid",
-                                    "field": "gid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500"
-                        },
-                        {
-                            "name": "Áreas de Exposición",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020200"
-                        }
-                    ]
-                },
-                {
-                    "name": "Sismo y Tsunami",
-                    "srv": [
-                        {
-                            "name": "Áreas de Exposición a Tsunami",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030100"
-                        },
-                        {
-                            "name": "Zonificación del Riesgo",
-                            "fields":[
-                                {
-                                    "alias": "objectid_1",
-                                    "field": "objectid_1"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030301"
-                        },
-                        {
-                            "name": "Zonificación Sísmica",
-                            "srv": [
-                                {
-                                    "name": "IGP",
-                                    "fields":[
-                                        {
-                                            "alias": "objectid",
-                                            "field": "objectid"
-                                        }
-                                    ],
-                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030401"
-                                },
-                                {
-                                    "name": "CISMID",
-                                    "fields":[
-                                        {
-                                            "alias": "objectid",
-                                            "field": "objectid"
-                                        }
-                                    ],
-                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030402"
-                                },
-                                {
-                                    "name": "MVCS",
-                                    "fields":[
-                                        {
-                                            "alias": "objectid",
-                                            "field": "objectid"
-                                        }
-                                    ],
-                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030403"                                    
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "Vulcanismo",
-                    "srv": [
-                        {
-                            "name": "Caídas de Ceniza y Pómez",
-                            "fields":[
-                                {
-                                    "alias": "objectid_1",
-                                    "field": "objectid_1"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050203"                            
-                        }
-                    ]
-                },
-                {
-                    "name": "Otros peligros geológicos",
-                    "srv": [
-                        {
-                            "name": "Inventario",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080100"
-                        },
-                        {
-                            "name": "Áreas de Exposición",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080200"
-                        }
-                    ]
-                },
-                {
-                    "name": "Inducidos por la acción humana",
-                    "srv": [
-                        {
-                            "name": "Pasivos Ambientales Mineros",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090100"
-                        },
-                        {
-                            "name": "Áreas Deforestadas",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090200"
-                        },
-                        {
-                            "name": "Inventario de Incendios Forestales",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "field": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090300"
-                        }
-                    ]
-                },
-                {
-                    "name": "Zonas afectadas por el niño costero 2017",
-                    "srv": [
-                        {
-                            "name": "Poblados Afectados",
-                            "fields":[
-                                {
-                                    "alias": "objectid_1",
-                                    "field": "objectid_1"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200"
-                        },
-                        {
-                            "name": "Tramos de Carreteras Afectadas",
-                            "fields":[
-                                {
-                                    "alias": "objectid_1",
-                                    "field": "objectid_1"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300"
-                        },
-                        {
-                            "name": "Obras de Infraestructura Afectadas",
-                            "fields":[
-                                {
-                                    "alias": "objectid_1",
-                                    "field": "objectid_1"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400"
-                        },
-                        {
-                            "name": "Áreas de Cultivo Afectadas",
-                            "fields":[
-                                {
-                                    "alias": "objectid_1",
-                                    "field": "objectid_1"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010500"
-                        }
-                    ]
-                },
-                {
-                    "name": "Imágenes de RPAS",
-                    "fields":[
-                        {
-                            "alias": "id",
-                            "field": "id"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6070000"
-                },
-                {
-                    "name": "Programas de Ciudades Sostenibles Estudios",
-                    "srv": [
-                        {
-                            "name": "Estudios",
-                            "fields":[
-                                {
-                                    "alias": "id_documento",
-                                    "field": "id_documento"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6090100"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]   
-    
+    ]
 }
   
