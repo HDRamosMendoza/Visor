@@ -1,3 +1,6 @@
+.hdrm_dt {
+  box-sizing: content-box;
+}
 .hdrm_dt main {
   width: 100%;
   margin: 0 auto;
@@ -68,7 +71,7 @@
 }  
 /** Filter **/
 .hdrm_dt .tab-content {
-  padding: 5px;
+  padding: 5px 0;
 }
 .hdrm_dt .form-filter {
   height: 35px;
@@ -137,7 +140,7 @@
   cursor: pointer;
   font-size: 12px !important;
   height: 30px;
-  margin-top: 7px;
+  
   -webkit-box-shadow: none;
   width: 90px;
 }
@@ -210,6 +213,11 @@
   font-size: 13px !important;
   color: #555;
 }
+.hdrm_dt #content2 .labelsAndValues-labelCell, 
+.hdrm_dt #content3 .labelsAndValues-labelCell{ 
+  display: none !important;
+}
+
 .hdrm_dt .form-alert {
   background-color: #ff9800;
   color: #FFFFFF;
@@ -321,7 +329,7 @@
   width: 80px;
   height: 80px;
   display: none;
-  margin: 20px auto 0px auto;
+  margin: 20px auto 20px auto;
 }
 .hdrm_dt .lds-facebook div {
   display: inline-block;
@@ -410,11 +418,22 @@
   margin-top: -4px;
   background-color: rgba(0,0,0,0.5);
   color: white;
-  margin-bottom: 10px;
 }
 .hdrm_dt .form-Analysis {    
   padding: 10px 0px;
   font-size: 13px;
+}
+.hdrm_dt .form-row {
+  
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0px 5px 8px 5px;
+}
+
+.hdrm_dt .form-horizontal > select {
+  width: 96.5% !important;
+  box-sizing: border-box;
+  
 }
 .hdrm_dt .form-Analysis input[type='number'],
 .hdrm_dt .form-Analysis p,
@@ -424,7 +443,7 @@
   margin: 0;
 }
 .hdrm_dt .form-Analysis .analysis-text {
-  width: 110px;
+  width: 130px;
   text-align: right;
   padding-right: 5px;
   margin-right: 0px;
@@ -442,18 +461,18 @@
 .hdrm_dt .form-Analysis .analysis-unit {
   margin-top: 2px;
   line-height: 26px;
-  width: 50px;
+  width: 30px;
   border-right: 2px solid white;
   padding-right: 5px;
   margin-right: 0px;
 }  
 .hdrm_dt .form-Analysis button { 
   height: 30px;
-  width: 80px;
+  width: 86px;
 
 }
 
-
+/*
 .hdrm_dt .leyend { 
   margin-top: 10px;
   padding: 5px;
@@ -484,3 +503,4 @@
   max-height: 500px;
   
 }
+*/
