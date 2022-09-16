@@ -191,7 +191,10 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             this.inherited(arguments);
             /* Servicio de Geometria */
             /* https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer */
-            this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+            //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+
+            esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
             this._htmlTable(this.ID_Table_Count);
@@ -752,6 +755,9 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
         },
         _diagnosisLayer: function(GPL) {
             try { /* Intersección de las capas operativas */
+                this.map.graphics.remove(this.bufferSelect_geometry);
+                this._htmlTable(this.ID_Table_Analysis);
+                
                 let [id, srv] = GPL;
                 let query = new Query();
                 query.objectIds = [id];
@@ -899,7 +905,6 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     //let countPagination = 0;
                     //let unionGeometry = [];
                     //let unionGeometryGeneral = [];
-                    
 
                     let fragment = document.createDocumentFragment();
                     let row = document.createElement("tr");
@@ -922,7 +927,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
 
                     let queryTask = new QueryTask(_url);
                     let query = new Query();
-                    //query.outFields = lyr.fields.map(x => x.field);
+                    query.outFields =_field.map(x => x.field);
                     query.geometry = _geometry;
                     query.spatialRelationship = "esriSpatialRelIntersects";
                     query.geometryType = "esriGeometryEnvelope";
@@ -931,8 +936,10 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                     queryTask.executeForCount(query).then(
                         (count) => {
                             _count = count;
-                            /*console.log(count);
-                            this.countAnalysis_Cantidad = this.countAnalysis_Cantidad + count;*/
+                            console.log(" - - - - - - - - - ");
+                            console.log(count);
+                            console.log(" - - - - - - - - - ");
+                            this.countAnalysis_Cantidad = this.countAnalysis_Cantidad + count;
                             this._elementById(`ID_1_${_id}`).innerText = count;
                         },
                         (error) => {  
@@ -940,17 +947,91 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                         }
                     ).always(lang.hitch(this, function() { 
                         if(_count == 0) {
-                            this.ID_Load_Buffer.style.display = "none";
-                            this.ID_Table_Buffer.style.display = "block";  
+                            this.ID_Load_Analysis.style.display = "none";
+                            this.ID_Table_Analysis.style.display = "block";  
                             this.map.graphics.remove(this.bufferSelect_geometry);
                             this.bufferSelect_geometry = null;
-                            this._htmlTable(this.ID_Table_Analysis);
-                            
+                            this._htmlTable(this.ID_Table_Analysis);                            
                             return false;
                         }
 
                         if(_count > 1000) {
+                            let arrLong = [];
+                            this.bufferCount = 0;
+                            const sizeFeature = Math.ceil(_count/500);
+                            //console.log(sizeFeature);
+                            for (let H = 0; H < sizeFeature; H++) {
+                                let queryTask_1k = new QueryTask(_url);
+                                let query_1k = new Query();
+                                query_1k.outFields =_field.map(x => x.field);
+                                query_1k.geometry = _geometry;
+                                query_1k.spatialRelationship = "esriSpatialRelIntersects";
+                                query_1k.geometryType = "esriGeometryEnvelope";
+                                query_1k.num = 500;
+                                query_1k.start = (H*500);
+                                query_1k.returnGeometry = true;
+                                //console.log(query_1k);
+                                queryTask_1k.execute(query_1k).then(
+                                    (result_geo) => {
+                                        console.log("===> " + result_geo.features.length);
+                                        console.log(result_geo.features.length);
+                                        result_geo.features.map(function(feature) {
+                                            this.bufferCount = this.bufferCount + 1;
+                                            console.log(this.bufferCount);
+                                            if(feature.geometry.type == "polyline") {                                                
+                                                arrLong.push(feature.attributes[_long]);
+                                                unionGeometry.push(feature.geometry);
+                                            }
+                                        }.bind(this));
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Analisis - Oops! 1 => ${error.name} - ${error.message}`);                                
+                                    }
+                                ).always(lang.hitch(this, function() {
+                                    /* Condicional para el total */
+                                    console.log(_count);
+                                    console.log(this.bufferCount);
 
+                                    /*
+                                    if(_count == this.bufferCount) {
+                                        console.log("ENTRO");
+                                        let longKm = arrLong.reduce((a, b) => a + b, 0);
+                                        this._elementById(`ID_2_${_id}`).innerText = parseFloat(longKm).toFixed(3);
+                                        
+                                        this.ID_Load_Analysis.style.display = "none";
+                                        this.ID_Table_Analysis.style.display = "block";                                             
+                                        
+                                        let geometryBuffer = geometryEngine.geodesicBuffer(
+                                            geometryEngine.union(unionGeometry),
+                                            [this.ID_Buffer.value],
+                                            GeometryService.UNIT_KILOMETER, true
+                                        );
+                                        // UNIT_KILOMETER, UNIT_METER
+    
+                                        // Geometry Graphic
+                                        let graphicBuffer = new Graphic(geometryBuffer, colorSimpleFillSymbol);
+                                        this.bufferSelect_geometry = graphicBuffer;
+                                        this.map.graphics.add(graphicBuffer);
+                                        let itemRandom = this._getRandom();
+                                        this.analysisRandom = itemRandom;
+    
+                                        setTimeout(() => {
+                                            this.analysisTemp.map(function(lyr) {
+                                                this._intersectAnalysis(
+                                                    this.IDTableAnalysis_Name,
+                                                    this.analysisTemp,
+                                                    lyr,
+                                                    this.analysisTotal,
+                                                    itemRandom
+                                                );
+                                            }.bind(this));
+                                        },1000);
+                                    }
+                                    */
+                                   
+                                    
+                                }));
+                            }
                         } else {
                             // Sin Paginación
                             if(_count !== 0) {
@@ -989,9 +1070,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                     /* Geometry Graphic */
                                     let graphicBuffer = new Graphic(geometryBuffer, colorSimpleFillSymbol);
                                     this.bufferSelect_geometry = graphicBuffer;
-                                    this.map.graphics.add(graphicBuffer);                                    
-                                    let _random = this._getRandom();
-                                    this.reportItemRandom = _random;
+                                    this.map.graphics.add(graphicBuffer);
                                     //this._report(geometryBuffer, _random);
                                     let itemRandom = this._getRandom();
                                     this.analysisRandom = itemRandom;
