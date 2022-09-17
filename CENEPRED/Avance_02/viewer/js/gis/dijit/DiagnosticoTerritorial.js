@@ -119,7 +119,6 @@ define([
         diagnosisResult: 0,
         diagnosisTemp: [],
 
-
         analysisCount: 1,
         analysisTotal: 0,
         analysisRandom: null,
@@ -139,9 +138,6 @@ define([
         bufferSelect_url: "",
         bufferSelect_geometry: null,
 
-        
-        
-        
         countAnalysis_Cantidad: 0,
         countAnalysis_Km: [],
         textAmbito: "",
@@ -150,49 +146,11 @@ define([
         
         IDTableCount_Name: "",
         IDTableBuffer_Name: "",
-        /*
-        Ramos: new SimpleFillSymbol(
-            SimpleFillSymbol.STYLE_SOLID,
-            new SimpleLineSymbol(
-              SimpleLineSymbol.STYLE_SHORTDASHDOTDOT,
-              new Color([239,184,16]),
-              2
-            ),
-            new Color([239,184,16,0.1])
-        ),
-        */
-        /* RED VIAL */
-/*
-let symbolRedVial = new SimpleFillSymbol(
-    SimpleFillSymbol.STYLE_SOLID,
-    new SimpleLineSymbol(
-      SimpleLineSymbol.STYLE_SHORTDASHDOTDOT,
-      new Color([239,184,16]),
-      2
-    ),
-    new Color([239,184,16,0.1])
-);
-*/
-
-/* RED FERROVIARIA 
-let symbolRedFerroviaria = new SimpleFillSymbol(
-    SimpleFillSymbol.STYLE_SOLID,
-    new SimpleLineSymbol(
-      SimpleLineSymbol.STYLE_SHORTDASHDOTDOT,
-      new Color([57,153,0]),
-      2
-    ),
-    new Color([57,153,0,0.1])
-);
-*/
-        
-        
+     
         postCreate: function () {
             this.inherited(arguments);
             /* Servicio de Geometria */
-            /* https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer */
             //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
-
             esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 
             const config = JSON.parse(configJSON);
@@ -215,17 +173,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             const lyrDis = config.lyrFilter[2];
             const srvDis = lyrDis.srv[0];
             /* Setup List Layer DIAGNOSIS */
-
-            
-            /* Setup List Layer ANALYSIS */
-            //this.confAnalysis = config.lyrAnalysis;
-            
-            
-
-            /* Setup List Layer REPORT */
-            //this.confReport = config.lyrReport;
-
-            
+           
             /* Asigna en un solo nivel a confAnalysis_Temp */
             //this._loadJson(this.confAnalysis, this.confAnalysis_Temp);
 
@@ -240,9 +188,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             /* Asigna en un solo nivel a confReport_Temp */
             //this._reportJson(this.confReport, this.confReport_Temp);
 
-            /* Cuenta las capas */
-            //this._jsonCountLayer(config.lyrDiagnosis);
-
+            
             /* Load DEPARTAMENTO */
             let fillDep = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,97,97,0]);
             let featureLayerDep = this._loadLayer(lyrDep.srv[0].objectID, srvDep.url, fillDep, lyrDep.srv[0].depName);
@@ -571,27 +517,6 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 console.error(`Error: _loadSelect => ${error.name} - ${error.message}`);
             }
         },
-        /*
-        _jsonCountLayer: function(json) {
-            try {
-                let type; let resul;
-                let abc = 0;
-                for (var i=0; i < json.length; i++) {   
-                    type = typeof json[i].srv;
-                    if (type == "undefined") {
-                        resul = true;
-                        this.lyrTotal = this.lyrTotal + 1;
-                    } else {
-                        resul += this._jsonCountLayer(json[i].srv);
-                    }
-                }
-                return resul;
-            } catch (error) {
-                console.error(`Error: _jsonTravelTotal_66 => ${error.name} - ${error.message}`);
-            }
-        },
-        */
-            
         _ambito: function(htmlID, htmlPH, htmlPHAlter, htmlLBL, order, oID, item, svr, queryWhere) {
             try { /* Carga de los SELECTOR del ámbito */
                 let options = [];
@@ -826,9 +751,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                         if((this.diagnosisCount == _total) && (this.diagnosisRandom == _random)) {
                             this.ID_Load.style.display = "none";
                             this.ID_Table_Count.style.display = "block";                            
-                            /* Recorrer el JSON y asignamos a un nuevo array - this.confDiagnosis_Temp */
-                            //this._jsonTravelTree_Temp(this.confDiagnosis);
-
+                           
                             /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
                             this._sortJSON(_temp, 'cantidad','desc'); 
                             /* Inserta a la tabla */
@@ -871,24 +794,8 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             try {                
                 this._elementById(`${this.IDTableBuffer_Name}_Tbody`).innerHTML = "";
                 this.ID_Table_Buffer.style.display = "none";
-                this.ID_Load_Buffer.style.display = "block";                
-                
-                //this.countAnalysis_Cantidad = 0;
-                //this.countAnalysis_Km = [];
-
-                //console.log(this.ID_Analysis_Buffer.value);
-                //console.log(this.ID_Analysis_Buffer.value);
-                //console.log(this.ID_Analysis_Buffer.get('data-id')("data-id"));
-                //console.log(this.ID_Analysis_Buffer.getAttribute("data-long"));
-                /*
-                long
-                name
-                color
-                id
-                */
-                //console.log(this.ID_Buffer.value);
-                //console.log(this.analysisTemp);
-                /* console.log(this.geometryIntersect); */
+                this.ID_Load_Buffer.style.display = "block";
+              
                 let _count = 0;
                 let unionGeometry = [];
                 const _id    = this.bufferSelect_id;
@@ -899,13 +806,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                 const _url   = this.bufferSelect_url;
                 const _geometry = this.geometryIntersect;                
                 const colorSimpleFillSymbol = this._getColorSimpleFillSymbol(_color[0],_color[1],_color[2]);
-                /* Recorreo el JSON */
-                //this.bufferTemp.map(function(lyr) {
-                    //this.analysisTotal.push({id: lyr.id, long: 0});
-                    //let countPagination = 0;
-                    //let unionGeometry = [];
-                    //let unionGeometryGeneral = [];
-
+               
                     let fragment = document.createDocumentFragment();
                     let row = document.createElement("tr");
                     let cell_0 = document.createElement("td");
@@ -991,7 +892,6 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                     /* Condicional para el total */
                                     console.log(_count);
                                     console.log(this.bufferCount);
-
                                     /*
                                     if(_count == this.bufferCount) {
                                         console.log("ENTRO");
@@ -1084,204 +984,26 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
                                                 itemRandom
                                             );
                                         }.bind(this));
-                                    },1000);
-
-                                    /* this._intersectAnalysis(
-                                        this.IDTableCount_Name,
-                                        this.diagnosisTemp,
-                                        lyr,
-                                        this.diagnosisTotal,
-                                        itemRandom
-                                    ); */
-                                    
-                                    //this._reportBuffer();
-
-                                    // geometryEngine.union(unionGeometryGeneral);
-                                    // let params = new BufferParameters();
-                                    // params.distances = [this.ID_Buffer.value];
-                                    // params.outSpatialReference = this.map.spatialReference;
-                                    // params.outSpatialReference = unionGeometry[0].spatialReference;
-                                    // params.unit = GeometryService.UNIT_METER;
-                                    // params.geometries = union;
-                                    // params.bufferSpatialReference = new SpatialReference({wkid: 4326});
-                                    //params.outSpatialReference = new SpatialReference({wkid: 4326});
-                                    //102100
-                                    // this.geometrySRV.buffer(params, (bufferGeometries) => {
-                                        // console.log(bufferGeometries);
-                                        // let graphic = new Graphic(bufferGeometries, this.Ramos);
-                                        // this.map.graphics.add(graphic);
-                                    // });
-                                    
+                                    },1000);                                    
                                 }));
                             }
                         }
                     }));
-                    /*
-                    queryTask.executeForCount(query).then(
-                        (count) => {
-                            _paramCount = count;
-                            this.countAnalysis_Cantidad = this.countAnalysis_Cantidad + count;
-                            this._elementById(`ID_1_${lyr.id}`).innerText = count;
-                        },
-                        (error) => {  
-                            console.error(`Error: Analisis - Oops! executeForCount => ${error.name} - ${error.message}`); 
-                        }
-                    ).always(lang.hitch(this, function() {                        
-                        this._elementById(`${this.IDTableBuffer_Name}_Cantidad`).innerText = this.countAnalysis_Cantidad;
-                        
-                     
-                        
-                        if(_paramCount > 1000) {// Paginación
-                            
-                            const sizeFeature = Math.ceil(_paramCount/500);
-                            let queryTask_1 = new QueryTask(lyr.url);
-                            let query_1 = new Query();
-                            query_1.outFields = lyr.fields.map(x => x.field);
-                            query_1.geometry = this.geometryIntersect;
-                            query_1.SpatialRelationship = "esriSpatialRelIntersects";
-                            query_1.geometryType = "esriGeometryEnvelope";
-                            query_1.returnGeometry = true;
-                            countPagination = sizeFeature-1;
-                            let arrLength = []
-                            for (let H = 0; H < sizeFeature; H++) {
-                                query_1.num = 500;
-                                query_1.start = (H*500);
-                                queryTask_1.execute(query_1).then(
-                                    (response) => {
-                                        response.features.map(function(feature) {
-                                            if(feature.geometry.type == "polyline") {
-                                                arrLength.push(feature.attributes[lyr.long]);
-                                            }
-                                        }.bind(this));
-                                    },
-                                    (error) => {
-                                        console.error(`Error: Analisis - Oops! 1 => ${error.name} - ${error.message}`);                                
-                                    }
-                                ).always(lang.hitch(this, function() {
-                                    let totalKm = arrLength.reduce((a, b) => a + b, 0);
-                                    this._elementById(`ID_2_${lyr.id}`).innerText = parseFloat(totalKm).toFixed(3);
-                                    
-                                    analysisTotal.forEach(function(_arr) {
-                                        if(_arr.id == lyr.id) {
-                                            _arr.long = parseFloat(totalKm).toFixed(3)
-                                        }
-                                    });
-
-                                    let _countTemp = 0;
-                                    analysisTotal.forEach(function(_arr) {
-                                        _countTemp = _countTemp + parseFloat(_arr.long);
-                                        this._elementById(`${this.IDTableBuffer_Name}_Km`).innerText = _countTemp;
-                                    }.bind(this));
-                                    
-                                    if(countPagination == H) {
-                                        this.ID_Load_Buffer.style.display = "none";
-                                        this.ID_Table_Analysis.style.display = "block";
-                                    }
-                                    
-                                    //if(countPagination == H) {
-                                        //let geometryUnion = geometryEngine.union(unionGeometry);
-                                        //console.log("Entro para graficar");
-                                        // Geometry Buffer
-                                        //let geometryBuffer = geometryEngine.geodesicBuffer(geometryUnion, [this.ID_Buffer.value], GeometryService.UNIT_METER, true);
-                                        //console.log(geometryBuffer);
-                                        // Geometry Graphic
-                                        //let graphicBuffer = new Graphic(geometryBuffer, colorSimpleFillSymbol);
-                                        //this.map.graphics.add(graphicBuffer);                                    
-                                        //this.ID_Load_Buffer.style.display = "none";
-                                        //this.ID_Table_Analysis.style.display = "block";
-                                    //}                                    
-                                    //
-                                }.bind(this)));
-                            }
-                        } else {
-                            // Sin Paginación
-                            if(_paramCount !== 0) {
-                                let arrLength = [];
-                                
-                                let queryTask_2 = new QueryTask(lyr.url);
-                                let query_2 = new Query();
-                                query_2.outFields = lyr.fields.map(x => x.field);
-                                query_2.geometry = this.geometryIntersect;
-                                query_2.SpatialRelationship = "esriSpatialRelIntersects";
-                                query_2.geometryType = "esriGeometryEnvelope";
-                                query_2.returnGeometry = true;
-                                queryTask_2.execute(query_2).then(
-                                    (response) => {
-                                        response.features.map(function(feature) {
-                                            if(feature.geometry.type == "polyline") {
-                                                arrLength.push(feature.attributes[lyr.long]);
-                                            }
-                                        }.bind(this));
-                                    },
-                                    (error) => {
-                                        console.error(`Error: Analisis - Oops! 2 => ${error.name} - ${error.message}`);                                
-                                    }
-                                ).always(lang.hitch(this, () => {                                    
-                                    let totalKm = arrLength.reduce((a, b) => a + b, 0);
-                                    this._elementById(`ID_2_${lyr.id}`).innerText = parseFloat(totalKm).toFixed(3);
-
-                                    analysisTotal.forEach(function(_arr) {
-                                        if(_arr.id == lyr.id) {
-                                            _arr.long = parseFloat(totalKm).toFixed(3)
-                                        }
-                                    });
-
-                                    let _countTemp = 0;
-                                    analysisTotal.forEach(function(_arr) {
-                                        _countTemp = _countTemp + parseFloat(_arr.long);
-                                        this._elementById(`${this.IDTableBuffer_Name}_Km`).innerText = _countTemp;
-                                    }.bind(this));                                    
-                                    
-                                    // Bloque LOAD
-                                    this.ID_Load_Buffer.style.display = "none";
-                                    // Bloque TABLE
-                                    this.ID_Table_Analysis.style.display = "block";  
-                                    
-                                    this._reportBuffer();
-
-                                    // geometryEngine.union(unionGeometryGeneral);
-                                    // let params = new BufferParameters();
-                                    // params.distances = [this.ID_Buffer.value];
-                                    // params.outSpatialReference = this.map.spatialReference;
-                                    // params.outSpatialReference = unionGeometry[0].spatialReference;
-                                    // params.unit = GeometryService.UNIT_METER;
-                                    // params.geometries = union;
-                                    // params.bufferSpatialReference = new SpatialReference({wkid: 4326});
-                                    //params.outSpatialReference = new SpatialReference({wkid: 4326});
-                                    //102100
-                                    // this.geometrySRV.buffer(params, (bufferGeometries) => {
-                                        // console.log(bufferGeometries);
-                                        // let graphic = new Graphic(bufferGeometries, this.Ramos);
-                                        // this.map.graphics.add(graphic);
-                                    // });
-                                    
-                                }));
-                            }
-                        }
-                       
-                    }.bind(this)));
-                    */
-//                }.bind(this));
+                  
             } catch (error) {
                 console.error(`Error: _buffer => ${error.name} - ${error.message}`);
             }
         },
         _intersectAnalysis: function(_id, _temp, _lyr, _total, _random) {
-            try {
-                //console.log(_id, _temp, _lyr, _total, _random);
-                //console.log(this.bufferSelect_geometry.geometry);
-                /*this.ID_Table_Count.style.display = "none";
-                this.ID_Load.style.display = "block";*/        
+            try {      
                 let queryTask_analysis = new QueryTask(_lyr.url);
                 let query_analysis = new Query();
                 query_analysis.outFields = _lyr.fields.map(x => x.field);
-                //console.log(this.bufferSelect_geometry);
                 //query.geometry = this.bufferSelect_geometry.geometry;
                 query_analysis.where = "1=1";
                 query_analysis.spatialRelationship = "esriSpatialRelIntersects";
                 query_analysis.geometryType = "esriGeometryEnvelope";
                 query_analysis.returnGeometry = true;
-                //console.log(query);
                 queryTask_analysis.executeForCount(query_analysis).then(
                     (count) => {
                         try {
@@ -1569,191 +1291,7 @@ let symbolRedFerroviaria = new SimpleFillSymbol(
             } catch(error) {
                 console.error(`__getRandomInt => ${error.name} - ${error.message}`);
             }
-        },
-        _reportBuffer: function() {
-            try {
-                this.reportItemResult = 0;
-                this.reportItemCount = 1;
-                /* Bloque LOAD */
-                this.ID_Load_Report.style.display = "block";
-                /* Bloque TABLE */
-                this.ID_Table_Report.style.display = "none";                
-                /* Recorreo el JSON */
-                this.confAnalysis_Temp.map(function(lyr) {
-                    let _paramCount = 0;
-                    let queryTask = new QueryTask(lyr.url);
-                    let query = new Query();
-                    query.outFields = lyr.fields.map(x => x.field);
-                    query.geometry = this.geometryIntersect;
-                    query.spatialRelationship = "esriSpatialRelIntersects";
-                    query.geometryType = "esriGeometryEnvelope";
-                    query.returnGeometry = false;
-
-                    queryTask.executeForCount(query).then(
-                        (count) => {
-                            _paramCount = count;
-                        },
-                        (error) => {  
-                            console.error(`Error: Analisis - Oops! executeForCount => ${error.name} - ${error.message}`); 
-                        }
-                    ).always(lang.hitch(this, function() {
-                        /* Get Color Symbol */
-                        let colorSimpleFillSymbol = this._getColorSimpleFillSymbol(lyr.color[0],lyr.color[1],lyr.color[2]);
-                        if(_paramCount > 1000) { /* Paginación */
-                            unionGeometry = [];
-                            const sizeFeature = Math.ceil(_paramCount/500);
-                            let queryTask_1 = new QueryTask(lyr.url);
-                            let query_1 = new Query();
-                            query_1.outFields = lyr.fields.map(x => x.field);
-                            query_1.geometry = this.geometryIntersect;
-                            query_1.SpatialRelationship = "esriSpatialRelIntersects";
-                            query_1.geometryType = "esriGeometryEnvelope";
-                            query_1.returnGeometry = true;
-                            countPagination = sizeFeature-1;
-                            for (let H = 0; H < sizeFeature; H++) {
-                                query_1.num = 500;
-                                query_1.start = (H*500);
-                                queryTask_1.execute(query_1).then(
-                                    (response) => {
-                                        response.features.map(function(feature) {
-                                            if(feature.geometry.type == "polyline") {
-                                                unionGeometry.push(feature.geometry);
-                                            }
-                                        }.bind(this));
-                                    },
-                                    (error) => {
-                                        console.error(`Error: Analisis - Oops! 1 => ${error.name} - ${error.message}`);                                
-                                    }
-                                ).always(lang.hitch(this, function() {
-                                    if(countPagination == H) {
-                                        this.ID_Load_Buffer.style.display = "none";
-                                        this.ID_Table_Analysis.style.display = "block";
-                                    }
-                                    /* if(countPagination == H) {
-                                        let geometryUnion = geometryEngine.union(unionGeometry);
-                                        console.log("Entro para graficar");
-                                        // Geometry Buffer
-                                        let geometryBuffer = geometryEngine.geodesicBuffer(geometryUnion, [this.ID_Buffer.value], GeometryService.UNIT_METER, true);
-                                        console.log(geometryBuffer);
-                                        // Geometry Graphic
-                                        let graphicBuffer = new Graphic(geometryBuffer, colorSimpleFillSymbol);
-                                        this.map.graphics.add(graphicBuffer);                                    
-                                        this.ID_Load_Buffer.style.display = "none";
-                                        this.ID_Table_Analysis.style.display = "block";
-                                    } */
-                                }.bind(this)));
-                            }
-                        } else {
-                            /* Sin Paginación */
-                            if(_paramCount !== 0) {
-                                let unionGeometry = [];
-                                let queryTask_2 = new QueryTask(lyr.url);
-                                let query_2 = new Query();
-                                query_2.outFields = lyr.fields.map(x => x.field);
-                                query_2.geometry = this.geometryIntersect;
-                                query_2.SpatialRelationship = "esriSpatialRelIntersects";
-                                query_2.geometryType = "esriGeometryEnvelope";
-                                query_2.returnGeometry = true;
-                                queryTask_2.execute(query_2).then(
-                                    (response) => {
-                                        response.features.map(function(feature) {
-                                            if(feature.geometry.type == "polyline") {
-                                                unionGeometry.push(feature.geometry);
-                                            }
-                                        }.bind(this));
-                                    },
-                                    (error) => {
-                                        console.error(`Error: Analisis - Oops! 2 => ${error.name} - ${error.message}`);                                
-                                    }
-                                ).always(lang.hitch(this, () => {                              
-                                    /* Geometry Union */
-                                    let geometryUnion = geometryEngine.union(unionGeometry);
-                                    this.reportGeometryUnion = geometryUnion;
-                                    /* Geometry Buffer */                                    
-                                    let geometryBuffer = geometryEngine.geodesicBuffer(geometryUnion, [this.ID_Buffer.value], GeometryService.UNIT_KILOMETER, true);/* UNIT_KILOMETER, UNIT_METER */
-                                    /* Geometry Graphic */
-                                    let graphicBuffer = new Graphic(geometryBuffer, colorSimpleFillSymbol);
-                                    this.reportGeometryIntersect = graphicBuffer;
-                                    this.map.graphics.add(graphicBuffer);                                    
-                                    let _random = this._getRandom();
-                                    this.reportItemRandom = _random;
-                                    this._report(geometryBuffer, _random);
-                                }));
-                            }
-                        }
-                    }.bind(this)));  
-                }.bind(this));
-            } catch (error) {
-                console.error(`Error: _reportBuffer => ${error.name} - ${error.message}`);
-            }
-        },
-        _report: function(_geometryBuffer, _random) {
-            this._elementById(`${this.IDTableReport_Name}_Tbody`).innerHTML = "";
-            
-            
-            setTimeout(() => {
-                // Recorreo el JSON
-                this.confDiagnosis_Temp.map(function(lyr) {
-                    try {
-                        let queryTask = new QueryTask(lyr.url);
-                        let query = new Query();
-                        query.outFields = lyr.fields.map(x => x.field);
-                        query.geometry = _geometryBuffer;                        
-                        query.SpatialRelationship = "esriSpatialRelIntersects";
-                        query.geometryType = "esriGeometryEnvelope";
-                        query.returnGeometry = false;
-                        this.deferredReport = queryTask.executeForCount(query)
-                        this.deferredReport.then(
-                            (count) => {
-                                try {
-                                    if (this.reportItemRandom == _random) {
-                                        this.reportItemCount++;
-                                        lyr.cantidad = count;
-                                        console.log(count);
-                                        this.reportItemResult = this.reportItemResult + count;
-                                        this._elementById(`${this.IDTableReport_Name}_Total`).innerText = this.reportItemResult;
-                                    }
-                                } catch (error) {
-                                    console.error(`Error: _queryTaskReport - count => ${error.name} - ${error.message}`);
-                                }                    
-                            },
-                            (error) => {  
-                                console.error(`Error: _queryTaskReport - error => ${error.name} - ${error.message}`);
-                            }
-                        ).always(lang.hitch(this, function() {
-                            try {
-                                if(((this.reportItemCount - 1) == this.reportItemTotal) && (this.reportItemRandom == _random)) {
-                                    this.ID_Load_Report.style.display = "none";
-                                    this.ID_Table_Report.style.display = "block";
-                                    this._sortJSON(this.confDiagnosis_Temp,'cantidad','desc');
-                                    this.confDiagnosis_Temp.map(function(cValue, index){
-                                        let fragment = document.createDocumentFragment();
-                                        let row = document.createElement("tr");
-                                        let cell_0 = document.createElement("td");
-                                        let cellText_0 = document.createTextNode(index + 1);
-                                        cell_0.appendChild(cellText_0);
-                                        let cell_1 = document.createElement("td");
-                                        cell_1.innerHTML = cValue.name;
-                                        let cell_2 = document.createElement("td");
-                                        let cellText_2 = document.createTextNode(cValue.cantidad || 0);
-                                        cell_2.appendChild(cellText_2);
-                                        row.appendChild(cell_0);
-                                        row.appendChild(cell_1);
-                                        row.appendChild(cell_2);
-                                        fragment.appendChild(row);
-                                        this._elementById(`${this.IDTableReport_Name}_Tbody`).appendChild(fragment);
-                                    }.bind(this));   
-                                }
-                            } catch (error) {
-                                console.error(`Error: always => ${error.name} - ${error.message}`);
-                            } 
-                        }.bind(this)));
-                    } catch (error) {
-                        console.error(`Error: confDiagnosis_Temp => ${error.name} - ${error.message}`);
-                    }
-                }.bind(this));                
-            }, 5000);
-        },
+        },     
         _queryTaskReport: function(lyr, srv, _geometryIntersect, _random){
             try {
                 /* if(this.deferredReport && (this.deferredReport > 0)) {
