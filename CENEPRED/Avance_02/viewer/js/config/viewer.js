@@ -153,162 +153,159 @@ define([
         // The 'options' object is passed as the layers options for constructor. Title will be used in the legend only. id's must be unique and have no spaces.
         // 3 'mode' options: MODE_SNAPSHOT = 0, MODE_ONDEMAND = 1, MODE_SELECTION = 2
         operationalLayers: [{
-            type: 'feature',
-            url: 'https://services1.arcgis.com/6bXbLtkf4y11TosO/arcgis/rest/services/Restaurants/FeatureServer/0',
-            title: i18n.viewer.operationalLayers.restaurants,
-            options: {
-                id: 'restaurants',
-                opacity: 1.0,
-                visible: true,
-                outFields: ['*'],
-                mode: 0
-            },
-            editorLayerInfos: {
-                disableGeometryUpdate: false
-            },
-            legendLayerInfos: {
-                exclude: false,
-                layerInfo: {
-                    title: i18n.viewer.operationalLayers.restaurants
-                }
-            },
-            layerControlLayerInfos: {
-                layerGroup: 'Grouped Feature Layers'
-            }
-        }, {
-            type: 'feature',
-            url: 'https://sampleserver6.arcgisonline.com/ArcGIS/rest/services/SF311/FeatureServer/0',
-            title: i18n.viewer.operationalLayers.sf311Incidents,
-            options: {
-                id: 'sf311Incidents',
-                opacity: 1.0,
-                visible: false,
-                outFields: ['req_type', 'req_date', 'req_time', 'address', 'district'],
-                mode: 0
-            },
-            layerControlLayerInfos: {
-                layerGroup: 'Grouped Feature Layers',
-                menu: [{
-                    topic: 'hello',
-                    label: 'Say Hello Custom',
-                    iconClass: 'fa fa-smile-o'
-                }]
-            }
-        }, {
             type: 'dynamic',
-            url: 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/PublicSafety/PublicSafetyOperationalLayers/MapServer',
-            title: i18n.viewer.operationalLayers.louisvillePubSafety,
+            url: 'http://sigrid.cenepred.gob.pe/arcgis/rest/services/collect/sigrid_collect/MapServer',
+            title: "SIGRID Collect",
             options: {
-                id: 'louisvillePubSafety',
-                opacity: 1.0,
-                visible: true,
-                imageParameters: buildImageParameters({
-                    layerIds: [0, 2, 4, 5, 8, 10, 12, 21],
-                    layerOption: 'show'
-                })
-            },
-            identifyLayerInfos: {
-                layerIds: [2, 4, 5, 8, 12, 21]
-            },
-            layerControlLayerInfos: {
-                layerIds: [0, 2, 4, 5, 8, 9, 10, 12, 21]
-            },
-            legendLayerInfos: {
-                layerInfo: {
-                    hideLayers: [21]
-                }
-            }
-        }, {
-            type: 'dynamic',
-            url: 'https://sampleserver6.arcgisonline.com/arcgis/rest/services/DamageAssessment/MapServer',
-            title: i18n.viewer.operationalLayers.damageAssessment,
-            options: {
-                id: 'damageAssessment',
+                id: 'SIGRIDCollect',
                 opacity: 1.0,
                 visible: true,
                 imageParameters: buildImageParameters()
             },
             legendLayerInfos: {
-                exclude: true
+                exclude: false
+            },
+            layerControlLayerInfos: {                
+                swipe: true,
+                metadataUrl: true,
+                expanded: false 
+            }
+        },
+
+        {
+            type: 'dynamic',
+            url: 'http://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer',
+            title: "Elementos Expuestos",
+            options: {
+                id: 'elementosExpuestos',
+                opacity: 1.0,
+                visible: true,
+                imageParameters: buildImageParameters()
+            },
+            legendLayerInfos: {
+                exclude: false
+            },
+            layerControlLayerInfos: {                
+               // layerIds: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,31,32,33,34],
+                swipe: true,
+                metadataUrl: true,
+                expanded: false,                
+                sublayers: true
+            }
+        },
+
+        {
+            type: 'dynamic',
+            url: 'http://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer',
+            title: "Informacion CENEPRED",
+            options: 
+            {
+                id: 'informacionCENEPRED',
+                opacity: 1.0,
+                visible: true,
+                imageParameters: buildImageParameters()
+            },
+            legendLayerInfos: 
+            {
+                exclude: false
+            },
+            layerControlLayerInfos: 
+            {
+                swipe: true,
+                metadataUrl: true,
+                expanded: false
+            }
+        },
+
+        {
+            type: 'dynamic',
+            url: 'http://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer',
+            title: "Cartografia Riesgos",
+            options: {
+                id: 'cartografiaRiesgos',
+                opacity: 1.0,
+                visible: true,
+                imageParameters: buildImageParameters()
+            },
+            legendLayerInfos: {
+                exclude: false
             },
             layerControlLayerInfos: {
                 swipe: true,
                 metadataUrl: true,
-                expanded: true,
+                expanded: false
+            }
+        },
 
-                //override the menu on this particular layer
-                subLayerMenu: [{
-                    topic: 'hello',
-                    label: 'Say Hello',
-                    iconClass: 'fa fa-smile-o'
-                }]
-            }
-        }, {
+        {
             type: 'dynamic',
-            url: 'https://sampleserver6.arcgisonline.com/arcgis/rest/services/SampleWorldCities/MapServer',
-            title: i18n.viewer.operationalLayers.cities,
+            url: 'http://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer',
+            title: "Cartografia Peligros",
             options: {
-                id: 'cities',
-                visible: false
-            }
-        /*
-        //examples of vector tile layers (beta in v3.15)
-        }, {
-            type: 'vectortile',
-            title: 'Light Gray Canvas Vector',
-            url: 'https//www.arcgis.com/sharing/rest/content/items/bdf1eec3fa79456c8c7c2bb62f86dade/resources/styles/root.json',
-            options: {
-                id: 'vectortile1',
-                opacity: 0.8,
-                visible: true
-            }
-        }, {
-           //  taken from this demo: https://github.com/ycabon/presentations/blob/gh-pages/2015-berlin-plenary/demos/3.15-vectortile/create-by-style-object.html
-            type: 'vectortile',
-            title: 'Custom Vector Style',
-            options: {
-                id: 'vectortile2',
+                id: 'cartografiaPeligros',
                 opacity: 1.0,
                 visible: true,
-                'glyphs': 'https://www.arcgis.com/sharing/rest/content/items/00cd8e843bae49b3a040423e5d65416b/resources/fonts/{fontstack}/{range}.pbf',
-                'sprite': 'https://www.arcgis.com/sharing/rest/content/items/00cd8e843bae49b3a040423e5d65416b/resources/sprites/sprite',
-                'version': 8,
-                'sources': {
-                    'esri': {
-                        'url': 'https://basemapsdev.arcgis.com/arcgis/rest/services/World_Basemap/VectorTileServer',
-                        'type': 'vector'
-                    }
-                },
-                'layers': [{
-                    'id': 'background',
-                    'type': 'background',
-                    'paint': {
-                        'background-color': '#556688'
-                    }
-                }, {
-                    'id': 'Land',
-                    'type': 'fill',
-                    'source': 'esri',
-                    'source-layer': 'Land',
-                    'paint': {
-                        'fill-color': '#273344'
-                    },
-                }, {
-                    'id': 'roads',
-                    'type': 'line',
-                    'source': 'esri',
-                    'source-layer': 'Road',
-                    'layout': {
-                        'line-join': 'round'
-                    },
-                    'paint': {
-                        'line-width': 1,
-                        'line-color': '#131622'
-                    }
-                }]
+                imageParameters: buildImageParameters()
+            },
+            legendLayerInfos: {
+                exclude: false
+            },
+            layerControlLayerInfos: {
+                swipe: true,
+                metadataUrl: true,
+                expanded: false
             }
-        */
-        }],
+        },
+
+        {
+            type: 'dynamic',
+            url: 'http://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer',
+            title: "Información Complementaria",
+            options: {
+                id: 'informacionComplementaria',
+                opacity: 1.0,
+                visible: true,
+                imageParameters: buildImageParameters()
+            },            
+            legendLayerInfos: {
+                exclude: false
+            },
+            //Para mostrar popups
+           identifyLayerInfos: {
+                //layerIds: [1,7,8,9,10,12,13,14,16,17,19,20,21,22,23,24,27,28,29,30,32,33,34,35,38,39,40,42,43,45,46,48,49,50,51,52]
+                //layerIds: [6010000,6010100,6010200,6010300,6010400,6010500,6030100,6030200,6040000,6050000,6060000,6060100,6060200,6070000,6080000,6080100,6080200,6090000,6090100,6090200,6090300,6090400,6090500,6090600,6100000,6100100,6100101,6100102,6100103,6100104,6100200,6100201,6100202,6100203,6100204,6100300,6110000,6110100,6110200,6110300,6120000,6120100,6120200,6130000,6130100,6130200,6130300,6130301,6130302,6130303,6130400,6130500]
+                layerIds: [6010000,6010100,6010200,6010300,6010400,6010500,6030100,6030200,6040000,6050000,6060000,6060100,6060200,6070000,6080000,6080100,6080200,6090000,6090100,6090200,6090300,6090400,6090500,6090600,6100000,6100100,6100101,6100102,6100103,6100104,6100200,6100201,6100202,6100203,6100204,6100300,6110000,6110100,6110200,6110300,6120000,6120100,6120200,6130000,6130100,6130200,6130400,,6130500,6140000]
+            },
+            layerControlLayerInfos: {
+                swipe: true,
+                metadataUrl: true,
+                expanded: false 
+            }
+        },  
+
+        {
+            type: 'dynamic',
+            url: 'http://sigrid.cenepred.gob.pe/arcgis/rest/services/MEF/prevaed/MapServer',
+            title: "PREVAED",
+            options: 
+            {
+                id: 'prevaedmef',
+                opacity: 1.0,
+                visible: true,
+                imageParameters: buildImageParameters()
+            },            
+            legendLayerInfos: 
+            {
+                exclude: false
+            },            
+            layerControlLayerInfos: 
+            {
+                swipe: true,
+                metadataUrl: true,
+                expanded: false 
+            }
+        }
+    ],
         // set include:true to load. For titlePane type set position the the desired order in the sidebar
         widgets: {
             growler: {
