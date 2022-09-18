@@ -71,6 +71,7 @@ require([
 
     let _htmlTable = function(ID_Table) {
         try { /* Se crea la tabla de resumen */
+            ID_Table.innerHTML = "";
             const idTable = ID_Table.getAttribute("id"); 
             const tbl = document.createElement("table");
             tbl.className = "tbl";
@@ -145,6 +146,8 @@ require([
     let _queryTask = function(lyr, _ambito, _index) {
         try {
             if(Object.keys(lyr).length !== 1) { /* Se filtra para que no entre la cabeceras de grupos */
+                this.ID_Load.style.display = "block";    
+                this.ID_TABLE_Resumen.style.display = "none";            
                 let queryTask = new QueryTask(lyr.url);
                 let query = new Query();
                 query.outFields = lyr.fields.map(x => x.name);
@@ -165,7 +168,7 @@ require([
                                 const chart = Chart.getChart(chartID);
                                 chartData.push(lyr.cantidad);
                                 chartLabel.push(lyr.name.replace(/<[^>]+>/g, ''));
-                                chartBackgroundColor.push(lyr.rgb);
+                                chartBackgroundColor.push(lyr.rgb);                                
                                 chart.data.datasets[0].data = chartData;
                                 chart.data.datasets[0].backgroundColor = chartBackgroundColor;
                                 chart.data.labels = chartLabel;
@@ -180,8 +183,11 @@ require([
                     }
                 ).always(lang.hitch(this, function() {
                     try {
+                        this.ID_Load.style.display = "none";
+                        this.ID_TABLE_Resumen.style.display = "block";
                         /* Se limpiar TABLE */
                         _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
+                        //_htmlTable(_elementById("ID_TABLE_Resumen"));
                         /* Se ordena JSON */
                         _sortJSON(configReport_Temp, 'cantidad','desc'); 
                         /* Se lista capas */
