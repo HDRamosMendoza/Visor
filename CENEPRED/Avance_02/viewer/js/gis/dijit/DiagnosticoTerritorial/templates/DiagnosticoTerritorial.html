@@ -7,51 +7,16 @@
               
             <input id="ID_Tab_Diagnosis" type="radio" name="tabs-2">
             <label for="ID_Tab_Diagnosis">Resultado</label>
-              
+            <!--
             <input id="ID_Tab_Analysis" type="radio" name="tabs-2">
             <label for="ID_Tab_Analysis">Análisis</label>
-            
+            -->
             <section id="content1">
                 <div class="tab-content">
                     <label class="subTitle">» Seleccionar Ámbito</label>
                     <hr>               
                     <!-- Departamento -->
                     <div data-dojo-attach-point="ID_HDRM"></div>
-                    <!--
-                    <div class="form-filter">
-                        <div>
-                            <label for="ID_Departamento" class="form-label">
-                                Departamento
-                            </label>
-                        </div>
-                        <select id="ID_Departamento">
-                            <option value="">Seleccione Departamento</option>
-                        </select>    
-                    </div>
-                    
-                    <div class="form-filter">
-                        <div>
-                            <label for="ID_Provincia" class="form-label">
-                                Provincia
-                            </label>
-                        </div>
-                        <select id="ID_Provincia">
-                            <option value="">Elija Departamento</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-filter">
-                        <div>
-                            <label for="ID_Distrito" class="form-label" style=" text-align: right">Distrito</label>
-                        </div>
-                        <select id="ID_Distrito">
-                            <option value="">Elija Provincia</option>
-                        </select>
-                    </div>
-                    
-                    <hr style="margin-top: 0;">
-                    -->
-
                     <div class="form-alert" data-dojo-attach-point="ID_Alert">
                         <strong>Advertencia! </strong> Seleccione Departamento
                     </div>
@@ -61,10 +26,6 @@
                             <i class="fa fa-eraser" aria-hidden="true"></i>
                             Limpiar
                         </button>
-                        <button type="button" data-dojo-attach-point="ID_Report">
-                            <i class="fa fa-file-text" aria-hidden="true"></i>
-                            Reporte
-                        </button>  
                         <button type="button" data-dojo-attach-point="ID_Diagnosis">
                             <i class="fa fa-search" aria-hidden="true"></i>
                             Diagnóstico
@@ -79,15 +40,14 @@
                         <div class="form-count-count" data-dojo-attach-point="ID_Count">0</div>
                         <div class="form-count-title">Coincidencia(s) de registro(s)</div>
                         <div class="form-count-title" data-dojo-attach-point="ID_CountText"></div>
-                        <!-- <div class="form-count-resul" data-dojo-attach-point="ID_CountResult">0 - 0</div>  -->
                     </div>
                     <div class="form-count" style="position: relative;">
                         <label class="subTitle">Resumen de Diagnóstico:</label>
-                        <button type="button" class="btn-float" data-dojo-attach-point="ID_Analisis" style="position:absolute; right:0; top:-5px; height:23px;">
-                            Análisis
+                        <button type="button" class="btn-float" data-dojo-attach-point="ID_Report" style="position:absolute; right:0; top:-5px; height:25px;">
+                            <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp; Reporte
                         </button>
                     </div>
-                    <!-- CSS Load -->
+                    
                     <div class="lds-facebook" data-dojo-attach-point="ID_Load"><div></div><div></div><div></div></div>
                     
                     <div class="form-scroll" data-dojo-attach-point="ID_Table_Count" id="ID_Table_Count"></div>
@@ -106,7 +66,7 @@
 
                 </div>
             </section>
-              
+            
             <section id="content3">
                 <div class="tab-content">
                     <div class="form-Analysis buffer">
@@ -118,13 +78,7 @@
                         <p class="analysis-unit">Km.</p>
                         <button type="button" data-dojo-attach-point="ID_Button_BufferUpdate">
                             <i class="fa fa-refresh" aria-hidden="true"></i> Actualizar
-                        </button> 
-                        <!--
-                        <div class="leyend" style="display: none;">
-                            <div>Red Ferroviaria</div>
-                            <div>Red Víal</div>
-                        </div>
-                        -->
+                        </button>
                     </div>
                     <!-- SubTitle -->
                     <div class="form-Analysis">
@@ -142,47 +96,9 @@
                     <div class="lds-facebook" data-dojo-attach-point="ID_Load_Analysis"><div></div><div></div><div></div></div>
                     <!-- Table Report -->
                     <div class="form-scroll" data-dojo-attach-point="ID_Table_Analysis"></div>
-                    <!--
-                    <div class="form-content">
-                        <label class="subTitle">Lista de Análisis</label>
-                        
-                        <select id="ID_Formato_">
-                            <option value="">Formato</option>
-                        </select>                        
-                    </div>
-                    -->                    
-                    <!--
-                    <div class="form-result form-scroll" data-dojo-attach-point="ID_Result_List">
-                        <div class="form-card">
-                            <span class="form-item">
-                                <label>1. Planes PPRRD</label>
-                                <span><i class="fa fa-map" aria-hidden="true"></i></span>
-                            </span>
-                            <div class="form-item">
-                                <div class="form-item-content">
-                                    <label>Campo 1</label>
-                                    <span><p> Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1 Detalle 1</p></span>
-                                </div>
-                            </div>
-                        </div> 
-                    </div>
-                    -->
                     <div class="load-time" data-dojo-attach-point="ID_Percentage_analysis"></div>
+                    <div class="form-row" data-dojo-attach-point="ID_Analysis_Format"></div>
 
-                    <div class="form-row" data-dojo-attach-point="ID_Analysis_Format">
-
-                    </div>
-
-                    <!--
-                    <div class="form-result-button">
-                        <span>
-                            <div data-dojo-attach-point="ID_Analysis_Format"></div>
-                            <button type="button" data-dojo-attach-point="ID_Analysis_Download">
-                                <i class="fa fa-download" aria-hidden="true"></i> Descargar
-                            </button>    
-                        </span>                    
-                    </div>
-                -->
                 </div>            
             </section>
         </main>

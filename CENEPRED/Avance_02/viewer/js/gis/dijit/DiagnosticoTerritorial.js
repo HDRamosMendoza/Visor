@@ -1,3 +1,4 @@
+let ramos;
 define([
     'dojo/_base/declare',
     'dojo/on',
@@ -124,6 +125,7 @@ define([
         analysisRandom: null,
         analysisResult: 0,
         analysisTemp: [],
+        ramos: "",
 
         bufferCount: 1,
         bufferTotal: 0,
@@ -188,7 +190,15 @@ define([
             /* Asigna en un solo nivel a confReport_Temp */
             //this._reportJson(this.confReport, this.confReport_Temp);
 
-            
+            /* console.log(this.diagnosisTemp);
+            let dynamicLayer = this.map.getLayer("cartografiaPeligros");
+            console.log(dynamicLayer);
+            var layerDefs = []; layerDefs[6090100] = "id_documento=(5231,3270,3452,3452,3459,3459,3478,3484,3269,232,3460,3421,3456,3456)";
+            dynamicLayer.setLayerDefinitions(layerDefs);
+            dynamicLayer.setVisibleLayers([6090100],true);
+            dynamicLayer.refresh();
+            console.log(this.diagnosisTemp); */
+
             /* Load DEPARTAMENTO */
             let fillDep = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,97,97,0]);
             let featureLayerDep = this._loadLayer(lyrDep.srv[0].objectID, srvDep.url, fillDep, lyrDep.srv[0].depName);
@@ -344,7 +354,7 @@ define([
                     this.textAmbito = this._validateSelect(selPro) ? this.textAmbito.concat("") : this.textAmbito.concat(`/${selPro.get('displayedValue')} (provincia)`);
                     this.textAmbito = this._validateSelect(selDis) ? this.textAmbito.concat("") : this.textAmbito.concat(`/${selDis.get('displayedValue')} (distrito)`);                    
                     let textAmbito_Temp = this.textAmbito.split("/");
-                    textAmbito_Temp[textAmbito_Temp.length-1] = `<span style="padding: 5px 5px;color:#555555;font-weight:800;">${textAmbito_Temp[textAmbito_Temp.length-1]}</span>`;
+                    textAmbito_Temp[textAmbito_Temp.length-1] = `<span style="padding: 10px 5px;color:#2a2929;font-weight:760;">${textAmbito_Temp[textAmbito_Temp.length-1]}</span>`;
                     textAmbito_Temp = textAmbito_Temp.join(" / ");
                     this.textAmbito = `<p style="line-height:20px;background-color:rgba(0,0,0,0.1);padding:5px;">${textAmbito_Temp}</p>`;                    
                     /* Reinicia contador */
@@ -365,16 +375,14 @@ define([
                 }
             })));
 
-            this.own(on(this.ID_Analisis, 'click', lang.hitch(this, () => {
-                /* Button (click) - ID_Analisis. Muestra la pestaña ANALISIS (segunda pestaña) */
+            /* this.own(on(this.ID_Analisis, 'click', lang.hitch(this, () => {
                 try {
                     this._elementById("ID_Tab_Analysis").click();
-                    /* Buffer Analysis */
                     this._buffer();
                 } catch (error) {
                     console.error(`Error: button/ID_Analisis (click) => ${error.name} - ${error.message}`);
                 }
-            })));
+            }))); */
             
             /*this.own(on(this.ID_Diagnosis_Download, 'click', lang.hitch(this, () => {
                 // Button (click) - ID_Diagnosis_Download. Descargar información de DIAGNOSTICO
@@ -725,7 +733,7 @@ define([
                 query.geometry = this.geometryIntersect;
                 query.spatialRelationship = "esriSpatialRelIntersects";
                 query.geometryType = "esriGeometryEnvelope";
-                this.deferredDiagnosis = queryTask.executeForCount(query)
+                this.deferredDiagnosis = queryTask.executeForCount(query);
                 this.deferredDiagnosis.then(
                     (count) => {
                         try {
@@ -779,6 +787,50 @@ define([
                         console.error(`Error: _intersectLaye/queryTask always => ${error.name} - ${error.message}`);
                     } 
                 }.bind(this)));
+
+                this.deferredDiagnosisId = queryTask.executeForIds(query);
+                this.deferredDiagnosisId.then(
+                    (ids) => {
+                        try {
+                            if (this.diagnosisRandom == _random && (ids ?? false)) {
+                                if(_lyr.type == "ArcGISDynamicMapServiceLayer") {
+                                    /*
+                                    console.log("ArcGISDynamicMapServiceLayer");                                    
+                                    console.log(_lyr.url);
+                                    console.log(_lyr.objectid);
+                                    console.log(_lyr.position);
+                                    console.log(ids.toString());
+                                    */
+                                    let dynamicLayer = this.map.getLayer(_lyr.id);
+                                    let layerDefs = []; 
+                                    layerDefs[_lyr.position] = `${_lyr.objectid} IN (${ids.toString()})`;
+                                    dynamicLayer.setLayerDefinitions(layerDefs);                                    
+                                    dynamicLayer.setVisibleLayers([_lyr.position],true);
+                                    /* dynamicLayer.setDefaultLayerDefinitions(layerDefs);
+                                    dynamicLayer.setDefaultVisibleLayers([_lyr.position],true); */
+                                    dynamicLayer.refresh();
+                                } else {
+
+                                }
+                            }
+                        } catch (error) {
+                            console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
+                        }                    
+                    },
+                    (error) => {  
+                        console.error(`Error: _queryTask ERROR - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
+                    }
+                ).always(lang.hitch(this, function() {
+                    try {
+                        if(this.diagnosisRandom == _random) {
+                            
+                        }
+                    } catch (error) {
+                        console.error(`Error: _intersectLaye/queryTask always => ${error.name} - ${error.message}`);
+                    } 
+                }.bind(this)));
+
+                
             } catch (error) { 
                 console.error(`Error: _intersectLaye => ${error.name} - ${error.message}`); 
             }
@@ -837,9 +889,6 @@ define([
                     queryTask.executeForCount(query).then(
                         (count) => {
                             _count = count;
-                            console.log(" - - - - - - - - - ");
-                            console.log(count);
-                            console.log(" - - - - - - - - - ");
                             this.countAnalysis_Cantidad = this.countAnalysis_Cantidad + count;
                             this._elementById(`ID_1_${_id}`).innerText = count;
                         },
@@ -1074,7 +1123,7 @@ define([
                 console.error(`Error: _getColorSimpleFillSymbol => ${error.name} - ${error.message}`);
             }
         },
-        _loadJson: function(json, _conf, _count, _name = "") {
+        _loadJson: function(json, _conf, _count, _name="", _id="", _type="FeatureLayer") {
             try { /* Recorre un arból de n hijos */
                 let type; let resul; let layer;
                 for (var i=0; i < json.length; i++) {
@@ -1082,10 +1131,20 @@ define([
                     if (type == "undefined") {
                         resul = true;
                         this[_count] = this[_count] + 1;
-                        layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
-                        _conf.push({ name:layer , url:json[i].url , fields:json[i].fields, id:json[i].id, color:json[i].color, long:json[i].long });
+                        layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name}<strong>${json[i].name}</strong>`;
+                        _conf.push({ 
+                            name:layer,
+                            url:json[i].url,
+                            fields:json[i].fields,
+                            id:json[i].id || _id,
+                            color:json[i].color,
+                            long:json[i].long,
+                            type: _type,
+                            objectid:json[i].objectid,
+                            position:json[i].position
+                        });
                     } else {
-                        resul += this._loadJson(json[i].srv, _conf, _count, _name || json[i].name);
+                        resul += this._loadJson(json[i].srv, _conf, _count, _name.concat(json[i].name + " / "), json[i].id, "ArcGISDynamicMapServiceLayer");
                     }
                 }            
                 return resul;
@@ -1153,7 +1212,7 @@ define([
                 const rowHeadTH_ItemNode = document.createTextNode("#");
                 rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
                 const rowHeadTH_Name = document.createElement("th");
-                const rowHeadTH_NameNode = document.createTextNode("Capas / Temáticas");
+                const rowHeadTH_NameNode = document.createTextNode("Información");
                 rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
                 const rowHeadTH_Count = document.createElement("th");
                 const rowHeadTH_CountSize = document.createTextNode("Cantidad");
