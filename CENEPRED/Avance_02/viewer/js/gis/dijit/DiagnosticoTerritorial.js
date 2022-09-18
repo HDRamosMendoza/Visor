@@ -148,6 +148,8 @@ define([
         
         IDTableCount_Name: "",
         IDTableBuffer_Name: "",
+
+        lyrDefinition: [],
      
         postCreate: function () {
             this.inherited(arguments);
@@ -190,14 +192,15 @@ define([
             /* Asigna en un solo nivel a confReport_Temp */
             //this._reportJson(this.confReport, this.confReport_Temp);
 
-            /* console.log(this.diagnosisTemp);
+            console.log(this.diagnosisTemp);
+            /*
             let dynamicLayer = this.map.getLayer("cartografiaPeligros");
             console.log(dynamicLayer);
-            var layerDefs = []; layerDefs[6090100] = "id_documento=(5231,3270,3452,3452,3459,3459,3478,3484,3269,232,3460,3421,3456,3456)";
+            var layerDefs = []; layerDefs[5010100] = "iobjectid_1=(1)";
             dynamicLayer.setLayerDefinitions(layerDefs);
-            dynamicLayer.setVisibleLayers([6090100],true);
+            dynamicLayer.setVisibleLayers([5010100],true);
             dynamicLayer.refresh();
-            console.log(this.diagnosisTemp); */
+            */
 
             /* Load DEPARTAMENTO */
             let fillDep = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,97,97,0]);
@@ -793,24 +796,28 @@ define([
                     (ids) => {
                         try {
                             if (this.diagnosisRandom == _random && (ids ?? false)) {
+                                let lyr = this.map.getLayer(_lyr.id);
                                 if(_lyr.type == "ArcGISDynamicMapServiceLayer") {
-                                    /*
-                                    console.log("ArcGISDynamicMapServiceLayer");                                    
+                                    /* ArcGISDynamicMapServiceLayer */
+                                    console.log("ArcGISDynamicMapServiceLayer");
+                                    console.log(_lyr.id);
+                                    console.log(lyr);
                                     console.log(_lyr.url);
                                     console.log(_lyr.objectid);
                                     console.log(_lyr.position);
                                     console.log(ids.toString());
-                                    */
-                                    let dynamicLayer = this.map.getLayer(_lyr.id);
-                                    let layerDefs = []; 
-                                    layerDefs[_lyr.position] = `${_lyr.objectid} IN (${ids.toString()})`;
-                                    dynamicLayer.setLayerDefinitions(layerDefs);                                    
-                                    dynamicLayer.setVisibleLayers([_lyr.position],true);
-                                    /* dynamicLayer.setDefaultLayerDefinitions(layerDefs);
-                                    dynamicLayer.setDefaultVisibleLayers([_lyr.position],true); */
-                                    dynamicLayer.refresh();
+                                    console.log(" - - - - - - - - - - - - - - - - - - - - - - - - - ");
+                                    
+                                    this.lyrDefinition[_lyr.position] = `${_lyr.objectid} IN (${ids.toString()})`;
+                                    lyr.setLayerDefinitions(this.lyrDefinition);                                    
+                                    lyr.setVisibleLayers([_lyr.position],true);
+                                    lyr.show();
+                                    lyr.refresh();
                                 } else {
-
+                                    /* FeatureLayer */
+                                    lyr.setDefinitionExpression(`${_lyr.objectid} IN (${ids.toString()})`);                                    
+                                    lyr.show();
+                                    lyr.refresh();
                                 }
                             }
                         } catch (error) {
@@ -1136,7 +1143,7 @@ define([
                             name:layer,
                             url:json[i].url,
                             fields:json[i].fields,
-                            id:json[i].id || _id,
+                            id:_id,
                             color:json[i].color,
                             long:json[i].long,
                             type: _type,
@@ -1144,7 +1151,15 @@ define([
                             position:json[i].position
                         });
                     } else {
-                        resul += this._loadJson(json[i].srv, _conf, _count, _name.concat(json[i].name + " / "), json[i].id, "ArcGISDynamicMapServiceLayer");
+                        resul += this._loadJson(
+                            json[i].srv,
+                            _conf,
+                            _count,
+                            _name.concat(json[i].name + " / "),
+                            typeof json[i].id == "undefined"? _id: json[i].id,
+                            json[i].id,
+                            "ArcGISDynamicMapServiceLayer"
+                        );
                     }
                 }            
                 return resul;
