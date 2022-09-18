@@ -314,6 +314,7 @@ define([
                                         true;
                     if(objectLiteral == true) {
                         disp.style.display = "block";
+                        this._elementById("ID_Tab_Filter").click();
                         setTimeout(() => { disp.style.display = "none"; }, 3000);
                         return false;
                     }
@@ -326,7 +327,6 @@ define([
                     textAmbito_Temp[textAmbito_Temp.length-1] = `${textAmbito_Temp[textAmbito_Temp.length-1]}`;
                     textAmbito_Temp = textAmbito_Temp.join(" / ");
                     _textAmbito = `${textAmbito_Temp}`;
-                    console.log(objectLiteral);
                     localStorage.clear();
                     localStorage.setItem("reportTitle", JSON.stringify(_textAmbito));
                     localStorage.setItem("reportAmbito", JSON.stringify(objectLiteral));
