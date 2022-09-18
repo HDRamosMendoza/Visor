@@ -3,10 +3,8 @@
   <head>
     <!-- ICON -->
     <link rel="icon" type="images/png" href="./img/heber-daniel-ramos-mendoza-tab.ico"/>
-
     <!-- TITLE -->
-    <title>Reporte | SIGRID - CENEPRED </title>
-    
+    <title>Reporte | SIGRID - CENEPRED </title>    
     <!-- META -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport"           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -14,15 +12,14 @@
     <meta name="author"             content="Ing. Heber Daniel Ramos Mendoza - GIS DEVELOPERS SAC">
     <meta name="description"        content="Prototipo: Visor de SIGRID. Diseñado e desarrollado por el Ing. Daniel Ramos Mendoza. Página web: https://HDRamosMendoza.github.io/Perfil-Profesional">
     <meta name="keywords"           content="Catastro Acuícola, ArcGis Server, ArcGis Desktop">
-
     <!-- CSS -->
     <link rel="stylesheet" href="https://js.arcgis.com/3.41/dijit/themes/claro/claro.css" />
     <link rel="stylesheet" href="https://js.arcgis.com/3.41/esri/css/esri.css" />
     <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="./css/style.css">
-  </head>
-  
+  </head>  
   <body class="claro esri">
+    <!-- Alert -->
     <div class="popup-alert" id="ID_Alert">
       <div class="popup-message">
         <div class="popup-text">
@@ -34,7 +31,7 @@
         </div>
       </div>
     </div>
-
+    <!-- /Alert -->
     <section class="report-main">
       <!-- Sub Title -->
       <div class="report-title">
@@ -47,7 +44,7 @@
         <!-- Gráfico -->
         <div class="report-aside report-graphic" >    
           <center>
-          <canvas id="ID_TABLE_Graphic"  height="275" width="400"></canvas>
+          <canvas id="ID_TABLE_Graphic"  height="270" width="400"></canvas>
           </center>
         </div>
         <!-- /Gráfico -->
@@ -63,33 +60,21 @@
         </div>
         <!-- /Cuadro de resumen-->
       </div>
-
-      <div class="tabs"> 
-        
+      <div class="tabs">         
         <div class="tab-header form-scroll" id="ID_TAB_Header"> 
-          <!-- <div class="active">
-            <i class="fa fa-code"></i> Code
-          </div>
-          <div>
-            <i class="fa fa-code"></i> Code
-          </div> -->
+          <!--
+          <div class="active"><i class="fa fa-code"></i> Code</div>
+          <div><i class="fa fa-code"></i> Code</div>
+          -->
         </div>
         <!-- <div class="tab-indicator"></div> -->
         <div class="tab-content" id="ID_TAB_Content">
-          <!-- <div class="active">
-            <i class="fa fa-code"></i>
-            <h2>Thissssis code</h2>
-            <p>dfsf sdf sdf sdf dsf dsfds fds fds fds fds f dsf dsf dsfds f sad</p>
-          </div>
-          <div>
-            <i class="fa fa-code"></i>
-            <h2>Thissssis code</h2>
-            <p>dfsf sdf sdf sdf dsf dsfds fds fds fds fds f dsf dsf dsfds f sad</p>
-          </div> -->
+          <!--
+          <div class="active"><i class="fa fa-code"></i><h2>Thissssis code</h2><p>dfsf sdf</p></div>
+          <div><i class="fa fa-code"></i><h2>Thissssis code</h2><p>dfsf sdf</p></div>
+          -->
         </div>
-
       </div>
-
       <aside class="report-table" id="ID_TableDetail"></aside>
       <!--
       <main style="display: none;">
@@ -153,12 +138,10 @@
       </main>
     -->
     </section>
-
+    <!-- Map -->
     <section class="map" id="map" style="display: none;"></section>
-  </body>
-  
+  </body>  
   <!-- JS -->  
   <script src="https://js.arcgis.com/3.41/"></script>
   <script src="./js/script_2.js"></script>
-
 </html>
