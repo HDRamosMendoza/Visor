@@ -310,10 +310,11 @@
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030301"
                         },
                         {
-                            "position": 5030401,
+                            
                             "name": "Zonificación Sísmica",
                             "srv": [
                                 {
+                                    "position": 5030401,
                                     "name": "IGP",
                                     "objectid": "objectid",
                                     "rgb": "rgb(211,84,0)",
@@ -326,6 +327,7 @@
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030401"
                                 },
                                 {
+                                    "position": 5030402,
                                     "name": "CISMID",
                                     "objectid": "objectid",
                                     "rgb": "rgb(230,126,34)",
@@ -338,6 +340,7 @@
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030402"
                                 },
                                 {
+                                    "position": 5030403,
                                     "name": "MVCS",
                                     "objectid": "objectid",
                                     "rgb": "rgb(243,156,18)",
