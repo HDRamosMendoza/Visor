@@ -700,9 +700,11 @@ define([
                 const lyr = new FeatureLayer(srv, { mode: FeatureLayer.MODE_SELECTION });
                 let itemRandom = this._getRandom();
                 this.diagnosisRandom = itemRandom;                
-                if(this.deferredDiagnosis && (this.deferredDiagnosis > 0)) {
-                    this.deferredDiagnosis.cancel();
-                }
+                
+                if(this.deferredDiagnosis && (this.deferredDiagnosis > 0)) { this.deferredDiagnosis.cancel(); }
+
+                if(this.deferredDiagnosisMap && (this.deferredDiagnosisMap > 0)) { this.deferredDiagnosisMap.cancel(); }
+                
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
@@ -736,6 +738,7 @@ define([
                 query.geometry = this.geometryIntersect;
                 query.spatialRelationship = "esriSpatialRelIntersects";
                 query.geometryType = "esriGeometryEnvelope";
+
                 this.deferredDiagnosis = queryTask.executeForCount(query);
                 this.deferredDiagnosis.then(
                     (count) => {
@@ -748,6 +751,8 @@ define([
                                 this.ID_Percentage.innerHTML = this._loadTime(this.diagnosisCount, _total);
                                 this.diagnosisCount++;
                                 _lyr.cantidad = count;
+                                /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
+                                this._sortJSON(_temp, 'cantidad','desc'); 
                             }
                         } catch (error) {
                             console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
@@ -758,15 +763,9 @@ define([
                     }
                 ).always(lang.hitch(this, function() {
                     try {
-                        //this.ID_Percentage.innerHTML = this._loadTime(this.diagnosisCount -1);
                         if((this.diagnosisCount == _total) && (this.diagnosisRandom == _random)) {
-                            this.ID_Load.style.display = "none";
-                            this.ID_Table_Count.style.display = "block";                            
-                           
-                            /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
-                            this._sortJSON(_temp, 'cantidad','desc'); 
-                            /* Inserta a la tabla */
-                            _temp.map(function(current, index) {
+                            this._elementById(`${_id}_Tbody`).innerHTML = "";
+                            _temp.map(function(current, index) { /* Inserta a la tabla */
                                 if(current.cantidad > 0) {
                                     let fragment = document.createDocumentFragment();
                                     let row = document.createElement("tr");
@@ -783,42 +782,29 @@ define([
                                     row.appendChild(cell_2);
                                     fragment.appendChild(row);
                                     this._elementById(`${_id}_Tbody`).appendChild(fragment);
-                                }                                
+                                } 
                             }.bind(this));   
+                            this.ID_Load.style.display = "none";
+                            this.ID_Table_Count.style.display = "block";
                         }
                     } catch (error) {
                         console.error(`Error: _intersectLaye/queryTask always => ${error.name} - ${error.message}`);
                     } 
                 }.bind(this)));
 
-                this.deferredDiagnosisId = queryTask.executeForIds(query);
-                this.deferredDiagnosisId.then(
+                this.deferredDiagnosisMap = queryTask.executeForIds(query);
+                this.deferredDiagnosisMap.then(
                     (ids) => {
                         try {
                             if (this.diagnosisRandom == _random && (ids ?? false)) {
                                 let lyr = this.map.getLayer(_lyr.id);
-                                if(_lyr.type == "ArcGISDynamicMapServiceLayer") {
-                                    /* ArcGISDynamicMapServiceLayer */
-                                    console.log("ArcGISDynamicMapServiceLayer");
-                                    console.log(_lyr.id);
-                                    console.log(lyr);
-                                    console.log(_lyr.url);
-                                    console.log(_lyr.objectid);
-                                    console.log(_lyr.position);
-                                    console.log(ids.toString());
-                                    console.log(" - - - - - - - - - - - - - - - - - - - - - - - - - ");
-                                    
-                                    this.lyrDefinition[_lyr.position] = `${_lyr.objectid} IN (${ids.toString()})`;
-                                    lyr.setLayerDefinitions(this.lyrDefinition);                                    
-                                    lyr.setVisibleLayers([_lyr.position],true);
-                                    lyr.show();
-                                    lyr.refresh();
-                                } else {
-                                    /* FeatureLayer */
-                                    lyr.setDefinitionExpression(`${_lyr.objectid} IN (${ids.toString()})`);                                    
-                                    lyr.show();
-                                    lyr.refresh();
-                                }
+                                /* if(_lyr.type == "ArcGISDynamicMapServiceLayer") {
+                                console.log(_lyr.type);console.log(_lyr.id);console.log(lyr);console.log(_lyr.url);console.log(_lyr.objectid);
+                                console.log(_lyr.position);console.log(ids.toString()); lyr.setVisibleLayers([_lyr.position],true); */
+                                this.lyrDefinition[_lyr.position] = `${_lyr.objectid} IN (${ids.toString()})`;
+                                lyr.setLayerDefinitions(this.lyrDefinition);
+                                lyr.show();
+                                lyr.refresh();
                             }
                         } catch (error) {
                             console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
@@ -827,16 +813,7 @@ define([
                     (error) => {  
                         console.error(`Error: _queryTask ERROR - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
                     }
-                ).always(lang.hitch(this, function() {
-                    try {
-                        if(this.diagnosisRandom == _random) {
-                            
-                        }
-                    } catch (error) {
-                        console.error(`Error: _intersectLaye/queryTask always => ${error.name} - ${error.message}`);
-                    } 
-                }.bind(this)));
-
+                );
                 
             } catch (error) { 
                 console.error(`Error: _intersectLaye => ${error.name} - ${error.message}`); 
