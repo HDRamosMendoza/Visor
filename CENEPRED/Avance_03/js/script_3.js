@@ -525,16 +525,11 @@ require([
 
                     divAside.appendChild(divMain); 
                 }
-                
-
-               
 
                 divContent.appendChild(divTitle);
                 divContent.appendChild(divHR);                
                 divContent.appendChild(divAside);
-
-
-
+                
                 let fragmentContent = document.createDocumentFragment();
                 fragmentContent.appendChild(divContent);
                 _elementById("ID_TAB_Content").appendChild(fragmentContent);
@@ -546,9 +541,9 @@ require([
 	};
 	_jsonTravelTree(configDiagnosis_Temp);
     /*
-    _elementById("ID_TAB_Header").childNodes[4].className = "active";
-	_elementById("ID_TAB_Content").childNodes[4].className = "active";*/
-    
+    _elementById("ID_TAB_Header").childNodes[4].className += "active";
+	_elementById("ID_TAB_Content").childNodes[4].className = "active";
+    */
 
     /*
     let _class = function(name) { return document.getElementsByClassName(name); };
