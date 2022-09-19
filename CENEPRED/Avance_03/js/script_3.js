@@ -397,6 +397,35 @@ require([
                     divHeader.className = "header-group";
                     _nameTemp = lyr.name;
                 } else {
+                    divHeader.id = `Header_${index}`;
+                    divHeader.className = "tablinks";
+                    divHeader.onclick = function(){
+                        let HeaderID = `Header_${index}`;
+                        let ContentID = HeaderID.replace("Header_","Content_"); 
+                        let i, tabcontent, tablinks;
+                        
+                        tabcontent = document.getElementsByClassName("tabcontent");
+                        for (i = 0; i < tabcontent.length; i++) {
+                            tabcontent[i].style.display = "none";
+                        }
+
+                        tablinks = document.getElementsByClassName("tablinks");
+                        for (i = 0; i < tablinks.length; i++) {
+                            tablinks[i].className = tablinks[i].className.replace(" active", "");
+                        }
+
+                        let nodeHeader = document.getElementById(HeaderID);
+                        nodeHeader.classList.add("active"); /* HEADER */
+                        document.getElementById(ContentID).style.display = "block"; /* CONTENT */
+                        document.getElementById(ContentID).classList.add("active"); /* CONTENT */
+
+                        featureTable.destroy();
+                        _featureTable(
+                            nodeHeader.getAttribute("data-url"),
+                            nodeHeader.getAttribute("data-objectid"),
+                            JSON.parse(nodeHeader.getAttribute("data-fields"))
+                        );                        
+                    };
                     divHeader.innerHTML = lyr.name.replace(_nameTemp + " /", "");
                     divHeader.dataset.url = lyr.url;
                     divHeader.dataset.objectid = lyr.objectid;
@@ -408,7 +437,10 @@ require([
                 _elementById("ID_TAB_Header").appendChild(fragmentHeader);
 
                 const divContent = document.createElement("div");
-                divContent.className = !lyr.default || "active";
+                divContent.className="tabcontent";
+                divContent.id = `Content_${index}`;
+
+                //divContent.className = !lyr.default || "active";
                 const divTitle = document.createElement("section");
                 divTitle.innerHTML = lyr.name;
                 const divHR = document.createElement("section");
@@ -416,8 +448,7 @@ require([
                 const divAside = document.createElement("section");
                 divAside.className = "report-table";
                 divAside.id = `IDTable_${index}`;
-                
-                /*
+              
                 const divMain = document.createElement("main");
                 if(lyr.content ?? false){
                     console.log(lyr.content ?? false);
@@ -425,36 +456,23 @@ require([
                     if(typeof lyr.content[0].tab[0].url == "undefined") {
                         console.log("CAMPOS");
                         console.log(lyr.content[0].tab[0].fields);
-                        lyr.content[0].tab[0].fields.map(function(current, index) {
-                           index = index + 1;
+                        lyr.content[0].tab[0].fields.map(function(current, ind) {
+                            ind = ind + 1;
                             
                             const inputText = document.createElement("input");
                             inputText.type = "radio";
                             inputText.className = "tabs-horiz";
-                            inputText.id = `tab${current.name}`;
-                            inputText.name = "tabs-2";
+                            inputText.id = `tab${index}${current.name}`;
+                            inputText.name = `tabs-2${index}`;
                             if(typeof current.default !== "undefined") {
                                 inputText.setAttribute("checked","");
                             }
                             const label = document.createElement("label");
                             label.innerText = current.alias;
-                            label.setAttribute("for",`tab${current.name}`);
+                            label.setAttribute("for",`tab${index}${current.name}`);
                             
                             divMain.appendChild(inputText);
                             divMain.appendChild(label);                            
-                        }.bind(this));
-
-
-                        lyr.content[0].tab[0].fields.map(function(current, index) {
-                            index = index + 1;
-                            
-                            const sect = document.createElement("section");
-                            sect.id = `content${current.name}`;
-                            const div = document.createElement("div");
-                            div.innerText = current.alias;
-                            sect.appendChild(div);
-                            
-                            divMain.appendChild(sect);                            
                         }.bind(this));
                     } else {
                         console.log("URL");
@@ -464,11 +482,11 @@ require([
                     if(typeof lyr.content[0].tab[0].url == "undefined") {
                         console.log("CAMPOS");
                         console.log(lyr.content[0].tab[0].fields);
-                        lyr.content[0].tab[0].fields.map(function(current, index) {
-                            index = index + 1;
+                        lyr.content[0].tab[0].fields.map(function(current, ind) {
+                            ind = ind + 1;
                             
                             const sect = document.createElement("section");
-                            sect.id = `content${current.name}`;
+                            sect.id = `content${index}${current.name}`;
                             const div = document.createElement("div");
                             div.innerText = current.alias;
                             sect.appendChild(div);
@@ -485,10 +503,10 @@ require([
                     if(typeof lyr.content[0].tab[0].url == "undefined") {
                         console.log("STYLE");
                         console.log(lyr.content[0].tab[0].fields);
-                        lyr.content[0].tab[0].fields.map(function(current, index) {
-                            index = index + 1;
+                        lyr.content[0].tab[0].fields.map(function(current, ind) {
+                            ind = ind + 1;
                             console.log(current.name);
-                            abc += `#tab${current.name}:checked ~ #content${current.name},`;
+                            abc += `#tab${index}${current.name}:checked ~ #content${index}${current.name},`;
                             console.log(abc);
                             
                         }.bind(this));
@@ -507,7 +525,7 @@ require([
 
                     divAside.appendChild(divMain); 
                 }
-                */
+                
 
                
 
@@ -527,26 +545,28 @@ require([
 		}
 	};
 	_jsonTravelTree(configDiagnosis_Temp);
-    
+    /*
     _elementById("ID_TAB_Header").childNodes[4].className = "active";
-	_elementById("ID_TAB_Content").childNodes[4].className = "active";
+	_elementById("ID_TAB_Content").childNodes[4].className = "active";*/
     
 
+    /*
     let _class = function(name) { return document.getElementsByClassName(name); };
 	let tabPanes = _class("tab-header")[0].getElementsByTagName("div");	
 	for(let i=0;i<tabPanes.length;i++) {
 		tabPanes[i].addEventListener("click", function() {
-            if(typeof tabPanes[i].getAttribute("data-url") == "string") { /* Se filtra solo para los que tenga URL */
+            if(typeof tabPanes[i].getAttribute("data-url") == "string") {
                 _class("tab-header")[0].getElementsByClassName("active")[0].classList.remove("active");
                 tabPanes[i].classList.add("active");
-                /*_class("tab-indicator")[0].style.top = `calc(80px + ${i*50}px)`;*/			
+                
                 _class("tab-content")[0].getElementsByClassName("active")[0].classList.remove("active");
                 _class("tab-content")[0].getElementsByTagName("div")[i].classList.add("active");
                 featureTable.destroy();
                 _featureTable(tabPanes[i].getAttribute("data-url"), tabPanes[i].getAttribute("data-objectid"), JSON.parse(tabPanes[i].getAttribute("data-fields")));
             }
 		});
-	}    
+	} 
+    */   
     map.on("load", () => { _graphicPie(); });
 });
 //https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca/6495_img.jpg
