@@ -319,15 +319,18 @@ define([
                         return false;
                     }
                     let _textAmbito = "";
+                    let _textAmbito_request = [];
                     /* Texto de Ámbito */
                     _textAmbito = _textAmbito.concat(`${selDep.get('displayedValue')} (departamento)`);
                     _textAmbito = this._validateSelect(selPro) ? _textAmbito.concat("") : _textAmbito.concat(`/${selPro.get('displayedValue')} (provincia)`);
                     _textAmbito = this._validateSelect(selDis) ? _textAmbito.concat("") : _textAmbito.concat(`/${selDis.get('displayedValue')} (distrito)`);
                     let textAmbito_Temp = _textAmbito.split("/");
                     textAmbito_Temp[textAmbito_Temp.length-1] = `${textAmbito_Temp[textAmbito_Temp.length-1]}`;
-                    textAmbito_Temp = textAmbito_Temp.join(" / ");
+                    _textAmbito_request = textAmbito_Temp.reverse().join(", ");/* Busqueda */
+                    textAmbito_Temp = textAmbito_Temp.join(" / ");                    
                     _textAmbito = `${textAmbito_Temp}`;
                     localStorage.clear();
+                    localStorage.setItem("reportTitle_request", JSON.stringify(_textAmbito_request));
                     localStorage.setItem("reportTitle", JSON.stringify(_textAmbito));
                     localStorage.setItem("reportAmbito", JSON.stringify(objectLiteral));
                     localStorage.setItem("reportGeometry", JSON.stringify(this.reportGeometry));                    
@@ -796,11 +799,13 @@ define([
                 this.deferredDiagnosisMap.then(
                     (ids) => {
                         try {
-                            if (this.diagnosisRandom == _random && (ids ?? false)) {
+                            //if (this.diagnosisRandom == _random && (ids ?? false)) {
+                            if (ids ?? false) {
+                                console.log(_lyr.id);
                                 let lyr = this.map.getLayer(_lyr.id);
-                                /* if(_lyr.type == "ArcGISDynamicMapServiceLayer") {
+                                /*if(_lyr.type == "ArcGISDynamicMapServiceLayer") {
                                 console.log(_lyr.type);console.log(_lyr.id);console.log(lyr);console.log(_lyr.url);console.log(_lyr.objectid);
-                                console.log(_lyr.position);console.log(ids.toString()); lyr.setVisibleLayers([_lyr.position],true); */
+                                console.log(_lyr.position);console.log(ids.toString()); lyr.setVisibleLayers([_lyr.position],true);*/
                                 this.lyrDefinition[_lyr.position] = `${_lyr.objectid} IN (${ids.toString()})`;
                                 lyr.setLayerDefinitions(this.lyrDefinition);
                                 lyr.show();
