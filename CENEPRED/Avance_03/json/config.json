@@ -7,9 +7,13 @@
                     "default": "active",
                     "objectid": "id_documento",
                     "name": "Planes PPRRD",
-                    "imagen": "https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca/",
+                    "imagen": "https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca/11513",
                     "rgb": "rgb(88,24,69)",
                     "fields":[
+                        {
+                            "alias": "Ambito",
+                            "name": "ambito"
+                        },
                         {
                             "alias": "Departamento",
                             "name": "nom_dep"
@@ -42,7 +46,26 @@
                             }
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000",
+                    "content": [
+                        {
+                            "version_01": [
+                                {
+                                    "imagen":"https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca",
+                                    "nota": "El <strong>PPRRD</strong> es un <strong>plan específico</strong> que permite identificar medidas, programas, actividades y proyectos que eliminen o reduzcan las condiciones existentes de riesgos de desastres, y prevengan la generación de nuevas condiciones de riesgos.",
+                                    "field": "ambito",
+                                    "documento": "id_documento",
+                                    "cuenta": [
+                                        {
+                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con su <strong>Plan de Prevención y Reducción del Riesgo de Desastres (PPRRD)</strong>",
+                                            "negacion": "seleccionado <strong>NO CUENTA</strong> con su <strong>Plan de Prevención y Reducción del Riesgo de Desastres (PPRRD)</strong>"
+                                        }
+                                    ]
+                                }
+                            ]
+
+                        }
+                    ]
                 }
             ]
         },
@@ -77,22 +100,31 @@
                         {
                             "alias": "Autor Coorporativo",
                             "name": "autor_corporativo_acronimo"
+                        },
+                        {		
+                            "alias": "Documento",
+                            "name": "id_documento",
+                            "format": {
+                                "template": "<center><a href=\"https://sigrid.cenepred.gob.pe/sigridv3/documento/${value}\" target=\"_blank\"><i class=\"fa fa-cloud-download\" style=\"font-size:18px\"></i> Descargar</a></center>"
+                            }
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4010000",
                     "content": [
                         {
-                            "tab": [
+                            "version_02": [
                                 {
+                                    "objectid": "id_documento",
+                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
                                     "fields": [
                                         {
                                             "alias": "Vivienda",
-                                            "name": "vivienda",
+                                            "name": "num_viv_part",
                                             "default": true
                                         },
                                         {
                                             "alias": "Población",
-                                            "name": "poblacion"
+                                            "name": "pob_total"
                                         }
                                     ]
                                 }
@@ -135,12 +167,16 @@
                                     "fields": [
                                         {
                                             "alias": "Vivienda",
-                                            "name": "vivienda",
+                                            "name": "viviendaa",
                                             "default": true
                                         },
                                         {
                                             "alias": "Población",
-                                            "name": "poblacion"
+                                            "name": "poblacionn"
+                                        },
+                                        {
+                                            "alias": "Manzanas",
+                                            "name": "manzanas"
                                         }
                                     ]
                                 }
@@ -259,7 +295,31 @@
                                     "name": "tipo_punto"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010200"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010200",
+                            "content": [
+                                {
+                                    "tab": [
+                                        {
+                                            "fields": [
+                                                {
+                                                    "alias": "Vivienda",
+                                                    "name": "viviendaa",
+                                                    "default": true
+                                                },
+                                                {
+                                                    "alias": "Población",
+                                                    "name": "poblacionn"
+                                                },
+                                                {
+                                                    "alias": "Manzanas",
+                                                    "name": "manzanas"
+                                                }
+                                            ]
+                                        }
+                                    ]
+        
+                                }
+                            ]
                         },
                         {
                             "name": "Áreas de Exposición",
@@ -307,7 +367,31 @@
                                     "name": "fuente_log"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010300"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010300",
+                            "content": [
+                                {
+                                    "tab": [
+                                        {
+                                            "fields": [
+                                                {
+                                                    "alias": "Vivienda",
+                                                    "name": "viviendaa",
+                                                    "default": true
+                                                },
+                                                {
+                                                    "alias": "Población",
+                                                    "name": "poblacionn"
+                                                },
+                                                {
+                                                    "alias": "Manzanas",
+                                                    "name": "manzanas"
+                                                }
+                                            ]
+                                        }
+                                    ]
+        
+                                }
+                            ]
                         },
                         {
                             "name": "Fajas Marginales",
@@ -339,7 +423,31 @@
                                     "name": "fecha_doc"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010400"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010400",
+                            "content": [
+                                {
+                                    "tab": [
+                                        {
+                                            "fields": [
+                                                {
+                                                    "alias": "Vivienda",
+                                                    "name": "viviendaa",
+                                                    "default": true
+                                                },
+                                                {
+                                                    "alias": "Población",
+                                                    "name": "poblacionn"
+                                                },
+                                                {
+                                                    "alias": "Manzanas",
+                                                    "name": "manzanas"
+                                                }
+                                            ]
+                                        }
+                                    ]
+        
+                                }
+                            ]
                         }
                     ]
                 },
@@ -428,7 +536,31 @@
                                     "name": "fuente_log"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020200"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020200",
+                            "content": [
+                                {
+                                    "tab": [
+                                        {
+                                            "fields": [
+                                                {
+                                                    "alias": "Vivienda",
+                                                    "name": "viviendaa",
+                                                    "default": true
+                                                },
+                                                {
+                                                    "alias": "Población",
+                                                    "name": "poblacionn"
+                                                },
+                                                {
+                                                    "alias": "Manzanas",
+                                                    "name": "manzanas"
+                                                }
+                                            ]
+                                        }
+                                    ]
+        
+                                }
+                            ]
                         }
                     ]
                 },

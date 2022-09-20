@@ -353,8 +353,9 @@ input.tabs-horiz:checked + label {
 }
 .tabs .tab-content .div-hr {
   border-bottom: 2px solid #23545E;
-  margin: 10px 0px;
-  width: 50px;
+  margin: 10px auto;
+  width: 100px;
+  text-align: center;
 }
 /*****************/
 .tabs .form-scroll {  
@@ -455,4 +456,48 @@ input.tabs-horiz:checked + label {
 }
 .form-scroll-resumen::-webkit-scrollbar-track {
   border-radius: 10px;  
+}
+
+
+.column_01,
+.column_02 {
+  margin: 15px;
+  display: inline-block;
+  vertical-align: top;
+  box-sizing: border-box;
+}
+.column_01 {
+  text-align: left;
+  width: 55%;
+}
+.column_02 {
+  width: 38%;
+}
+.column_02 img {
+  width: 100%;
+}
+
+.column_01 p.sect-nota-info {
+  font-size : 14px;
+  line-height : 1.4;
+  background-color : #d9edf7;
+  border-color : #bce8f1;
+  color : #31708f;
+  padding : 10px;
+  margin : 0px 0px 15px 0px;
+}
+.column_01 p.sect-nota-warning {
+  font-size : 14px;
+  line-height : 1.4;
+  background-color : #fff3cd;
+  border-color : #fff3cd;
+  color : #856404;
+  padding : 10px;
+  margin : 0px 0px 15px 0px;
+}
+.column_01 p.sect-nota {
+  font-size : 14px;
+  padding : 0px 5px 0px 5px;
+  margin : 0px 0px 15px 0px;
+  border-left : 3px solid #555555;
 }

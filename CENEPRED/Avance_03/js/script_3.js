@@ -10,7 +10,6 @@ require([
   'esri/map',
   'dojo/text!./json/config.json',
   'dojo/_base/lang',
-  'dojo/parser',
   'dojo/ready',
   'dojo/on',
   'dojo/domReady!'
@@ -26,7 +25,6 @@ require([
     configJSON,
     lang,
     dom,
-    parser,
     ready,
     on
 ) {
@@ -38,12 +36,16 @@ require([
     let configDiagnosis_Temp = [];
     let configAnalysis = config.lyrAnalysis;
     let configAnalysis_Temp = [];
-    let reportItemTotal = 0;
+    //let reportItemTotal = 0;
     let reportItemResult = 0;
     let chartLabel = [];
     let chartData = [];
     let chartBackgroundColor = [];
     let chartID = "ID_TABLE_Graphic";
+    this.analysisTotal = 0;
+    this.diagnosisTotal = 0;
+    this.diagnosisCount = 1;
+    
     
     map = new Map("map", { center: [-76, -10], zoom: 6, basemap: "topo" });
     
@@ -61,13 +63,14 @@ require([
     };
     _elementById("ID_Alert").style.display = "none";
 
-    let _reportJson = function(json, _conf, _name = "") {
+    let _reportJson = function(json, _conf, _count, _name = "") {
         try { /* Recorre un arból de n hijos */
             let type; let resul; let layer;             
             for (var i=0; i < json.length; i++) {
                 type = typeof json[i].srv;
                 if (type == "undefined") {
-                    reportItemTotal = reportItemTotal + 1;
+                    //reportItemTotal = reportItemTotal + 1;
+                    this[_count] = this[_count] + 1;
                     resul = true;
                     //layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
                     layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name}<strong>${json[i].name}</strong>`;
@@ -84,7 +87,7 @@ require([
                     if(_name.length == 0) { /* Se filtra solo las cabeceras una vez */
                         _conf.push({ name:json[i].name });
                     }
-                    resul += _reportJson(json[i].srv, _conf, _name.concat(json[i].name + " / "));
+                    resul += _reportJson(json[i].srv, _conf, _count, _name.concat(json[i].name + " / "));
                 }
             }            
             return resul;
@@ -94,9 +97,9 @@ require([
     };
 
     /* Lista de ANALYSIS */
-    _reportJson(configAnalysis, configAnalysis_Temp);
+    _reportJson(configAnalysis,configAnalysis_Temp,"analysisTotal");
     /* Lista de DIAGNOSIS */
-    _reportJson(configDiagnosis, configDiagnosis_Temp);
+    _reportJson(configDiagnosis,configDiagnosis_Temp,"diagnosisTotal");
     
     let _title = function(_title) {
         try {
@@ -175,14 +178,14 @@ require([
                 var x = a[key], y = b[key];        
                 if (orden === 'asc') { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
         
-                if (orden === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+                if (orden === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }                
             });
         } catch (error) { 
             console.error(`Error: _sortJSON => ${error.name} - ${error.message}`); 
         }
     };
 
-    let _queryTask = function(lyr, _ambito, _index) {
+    let _queryTask = function(lyr, _count, _ambito, _index) {
         try {
             if(Object.keys(lyr).length !== 1) { /* Se filtra para que no entre la cabeceras de grupos */
                 this.ID_Load.style.display = "block";    
@@ -199,7 +202,9 @@ require([
                         try {
                             reportItemResult = reportItemResult + count;
                             _elementById(`ID_TABLE_Resumen_Total`).innerText = reportItemResult;
+                            this.diagnosisCount++;
                             lyr.cantidad = count;
+                            
                             if(count === 0) {                            
                                 _elementById("ID_TAB_Header").childNodes[3+_index].style.display="none";
                                 _elementById("ID_TAB_Content").childNodes[3+_index].style.display="none";
@@ -213,6 +218,7 @@ require([
                                 chart.data.labels = chartLabel;
                                 chart.update();
                             }
+                            /* Se ordena JSON */
                         } catch (error) {
                             console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
                         }
@@ -222,33 +228,38 @@ require([
                     }
                 ).always(lang.hitch(this, function() {
                     try {
-                        this.ID_Load.style.display = "none";
-                        this.ID_TABLE_Resumen.style.display = "block";
-                        /* Se limpiar TABLE */
-                        _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
-                        //_htmlTable(_elementById("ID_TABLE_Resumen"));
-                        /* Se ordena JSON */
-                        _sortJSON(configDiagnosis_Temp, 'cantidad','desc'); 
-                        /* Se lista capas */
-                        configDiagnosis_Temp.map(function(cValue, index){
-                            if(cValue.cantidad > 0 && typeof cValue.cantidad !== "undefined") {
-                                let fragment = document.createDocumentFragment();
-                                let row = document.createElement("tr");
-                                let cell_0 = document.createElement("td");
-                                let cellText_0 = document.createTextNode(index + 1);
-                                cell_0.appendChild(cellText_0);
-                                let cell_1 = document.createElement("td");
-                                cell_1.innerHTML = cValue.name;
-                                let cell_2 = document.createElement("td");
-                                let cellText_2 = document.createTextNode(cValue.cantidad || 0);
-                                cell_2.appendChild(cellText_2);
-                                row.appendChild(cell_0);
-                                row.appendChild(cell_1);
-                                row.appendChild(cell_2);
-                                fragment.appendChild(row);
-                                _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
-                            }
-                        }.bind(this)); 
+                        if( this.diagnosisCount == _count) {
+                            this.ID_Load.style.display = "none";
+                            this.ID_TABLE_Resumen.style.display = "block";
+                            _sortJSON(configDiagnosis_Temp, 'cantidad','desc');
+                            //_htmlTable(_elementById("ID_TABLE_Resumen"));
+                            /* Se lista capas */
+                            let _index = 0;
+                            /* Se limpiar TABLE */
+                            setTimeout(() => {
+                                _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
+                                configDiagnosis_Temp.map(function(cValue) {
+                                    if(cValue.cantidad > 0 && typeof cValue.cantidad !== "undefined") {
+                                        _index = _index + 1;
+                                        let fragment = document.createDocumentFragment();
+                                        let row = document.createElement("tr");
+                                        let cell_0 = document.createElement("td");
+                                        let cellText_0 = document.createTextNode(_index);
+                                        cell_0.appendChild(cellText_0);
+                                        let cell_1 = document.createElement("td");
+                                        cell_1.innerHTML = cValue.name;
+                                        let cell_2 = document.createElement("td");
+                                        let cellText_2 = document.createTextNode(cValue.cantidad || 0);
+                                        cell_2.appendChild(cellText_2);
+                                        row.appendChild(cell_0);
+                                        row.appendChild(cell_1);
+                                        row.appendChild(cell_2);
+                                        fragment.appendChild(row);
+                                        _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
+                                    }
+                                }.bind(this));   
+                            }, 1000);                             
+                        }                         
                     } catch (error) {
                         console.error(`Error: _queryTask always => ${error.name} - ${error.message}`);
                     } 
@@ -261,8 +272,8 @@ require([
     
     let _featureTable = function(srv,objectid,fields) {
         try {   
-            const idTable = _elementById("ID_TableDetail");
-            const tbl = document.createElement("div");
+            let idTable = _elementById("ID_TableDetail");
+            let tbl = document.createElement("div");
             tbl.id = "ID_TableDynamic";
             idTable.appendChild(tbl);
 
@@ -357,9 +368,10 @@ require([
                 _elementById("ID_Alert").style.display = "block";
             } else {
                 _elementById("ID_Alert").style.display = "none";
+                this.diagnosisCount = 1;
                 configDiagnosis_Temp.map(function(lyr, index) {
                     !lyr.default || _featureTable(lyr.url,lyr.objectid,lyr.fields);
-                    _queryTask(lyr, _ambito, index);
+                    _queryTask(lyr, this.diagnosisTotal, _ambito, index);
                 });
             }
         } catch(error) {
@@ -389,6 +401,15 @@ require([
 
     let _jsonTravelTree = function(_json, _name = "") {
 		try {/* Se crea dinamicamente el TAB y CONTENT del TAB */
+            let _ambitoLS = JSON.parse(localStorage.getItem("reportTitle_request")).replace(" (distrito)", "");
+            _ambitoLS = _ambitoLS.replace(" (provincia)", "");
+            _ambitoLS = _ambitoLS.replace(" (departamento)", "");
+
+            let jsonLS = JSON.parse(localStorage.getItem("reportTitle_request"));
+            let litAmbito = jsonLS.search("(distrito)") > 0 ? "DISTRITO" : 
+            jsonLS.search("(provincia)") > 0 ? "PROVINCIA" : "DEPARTAMENTO";
+
+            /* ANALIZAR */
             let _nameTemp = "";
             _json.map(function(lyr, index) {
                 const divHeader = document.createElement("div");
@@ -402,8 +423,7 @@ require([
                     divHeader.onclick = function(){
                         let HeaderID = `Header_${index}`;
                         let ContentID = HeaderID.replace("Header_","Content_"); 
-                        let i, tabcontent, tablinks;
-                        
+                        let i, tabcontent, tablinks;                        
                         tabcontent = document.getElementsByClassName("tabcontent");
                         for (i = 0; i < tabcontent.length; i++) {
                             tabcontent[i].style.display = "none";
@@ -418,7 +438,7 @@ require([
                         nodeHeader.classList.add("active"); /* HEADER */
                         document.getElementById(ContentID).style.display = "block"; /* CONTENT */
                         document.getElementById(ContentID).classList.add("active"); /* CONTENT */
-
+                        
                         featureTable.destroy();
                         _featureTable(
                             nodeHeader.getAttribute("data-url"),
@@ -431,7 +451,8 @@ require([
                     divHeader.dataset.objectid = lyr.objectid;
                     divHeader.dataset.fields = JSON.stringify(lyr.fields);
                     //divHeader.className = !lyr.default || "active";
-                }                
+                }
+
                 let fragmentHeader = document.createDocumentFragment();
                 fragmentHeader.appendChild(divHeader);                
                 _elementById("ID_TAB_Header").appendChild(fragmentHeader);
@@ -448,17 +469,86 @@ require([
                 const divAside = document.createElement("section");
                 divAside.className = "report-table";
                 divAside.id = `IDTable_${index}`;
-              
-                const divMain = document.createElement("main");
-                if(lyr.content ?? false){
-                    console.log(lyr.content ?? false);
+                divAside.style.backgroundColor = "#FFFFFF";
+                
+                if(lyr.content ?? false) {
                     
-                    if(typeof lyr.content[0].tab[0].url == "undefined") {
-                        console.log("CAMPOS");
-                        console.log(lyr.content[0].tab[0].fields);
-                        lyr.content[0].tab[0].fields.map(function(current, ind) {
-                            ind = ind + 1;
-                            
+                    if(typeof lyr.content[0].version_01 !== "undefined") {
+                        let _boolean = false;
+                        let _version = lyr.content[0].version_01[0];
+                        const divColumn_01 = document.createElement("section");
+                        divColumn_01.className = "column_01";
+                        const divColumn_02 = document.createElement("section");
+                        divColumn_02.className = "column_02";
+                        
+                        let queryTask_PPRD = new QueryTask(lyr.url);
+                        let query_PPRD = new Query();
+                        query_PPRD.outFields = ["*"];
+                        query_PPRD.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
+                        query_PPRD.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                        query_PPRD.returnGeometry = false;
+
+                        queryTask_PPRD.execute(query_PPRD).then(
+                            (response) => {
+                                try {
+                                    let _features = "", _ambito = "";
+                                    let _length = response.features.length;
+                                    for (let i = 0; i < _length; i++) {
+                                        _features = response.features[i];
+                                        _ambito = _features.attributes[_version.field];                                        
+                                        _ambito = _ambito.replace("DISTRITO ","");
+                                        _ambito = _ambito.replace("PROVINCIA ","");
+                                        _ambito = _ambito.replace("DEPARTAMENTO ","");
+                                        if(_ambito == _ambitoLS) {
+                                            const divOBS = document.createElement("p");
+                                            divOBS.className = "sect-nota-info";
+                                            divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion}`;
+                                            divColumn_01.appendChild(divOBS);
+                                            const divNota = document.createElement("p");
+                                            divNota.className = "sect-nota";
+                                            divNota.innerHTML = _version.nota;
+                                            divColumn_01.appendChild(divNota);                                            
+                                            const divImg = document.createElement("img");
+                                            divImg.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
+                                            divColumn_02.appendChild(divImg);
+                                            break;
+                                        }
+                                        _boolean = true;
+                                    }
+
+                                    if(_boolean) {
+                                        const divOBS = document.createElement("p");
+                                        divOBS.className = "sect-nota-warning";
+                                        divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                        divColumn_01.appendChild(divOBS);                                        
+                                        const divNota = document.createElement("p");
+                                        divNota.className = "sect-nota";
+                                        divNota.innerHTML = _version.nota;
+                                        divColumn_01.appendChild(divNota);                                        
+                                        const divImg = document.createElement("img");
+                                        divImg.setAttribute("src", `./images/documento.png`);
+                                        divColumn_02.appendChild(divImg);
+                                    }
+                                    
+                                } catch (error) {
+                                    console.error(`Count: PPRRD => ${error.name} - ${error.message}`);
+                                }                    
+                            },
+                            (error) => {  
+                                console.error(`Error: PPRRD => ${error.name} - ${error.message}`);
+                            }
+                        );
+                        divAside.appendChild(divColumn_01);
+                        divAside.appendChild(divColumn_02);
+                    }
+                
+                    if(typeof lyr.content[0].version_02 !== "undefined") {
+                        const divMain = document.createElement("main");
+                    //if(typeof lyr.content[0].tab[0].url == "undefined") {
+                        //console.log("CAMPOS");
+                        //console.log(lyr.content[0].tab[0].fields);
+                        lyr.content[0].version_02[0].fields.map(function(current, ind) {
+                            //ind = ind + 1;
                             const inputText = document.createElement("input");
                             inputText.type = "radio";
                             inputText.className = "tabs-horiz";
@@ -474,56 +564,44 @@ require([
                             divMain.appendChild(inputText);
                             divMain.appendChild(label);                            
                         }.bind(this));
-                    } else {
-                        console.log("URL");
-                        console.log(lyr.content[0].tab[0].url);
-                    }      
+                    //}
                  
-                    if(typeof lyr.content[0].tab[0].url == "undefined") {
-                        console.log("CAMPOS");
-                        console.log(lyr.content[0].tab[0].fields);
-                        lyr.content[0].tab[0].fields.map(function(current, ind) {
-                            ind = ind + 1;
-                            
+                    //if(typeof lyr.content[0].version_02 !== "undefined") {
+                        //console.log("CAMPOS");
+                        //console.log(lyr.content[0].tab[0].fields);
+                        lyr.content[0].version_02[0].fields.map(function(current, ind) {
+                            //ind = ind + 1;                            
                             const sect = document.createElement("section");
                             sect.id = `content${index}${current.name}`;
                             const div = document.createElement("div");
                             div.innerText = current.alias;
-                            sect.appendChild(div);
-                            
+                            sect.appendChild(div);                            
                             divMain.appendChild(sect);                            
                         }.bind(this));
-                    } else {
-                        console.log("URL");
-                        console.log(lyr.content[0].tab[0].url);
-                    } 
+                    //}
 
                     const tagStyle = document.createElement("style");
                     let abc = "";
-                    if(typeof lyr.content[0].tab[0].url == "undefined") {
-                        console.log("STYLE");
-                        console.log(lyr.content[0].tab[0].fields);
-                        lyr.content[0].tab[0].fields.map(function(current, ind) {
-                            ind = ind + 1;
-                            console.log(current.name);
+                    //if(typeof lyr.content[0].version_02 !== "undefined") {
+                        //console.log("STYLE");
+                        //console.log(lyr.content[0].tab[0].fields);
+                        lyr.content[0].version_02[0].fields.map(function(current, ind) {
+                            //ind = ind + 1;
+                            //console.log(current.name);
                             abc += `#tab${index}${current.name}:checked ~ #content${index}${current.name},`;
-                            console.log(abc);
-                            
+                            //console.log(abc);                            
                         }.bind(this));
-                    } else {
-                        console.log("URL");
-                        console.log(lyr.content[0].tab[0].url);
-                    } 
-
-                    if(abc !== "") {
-                        let abc_2 = abc.substring(0, abc.length - 1);
-                        console.log(abc_2);
-                        tagStyle.textContent = abc_2.concat("{display: block;};");
-                        divMain.appendChild(tagStyle);
+              
+                    //if(typeof lyr.content[0].version_02 !== "undefined") {
+                        if(abc !== "") {
+                            let abc_2 = abc.substring(0, abc.length - 1);
+                            //console.log(abc_2);
+                            tagStyle.textContent = abc_2.concat("{display: block;};");
+                            divMain.appendChild(tagStyle);
+                        }
+                        divAside.appendChild(divMain); 
                     }
-                 
-
-                    divAside.appendChild(divMain); 
+              
                 }
 
                 divContent.appendChild(divTitle);
@@ -540,11 +618,16 @@ require([
 		}
 	};
 	_jsonTravelTree(configDiagnosis_Temp);
+    
     /*
     _elementById("ID_TAB_Header").childNodes[4].className += "active";
 	_elementById("ID_TAB_Content").childNodes[4].className = "active";
     */
 
+    _elementById("ID_TAB_Header").childNodes[4].classList.add("active");
+	_elementById("ID_TAB_Content").childNodes[4].style.display = "block";
+    _elementById("ID_TAB_Content").childNodes[4].classList.add("active");
+   
     /*
     let _class = function(name) { return document.getElementsByClassName(name); };
 	let tabPanes = _class("tab-header")[0].getElementsByTagName("div");	
