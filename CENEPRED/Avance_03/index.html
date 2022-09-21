@@ -40,26 +40,62 @@
         </h2>
       </div>
       <!-- /Sub Title -->
-      <div class="report-content">
+      <!-- Summary -->
+      <button class="accordion">
+        <i class="fa fa-pie-chart"></i>&nbsp;Cuadro de Resumen
+      </button>
+      <div class="panel">
+        <!--
+        <div class="lds-facebook" id="ID_CR_Load" style="display: none;">
+          <div></div><div></div><div></div>
+        </div>-->
+
+        
+      
         <!-- Gráfico -->
+        <section class="column">
+          <!--
+          <center>
+            <canvas id="ID_CR_Graphic"  height="270" width="400"></canvas>
+          </center>
+          -->
+          <center>
+            <canvas id="ID_TABLE_Graphic"  height="220" width="490" style="margin-top: 10px;"></canvas>
+            </center>
+        </section>
+        <!-- Cuadro de resumen-->
+        <section class="column">
+          <div class=" form-scroll-resumen"  id="ID_TABLE_Resumen"></div>
+          <div class="lds-facebook" id="ID_Load">
+            <div></div><div></div><div></div>
+          </div>
+          <!--<div class="form-scroll-resumen"  id="ID_CR_Summary"></div>-->
+        </section>
+        
+      </div>
+      <!-- /Summary -->
+
+      <!--
+      <div class="report-content">
+        
         <div class="report-aside report-graphic" >    
           <center>
           <canvas id="ID_TABLE_Graphic"  height="270" width="400"></canvas>
           </center>
         </div>
-        <!-- /Gráfico -->
-        <!-- Cuadro de resumen-->
+        
         <div class="report-aside report-summary ">
           <label class="report-title-resumen">» CUADRO DE RESUMEN</label>
-          <!-- Table -->
+        
           <div class=" form-scroll-resumen"  id="ID_TABLE_Resumen"></div>
-          <!-- Load CSS -->
+        
           <div class="lds-facebook" id="ID_Load">
             <div></div><div></div><div></div>
           </div>
-        </div>
-        <!-- /Cuadro de resumen-->
+        </div>        
       </div>
+      -->
+      
       <div class="tabs">         
         <div class="tab-header form-scroll" id="ID_TAB_Header"> 
           <!--

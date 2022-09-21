@@ -36,19 +36,28 @@ require([
     let configDiagnosis_Temp = [];
     let configAnalysis = config.lyrAnalysis;
     let configAnalysis_Temp = [];
+    let configSummary_Temp = [];    
     //let reportItemTotal = 0;
     let reportItemResult = 0;
     let chartLabel = [];
     let chartData = [];
     let chartBackgroundColor = [];
     let chartID = "ID_TABLE_Graphic";
+    let graphicID = "ID_CR_Graphic";
+    let summaryID = "ID_CR_Summary";
+    
     this.analysisTotal = 0;
     this.diagnosisTotal = 0;
     this.diagnosisCount = 1;
+
+    this.summaryTotal = 0;
+    this.summaryCount = 0;
     
     
     map = new Map("map", { center: [-76, -10], zoom: 6, basemap: "topo" });
-    
+    /* Load GEOMETRY */
+    this.geometryAmbito = JSON.parse(localStorage.getItem("reportGeometry"));
+    /* Validated ID */
     let _elementById = function (paramId) {
         try { /* Valida el ID */
             let id = document.getElementById(paramId);
@@ -62,7 +71,50 @@ require([
         }
     };
     _elementById("ID_Alert").style.display = "none";
-
+    /* Sort JSON - QUANTITY */
+    let _sortJSON = function(data, key, orden) {
+        try { /* Ordenando el json de capas */
+            return data.sort(function (a, b) {
+                var x = a[key], y = b[key];        
+                if (orden === 'asc') { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+        
+                if (orden === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }                
+            });
+        } catch (error) { 
+            console.error(`Error: _sortJSON => ${error.name} - ${error.message}`); 
+        }
+    };
+    /* Load TITLE */
+    let _title = function(_title) {
+        try {
+            _elementById("ID_ReportTitle").innerHTML = "";
+            _elementById("ID_ReportTitle").innerHTML = `<i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp; ${_title || ''}`;
+        } catch (error) {
+            console.error(`Error: _title => ${error.name} - ${error.message}`);
+        }
+    };
+    _title(JSON.parse(localStorage.getItem("reportTitle")));
+    /* Create GRAPHIC */
+    let _graphic = function(_id) {
+        try {
+            const data = { labels:[], datasets:[{ data:[], backgroundColor:[],borderWidth: 1 }]};
+            new Chart(_id, { 
+                type: 'doughnut',
+                data,
+                options: {
+                    responsive: false,
+                    plugins: {
+                        legend: { display:false, position:'bottom' },
+                        title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                    }
+                }
+            });
+        } catch(error) {
+            console.error(`_graphicPie: ${error.name} - ${error.message}`);
+        }
+    };
+    //_graphic(graphicID);
+    /* Load LIST JSON */
     let _reportJson = function(json, _conf, _count, _name = "") {
         try { /* Recorre un arból de n hijos */
             let type; let resul; let layer;             
@@ -81,7 +133,8 @@ require([
                         objectid:json[i].objectid,
                         rgb:json[i].rgb,
                         default:typeof json[i].default !== "undefined" ? true: false,
-                        content:json[i].content
+                        content:json[i].content,
+                        cantidad: 0
                     });
                 } else {
                     if(_name.length == 0) { /* Se filtra solo las cabeceras una vez */
@@ -95,22 +148,14 @@ require([
             console.error(`Error: _reportJson => ${error.name} - ${error.message}`);
         }
     };
-
     /* Lista de ANALYSIS */
     _reportJson(configAnalysis,configAnalysis_Temp,"analysisTotal");
     /* Lista de DIAGNOSIS */
     _reportJson(configDiagnosis,configDiagnosis_Temp,"diagnosisTotal");
-    
-    let _title = function(_title) {
-        try {
-            _elementById("ID_ReportTitle").innerHTML = "";
-            _elementById("ID_ReportTitle").innerHTML = `<i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp; ${_title || ''}`;
-        } catch (error) {
-            console.error(`Error: _title => ${error.name} - ${error.message}`);
-        }
-    };
-    _title(JSON.parse(localStorage.getItem("reportTitle")));
-
+    configSummary_Temp = JSON.parse( JSON.stringify(configDiagnosis_Temp));
+    /* Lista de DIAGNOSIS */
+    //_reportJson(configDiagnosis,configSummary_Temp,"summaryTotal");
+    /* Crear TABLE */
     let _htmlTable = function(ID_Table) {
         try { /* Se crea la tabla de resumen */
             ID_Table.innerHTML = "";
@@ -124,7 +169,7 @@ require([
             const rowHeadTH_ItemNode = document.createTextNode("#");
             rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
             const rowHeadTH_Name = document.createElement("th");
-            const rowHeadTH_NameNode = document.createTextNode("Capas / Temáticas");
+            const rowHeadTH_NameNode = document.createTextNode("Información");
             rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
             const rowHeadTH_Count = document.createElement("th");
             const rowHeadTH_CountSize = document.createTextNode("Cantidad");
@@ -140,7 +185,7 @@ require([
             const rowTD = document.createElement("td");
             rowTD.colSpan = "3";
             rowTD.style.textAlign = "center";
-            const rowTD_Node = document.createTextNode("Sin Coincidencias");
+            const rowTD_Node = document.createTextNode("Sin coincidencias");
             rowTD.appendChild(rowTD_Node);
             row.appendChild(rowTD);
             tblBody.appendChild(row);
@@ -171,19 +216,113 @@ require([
         }
     };    
     _htmlTable(_elementById("ID_TABLE_Resumen"));
-
-    let _sortJSON = function(data, key, orden) {
-        try { /* Ordenando el json de capas */
-            return data.sort(function (a, b) {
-                var x = a[key], y = b[key];        
-                if (orden === 'asc') { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
-        
-                if (orden === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }                
-            });
-        } catch (error) { 
-            console.error(`Error: _sortJSON => ${error.name} - ${error.message}`); 
+    //_htmlTable(_elementById("ID_CR_Summary"));
+    /* Carga de la funcional del acordion */
+    let _acordion = function() {
+        try {
+            let acc = document.getElementsByClassName("accordion"); let i;
+            for (i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    var panel = this.nextElementSibling;
+                    if (panel.style.maxHeight) {
+                        panel.style.maxHeight = null;
+                    } else {
+                        panel.style.maxHeight = panel.scrollHeight + "px";
+                    } 
+                });
+            }
+        } catch (error) {
+            console.error(`_acordion: ${error.name} - ${error.message}`);
         }
     };
+    _acordion();
+    configSummary_Temp.map(function(lyr, index) {
+        if(typeof lyr.url === "undefined") {
+            configSummary_Temp.splice(index, 1);
+        }
+    });
+    /* Carga de datos al acordion 
+    let _acordionLoad = function(_summaryID,_graphicID) {
+        try {//summaryID,graphicID
+            this.ID_CR_Summary.style.display = "none";
+            this.ID_CR_Load.style.display = "block";
+            let _count = 0;
+            configSummary_Temp.map(function(lyr) {
+                if(typeof lyr.url !== "undefined") {
+                    let queryTaskSummary = new QueryTask(lyr.url);
+                    let querySummary = new Query();
+                    querySummary.geometry = new Polygon(this.geometryAmbito);
+                    querySummary.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                    querySummary.returnGeometry = false;
+                    queryTaskSummary.executeForCount(querySummary).then(
+                        (response) => {
+                            try {
+                                _count = _count + response;
+                                this.summaryCount++;
+                                _elementById(`${_summaryID}_Total`).innerText = _count;
+                                lyr.cantidad = response;
+                            } catch (error) {
+                                console.error(`Response: _acordionLoad => ${error.name} - ${error.message}`);
+                            }                    
+                        },
+                        (error) => {  
+                            console.error(`Error: _acordionLoad => ${error.name} - ${error.message}`);
+                        }
+                    ).always(lang.hitch(this, function() {
+                        try {
+                            if(this.summaryTotal == this.summaryCount) {
+                                // Se lista capas
+                                let _index = 0;
+                                // Se limpiar TABLE
+                                _sortJSON(configSummary_Temp, 'cantidad','desc');
+                                _elementById(`${_summaryID}_Tbody`).innerHTML = "";
+                                configSummary_Temp.map(function(_lyr) {
+                                    if(_lyr.cantidad > 0) {
+                                        // Load TABLE
+                                        _index = _index + 1;
+                                        let fragment = document.createDocumentFragment();
+                                        let row = document.createElement("tr");
+                                        let cell_0 = document.createElement("td");
+                                        let cellText_0 = document.createTextNode(_index);
+                                        cell_0.appendChild(cellText_0);
+                                        let cell_1 = document.createElement("td");
+                                        cell_1.innerHTML = _lyr.name;
+                                        let cell_2 = document.createElement("td");
+                                        let cellText_2 = document.createTextNode(_lyr.cantidad || 0);
+                                        cell_2.appendChild(cellText_2);
+                                        row.appendChild(cell_0);
+                                        row.appendChild(cell_1);
+                                        row.appendChild(cell_2);
+                                        fragment.appendChild(row);
+                                        _elementById(`${_summaryID}_Tbody`).appendChild(fragment);
+                                        // Load GRAPHIC
+                                        let chart = Chart.getChart(_graphicID);
+                                        chartData.push(_lyr.cantidad);
+                                        chartLabel.push(_lyr.name.replace(/<[^>]+>/g, ''));
+                                        chartBackgroundColor.push(_lyr.rgb);                                
+                                        chart.data.datasets[0].data = chartData;
+                                        chart.data.datasets[0].backgroundColor = chartBackgroundColor;
+                                        chart.data.labels = chartLabel;
+                                        chart.update();
+                                    }
+                                }.bind(this));
+                                this.ID_CR_Load.style.display = "none";
+                                this.ID_CR_Summary.style.display = "block";
+                            }  
+                        } catch (error) {
+                            console.error(`Error: _acordionLoad always => ${error.name} - ${error.message}`);
+                        } 
+                    }.bind(this)));
+                    
+                }
+            }.bind(this));            
+        } catch (error) {
+            console.error(`_acordionLoad: ${error.name} - ${error.message}`);
+        }
+    };
+    */
+    //_acordionLoad(summaryID,graphicID);
 
     let _queryTask = function(lyr, _count, _ambito, _index) {
         try {
@@ -204,10 +343,9 @@ require([
                             _elementById(`ID_TABLE_Resumen_Total`).innerText = reportItemResult;
                             this.diagnosisCount++;
                             lyr.cantidad = count;
-                            
                             if(count === 0) {                            
-                                _elementById("ID_TAB_Header").childNodes[3+_index].style.display="none";
-                                _elementById("ID_TAB_Content").childNodes[3+_index].style.display="none";
+                                _elementById("ID_TAB_Header").childNodes[5+_index].style.display="none";
+                                _elementById("ID_TAB_Content").childNodes[5+_index].style.display="none";
                             } else {
                                 const chart = Chart.getChart(chartID);
                                 chartData.push(lyr.cantidad);
@@ -231,34 +369,33 @@ require([
                         if( this.diagnosisCount == _count) {
                             this.ID_Load.style.display = "none";
                             this.ID_TABLE_Resumen.style.display = "block";
-                            _sortJSON(configDiagnosis_Temp, 'cantidad','desc');
-                            //_htmlTable(_elementById("ID_TABLE_Resumen"));
+                            _sortJSON(configSummary_Temp, 'cantidad','desc');
                             /* Se lista capas */
                             let _index = 0;
                             /* Se limpiar TABLE */
-                            setTimeout(() => {
-                                _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
-                                configDiagnosis_Temp.map(function(cValue) {
-                                    if(cValue.cantidad > 0 && typeof cValue.cantidad !== "undefined") {
-                                        _index = _index + 1;
-                                        let fragment = document.createDocumentFragment();
-                                        let row = document.createElement("tr");
-                                        let cell_0 = document.createElement("td");
-                                        let cellText_0 = document.createTextNode(_index);
-                                        cell_0.appendChild(cellText_0);
-                                        let cell_1 = document.createElement("td");
-                                        cell_1.innerHTML = cValue.name;
-                                        let cell_2 = document.createElement("td");
-                                        let cellText_2 = document.createTextNode(cValue.cantidad || 0);
-                                        cell_2.appendChild(cellText_2);
-                                        row.appendChild(cell_0);
-                                        row.appendChild(cell_1);
-                                        row.appendChild(cell_2);
-                                        fragment.appendChild(row);
-                                        _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
-                                    }
-                                }.bind(this));   
-                            }, 1000);                             
+                            _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
+                            configSummary_Temp.map(function(_lyr) {
+                                if(_lyr.cantidad > 0 && typeof _lyr.cantidad !== "undefined") {
+                                    _index = _index + 1;
+                                    console.log(_lyr);
+                                    let fragment = document.createDocumentFragment();
+                                    let row = document.createElement("tr");
+                                    let cell_0 = document.createElement("td");
+                                    let cellText_0 = document.createTextNode(_index);
+                                    cell_0.innerHTML = `<span style="color: ${_lyr.rgb}">■</span>`;
+                                    //cell_0.appendChild(cellText_0);
+                                    let cell_1 = document.createElement("td");
+                                    cell_1.innerHTML = _lyr.name;
+                                    let cell_2 = document.createElement("td");
+                                    let cellText_2 = document.createTextNode(_lyr.cantidad || 0);
+                                    cell_2.appendChild(cellText_2);
+                                    row.appendChild(cell_0);
+                                    row.appendChild(cell_1);
+                                    row.appendChild(cell_2);
+                                    fragment.appendChild(row);
+                                    _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
+                                }
+                            }.bind(this)); 
                         }                         
                     } catch (error) {
                         console.error(`Error: _queryTask always => ${error.name} - ${error.message}`);
@@ -369,7 +506,7 @@ require([
             } else {
                 _elementById("ID_Alert").style.display = "none";
                 this.diagnosisCount = 1;
-                configDiagnosis_Temp.map(function(lyr, index) {
+                configSummary_Temp.map(function(lyr, index) {
                     !lyr.default || _featureTable(lyr.url,lyr.objectid,lyr.fields);
                     _queryTask(lyr, this.diagnosisTotal, _ambito, index);
                 });
@@ -452,7 +589,7 @@ require([
                     divHeader.dataset.fields = JSON.stringify(lyr.fields);
                     //divHeader.className = !lyr.default || "active";
                 }
-
+                
                 let fragmentHeader = document.createDocumentFragment();
                 fragmentHeader.appendChild(divHeader);                
                 _elementById("ID_TAB_Header").appendChild(fragmentHeader);
@@ -473,6 +610,7 @@ require([
                 
                 if(lyr.content ?? false) {
                     
+                    /* <PPRRD> */
                     if(typeof lyr.content[0].version_01 !== "undefined") {
                         let _boolean = false;
                         let _version = lyr.content[0].version_01[0];
@@ -511,9 +649,11 @@ require([
                                             const divImg = document.createElement("img");
                                             divImg.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
                                             divColumn_02.appendChild(divImg);
+                                            _boolean = false;
                                             break;
                                         }
                                         _boolean = true;
+                                        
                                     }
 
                                     if(_boolean) {
@@ -541,6 +681,9 @@ require([
                         divAside.appendChild(divColumn_01);
                         divAside.appendChild(divColumn_02);
                     }
+                    /* </PPRRD> */
+
+
                 
                     if(typeof lyr.content[0].version_02 !== "undefined") {
                         const divMain = document.createElement("main");
