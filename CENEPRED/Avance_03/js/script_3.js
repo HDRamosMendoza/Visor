@@ -187,7 +187,7 @@ require([
     //_reportJson(configDiagnosis,configSummary_Temp,"summaryTotal");
     
     /* Crear TABLE */
-    let _htmlTable = function(ID_Table) {
+    let _htmlTable = function(ID_Table, _lyrTitle = "Elementos Expuestos") {
         try { /* Se crea la tabla de resumen */
             ID_Table.innerHTML = "";
             const idTable = ID_Table.getAttribute("id"); 
@@ -200,7 +200,7 @@ require([
             const rowHeadTH_ItemNode = document.createTextNode("#");
             rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
             const rowHeadTH_Name = document.createElement("th");
-            const rowHeadTH_NameNode = document.createTextNode("Información");
+            const rowHeadTH_NameNode = document.createTextNode(_lyrTitle);
             rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
             const rowHeadTH_Count = document.createElement("th");
             const rowHeadTH_CountSize = document.createTextNode("Cantidad");
@@ -246,7 +246,7 @@ require([
             console.error(`Error: _htmlTable => ${error.name} - ${error.message}`);
         }
     }; 
-    _htmlTable(_elementById("ID_TABLE_Resumen"));
+    _htmlTable(_elementById("ID_TABLE_Resumen"), "Información");
     /* Add row TABLE */
     let _htmlTable_ADD = function(_id,_arr) {
         try {
@@ -1811,6 +1811,424 @@ require([
                                 _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
                             }
                             /* </FM> */
+
+
+
+
+
+
+
+                            /* <AE> */
+                            if(typeof lyr.content[0].version_08 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_08[0];
+                                let _boolean = true;
+                                let unionGeometry = [];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+                                
+                                let queryTask_AE = new QueryTask(lyr.url);
+                                let query_AE = new Query();
+                                query_AE.returnGeometry = true;
+                                query_AE.geometry = new Polygon(_geometryAmbito);
+                                query_AE.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                queryTask_AE.execute(query_AE).then(
+                                    (response) => {
+                                        try {
+                                            let _length = response.features.length;
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
+
+                                            if(_length == 0) {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);  
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                            
+                                            if(_boolean) {                            
+                                                const divNota = document.createElement("p");
+                                                divNota.className = "sect-nota";
+                                                divNota.innerHTML = _version.nota;
+                                                divColumn_01.appendChild(divNota);
+                                            }                             
+                                        } catch (error) {
+                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
+                                        }                    
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
+                                    }
+                                ).always(lang.hitch(this, () => { 
+                                    let countTabItem = 1;
+                                    let countTabItemTotal = 0;
+                                    /* Union Geometry */
+                                    let _geometry = geometryEngine.union(unionGeometry);
+                                    /* Statistic Poblacion */
+                                    let poblacionSUM = new StatisticDefinition();
+                                    poblacionSUM.statisticType = "sum";
+                                    poblacionSUM.onStatisticField = _version.fields[0].name;
+                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                    /* Statistic Vivienda */
+                                    let viviendaSUM = new StatisticDefinition();
+                                    viviendaSUM.statisticType = "sum";
+                                    viviendaSUM.onStatisticField = _version.fields[1].name;
+                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                    /* Statistic Response */
+                                    let queryTask_Engine = new QueryTask(_version.url);
+                                    let query_Engine = new Query();
+                                    query_Engine.outFields = _version.fields.map(x => x.name);
+                                    query_Engine.geometry = _geometry;
+                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                    query_Engine.returnGeometry = false;
+                                    queryTask_Engine.execute(query_Engine).then(
+                                        (response) => {
+                                            try {
+                                                let _contentTab01 = []; let _contentTab02 = [];
+                                                let _attr = response.features[0].attributes;
+                                                /* Poblacion */
+                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                /* Vivienda */
+                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                            } catch (error) {
+                                                console.error(`Count: Statistic FM => ${error.name}`);
+                                            }                    
+                                        },
+                                        (error) => {
+                                            console.error(`Error: Statistic FM => ${error.name}`);
+                                        }
+                                    );                                    
+                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                    configAnalysis_Temp.forEach(function(cValue) {
+                                       /* Statistic Analysis */
+                                        let analysisCOUNT = new StatisticDefinition();
+                                        analysisCOUNT.statisticType = "count";
+                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                        /* Statistic Analysis */
+                                        let queryTask_Analysis = new QueryTask(cValue.url);
+                                        let query_Analysis = new Query();
+                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                        query_Analysis.geometry = _geometry;
+                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.outStatistics = [ analysisCOUNT ];
+                                        queryTask_Analysis.execute(query_Analysis).then(
+                                            (response) => {
+                                                try {
+                                                    let _attr = response.features[0].attributes;
+                                                    if(_attr.cantidad > 0) {
+                                                        let _contentTab = [];
+                                                        let _id = `ID_TBcontent${lyr.tag}`;
+                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                        _htmlTable_ADD(`${_id}`,_contentTab);
+                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                            }
+                                        );
+                                    });
+                                }));
+                                
+                                const divTable = document.createElement("div");
+                                divTable.id = `ID_TBcontent${lyr.tag}`;
+                                divTable.className = "form-scroll-resumen2";
+                                divColumn_02.appendChild(divTable);
+                                
+                                /* HEADER */
+                                lyr.content[0].version_08[0].fields.map(function(current) {
+                                    const inputText = document.createElement("input");
+                                    inputText.type = "radio";
+                                    inputText.className = "tabs-horiz";
+                                    inputText.id = `tab${lyr.tag}${current.name}`;
+                                    inputText.name = `tabs-2${lyr.tag}`;
+                                    if(typeof current.default !== "undefined") {
+                                        inputText.setAttribute("checked","");
+                                    }
+                                    const label = document.createElement("label");
+                                    label.innerText = current.alias;
+                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                    
+                                    divMain.appendChild(inputText);
+                                    divMain.appendChild(label);                            
+                                }.bind(this));
+                                /* CONTENT */
+                                lyr.content[0].version_08[0].fields.map(function(current) {
+                                    const sect = document.createElement("section");
+                                    sect.id = `content${lyr.tag}${current.name}`;
+                                    const div = document.createElement("div");
+                                    
+                                    const divCenter = document.createElement("center");
+                                    const divOBS = document.createElement("p");
+                                    divOBS.style.fontSize = "14px";
+                                    divOBS.innerText = current.note;
+                                    divCenter.appendChild(divOBS);
+                                    div.appendChild(divCenter);
+
+                                    const divCenterTotal = document.createElement("center");
+                                    const divTotal = document.createElement("p");
+                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                    divTotal.style.fontSize = "65px";
+                                    divTotal.style.margin = "5px 0px";
+                                    divTotal.innerText = 0;
+                                    divCenterTotal.appendChild(divTotal);
+                                    div.appendChild(divCenterTotal);
+                                    const divTable = document.createElement("div");
+                                    divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    div.appendChild(divTable);
+
+                                    sect.appendChild(div);                            
+                                    divMain.appendChild(sect);                            
+                                }.bind(this));
+                                
+                                const tagStyle = document.createElement("style"); let _css = "";
+                            
+                                lyr.content[0].version_08[0].fields.map(function(current) {
+                                    _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;  
+                                }.bind(this));
+                            
+                                if(_css !== "") {
+                                    let _cssStyle = _css.substring(0, _css.length - 1);
+                                    tagStyle.textContent = _cssStyle.concat("{display: block;};");
+                                    divMain.appendChild(tagStyle);
+                                } 
+                                divColumn_01.appendChild(divMain);
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por mov. en Masa", "Población Expuesta");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por mov. en Masa", "Viviendas Expuesta");
+
+                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                            }
+                            /* </AE> */
+
+                            /* <AET> */
+                            if(typeof lyr.content[0].version_09 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_09[0];
+                                let _boolean = true;
+                                let unionGeometry = [];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+                                
+                                let queryTask_AET = new QueryTask(lyr.url);
+                                let query_AET = new Query();
+                                query_AET.returnGeometry = true;
+                                query_AET.geometry = new Polygon(_geometryAmbito);
+                                query_AET.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                queryTask_AET.execute(query_AET).then(
+                                    (response) => {
+                                        try {
+                                            let _length = response.features.length;
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
+
+                                            if(_length == 0) {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);  
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                            
+                                            if(_boolean) {                            
+                                                const divNota = document.createElement("p");
+                                                divNota.className = "sect-nota";
+                                                divNota.innerHTML = _version.nota;
+                                                divColumn_01.appendChild(divNota);
+                                            }                             
+                                        } catch (error) {
+                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
+                                        }                    
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
+                                    }
+                                ).always(lang.hitch(this, () => { 
+                                    let countTabItem = 1;
+                                    let countTabItemTotal = 0;
+                                    /* Union Geometry */
+                                    let _geometry = geometryEngine.union(unionGeometry);
+                                    /* Statistic Poblacion */
+                                    let poblacionSUM = new StatisticDefinition();
+                                    poblacionSUM.statisticType = "sum";
+                                    poblacionSUM.onStatisticField = _version.fields[0].name;
+                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                    /* Statistic Vivienda */
+                                    let viviendaSUM = new StatisticDefinition();
+                                    viviendaSUM.statisticType = "sum";
+                                    viviendaSUM.onStatisticField = _version.fields[1].name;
+                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                    /* Statistic Response */
+                                    let queryTask_Engine = new QueryTask(_version.url);
+                                    let query_Engine = new Query();
+                                    query_Engine.outFields = _version.fields.map(x => x.name);
+                                    query_Engine.geometry = _geometry;
+                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                    query_Engine.returnGeometry = false;
+                                    queryTask_Engine.execute(query_Engine).then(
+                                        (response) => {
+                                            try {
+                                                let _contentTab01 = []; let _contentTab02 = [];
+                                                let _attr = response.features[0].attributes;
+                                                /* Poblacion */
+                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                /* Vivienda */
+                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                            } catch (error) {
+                                                console.error(`Count: Statistic FM => ${error.name}`);
+                                            }                    
+                                        },
+                                        (error) => {
+                                            console.error(`Error: Statistic FM => ${error.name}`);
+                                        }
+                                    );                                    
+                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                    configAnalysis_Temp.forEach(function(cValue) {
+                                       /* Statistic Analysis */
+                                        let analysisCOUNT = new StatisticDefinition();
+                                        analysisCOUNT.statisticType = "count";
+                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                        /* Statistic Analysis */
+                                        let queryTask_Analysis = new QueryTask(cValue.url);
+                                        let query_Analysis = new Query();
+                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                        query_Analysis.geometry = _geometry;
+                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.outStatistics = [ analysisCOUNT ];
+                                        queryTask_Analysis.execute(query_Analysis).then(
+                                            (response) => {
+                                                try {
+                                                    let _attr = response.features[0].attributes;
+                                                    if(_attr.cantidad > 0) {
+                                                        let _contentTab = [];
+                                                        let _id = `ID_TBcontent${lyr.tag}`;
+                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                        _htmlTable_ADD(`${_id}`,_contentTab);
+                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                            }
+                                        );
+                                    });
+                                }));
+                                
+                                const divTable = document.createElement("div");
+                                divTable.id = `ID_TBcontent${lyr.tag}`;
+                                divTable.className = "form-scroll-resumen2";
+                                divColumn_02.appendChild(divTable);
+                                
+                                /* HEADER */
+                                lyr.content[0].version_09[0].fields.map(function(current) {
+                                    const inputText = document.createElement("input");
+                                    inputText.type = "radio";
+                                    inputText.className = "tabs-horiz";
+                                    inputText.id = `tab${lyr.tag}${current.name}`;
+                                    inputText.name = `tabs-2${lyr.tag}`;
+                                    if(typeof current.default !== "undefined") {
+                                        inputText.setAttribute("checked","");
+                                    }
+                                    const label = document.createElement("label");
+                                    label.innerText = current.alias;
+                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                    
+                                    divMain.appendChild(inputText);
+                                    divMain.appendChild(label);                            
+                                }.bind(this));
+                                /* CONTENT */
+                                lyr.content[0].version_09[0].fields.map(function(current) {
+                                    const sect = document.createElement("section");
+                                    sect.id = `content${lyr.tag}${current.name}`;
+                                    const div = document.createElement("div");
+                                    
+                                    const divCenter = document.createElement("center");
+                                    const divOBS = document.createElement("p");
+                                    divOBS.style.fontSize = "14px";
+                                    divOBS.innerText = current.note;
+                                    divCenter.appendChild(divOBS);
+                                    div.appendChild(divCenter);
+
+                                    const divCenterTotal = document.createElement("center");
+                                    const divTotal = document.createElement("p");
+                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                    divTotal.style.fontSize = "65px";
+                                    divTotal.style.margin = "5px 0px";
+                                    divTotal.innerText = 0;
+                                    divCenterTotal.appendChild(divTotal);
+                                    div.appendChild(divCenterTotal);
+                                    const divTable = document.createElement("div");
+                                    divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    div.appendChild(divTable);
+
+                                    sect.appendChild(div);                            
+                                    divMain.appendChild(sect);                            
+                                }.bind(this));
+                                
+                                const tagStyle = document.createElement("style"); let _css = "";
+                            
+                                lyr.content[0].version_09[0].fields.map(function(current) {
+                                    _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;  
+                                }.bind(this));
+                            
+                                if(_css !== "") {
+                                    let _cssStyle = _css.substring(0, _css.length - 1);
+                                    tagStyle.textContent = _cssStyle.concat("{display: block;};");
+                                    divMain.appendChild(tagStyle);
+                                } 
+                                divColumn_01.appendChild(divMain);
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de exposicion al tsunami", "Población");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Areas de exposicion al tsunami", "Vivienda");
+
+                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                            }
+                            /* </AET> */
 
                         }
                         //_elementById(`IDTable_${lyr.tag}`).appendChild(); 

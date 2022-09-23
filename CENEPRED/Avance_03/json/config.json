@@ -618,7 +618,8 @@
                                     "name": "recomend"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500",
+                            
                         },
                         {
                             "name": "Áreas de Exposición",
@@ -657,26 +658,38 @@
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020200",
                             "content": [
                                 {
-                                    "tab": [
+                                    "version_08": [
                                         {
+                                            "nota": "Las áreas de exposición por movimientos en masa son aquellos ámbitos identificados como peligros geológicos: Deslizamientos, flujos, caída de rocas, reptación, propagación lateral y movimientos complejos, por diferentes entidades mediante informes y/o estudios.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> áreas de exposición por movimientos en masa",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con áreas de exposición por movimientos en masa"
+                                                }
+                                            ],
+                                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
                                             "fields": [
                                                 {
-                                                    "alias": "Vivienda",
-                                                    "name": "viviendaa",
-                                                    "default": true
-                                                },
-                                                {
                                                     "alias": "Población",
-                                                    "name": "poblacionn"
+                                                    "name": "pob_total",
+                                                    "note": "Población expuesta en áreas de exposición por movimiento en masa",
+                                                    "td": "Expuesto",
+                                                    "default": true                    
                                                 },
                                                 {
-                                                    "alias": "Manzanas",
-                                                    "name": "manzanas"
+                                                    "alias": "Vivienda",
+                                                    "name": "num_viv_part",
+                                                    "note": "Viviendas expuestas en áreas de exposición por movimiento en masa",
+                                                    "td": "Expuesto"
+                                                }
+                                            ],
+                                            "analysis": [
+                                                {
+                                                    "field": "shape"
                                                 }
                                             ]
                                         }
                                     ]
-        
                                 }
                             ]
                         }
@@ -695,7 +708,43 @@
                                     "name": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030100"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030100",
+                            "content": [
+                                {
+                                    "version_09": [
+                                        {
+                                            "nota": "Las áreas de exposición a tsunami están determinadas por límite de máxima Inundación, se obtiene considerando aspectos oceanográficos tales como: altura y dirección de olas, además de información de las características geomorfológicas, pendiente, batimetría y topografía de las zonas de evaluación; las cartas de inundación se complementaron con información del INEI de población y viviendas de las zonas inundables ante un tsunami producido por un evento sísmico de 8.5 y 9.0 MW.(Según Sigrid).",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> áreas de exposición al peligro de tsunami",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con áreas de exposición al peligro de tsunami"
+                                                }
+                                            ],
+                                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
+                                            "fields": [
+                                                {
+                                                    "alias": "Población",
+                                                    "name": "pob_total",
+                                                    "note": "Población expuesta en área de exposición a tsunami",
+                                                    "td": "Expuesto",
+                                                    "default": true                    
+                                                },
+                                                {
+                                                    "alias": "Vivienda",
+                                                    "name": "num_viv_part",
+                                                    "note": "Viviendas expuestas en áreas de exposición a tsunami",
+                                                    "td": "Expuesto"
+                                                }
+                                            ],
+                                            "analysis": [
+                                                {
+                                                    "field": "shape"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },
