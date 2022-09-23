@@ -18,6 +18,7 @@ define([
     'dojo/dom-construct',
     'esri/config',
     'esri/graphic',
+    'esri/geometry/Polygon',
     'esri/geometry/geometryEngine',
     'esri/geometry/normalizeUtils',
     'esri/tasks/GeometryService',    
@@ -61,6 +62,7 @@ define([
     domConstruct,
     esriConfig,
     Graphic,
+    Polygon,
     geometryEngine,
     normalizeUtils,
     GeometryService,
@@ -802,7 +804,8 @@ define([
                 let queryTask = new QueryTask(_lyr.url);
                 let query = new Query();
                 query.outFields = _lyr.fields.map(x => x.field);
-                query.geometry = this.geometryIntersect;
+                /*console.log(this.geometryIntersect);*/ /* DANIEL */
+                query.geometry = new Polygon(this.geometryIntersect);
                 query.spatialRelationship = "esriSpatialRelIntersects";
                 query.geometryType = "esriGeometryEnvelope";
                 query.outStatistics = [ diagnosisCOUNT ];

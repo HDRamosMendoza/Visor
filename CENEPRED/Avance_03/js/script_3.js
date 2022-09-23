@@ -479,7 +479,8 @@ require([
                 let queryTask = new QueryTask(lyr.url);
                 let query = new Query();
                 query.outFields = lyr.fields.map(x => x.name);
-                query.geometry = new Polygon(_ambito)
+                /*console.log(_ambito);*/ /* DANIEL */
+                query.geometry = new Polygon(_ambito);
                 query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
                 query.returnGeometry = false;
                 query.outStatistics = [ diagnosisSUM ];
@@ -488,7 +489,6 @@ require([
                 this.deferredReport.then(
                     (response) => {
                         try {
-                            
                             let _attr = response.features[0].attributes;
                             reportItemResult = reportItemResult + _attr.cantidad;
                             _elementById(`ID_TABLE_Resumen_Total`).innerText = reportItemResult;
@@ -500,6 +500,34 @@ require([
                                 //_elementById("ID_TAB_Header").childNodes[5+_index].style.display="none";
                                 //_elementById("ID_TAB_Content").childNodes[5+_index].style.display="none";
                             } else {
+                                /* Se limpiar TABLE */
+                                _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
+                                /* Sort JSON */
+                                _sortJSON(configSummary_Temp, 'cantidad','desc');
+                                
+                                configSummary_Temp.map(function(_lyr) {
+                                    _elementById("ID_GraphicSummary").click();
+                                    if(_lyr.cantidad > 0 && typeof _lyr.cantidad !== "undefined") {
+                                        /*_index = _index + 1;*/
+                                        let fragment = document.createDocumentFragment();
+                                        let row = document.createElement("tr");
+                                        let cell_0 = document.createElement("td");
+                                        /*let cellText_0 = document.createTextNode(_index);*/
+                                        cell_0.innerHTML = `<span style="color: ${_lyr.rgb}">■</span>`;
+                                        /*cell_0.appendChild(cellText_0);*/
+                                        let cell_1 = document.createElement("td");
+                                        cell_1.innerHTML = _lyr.name;
+                                        let cell_2 = document.createElement("td");
+                                        let cellText_2 = document.createTextNode(_lyr.cantidad || 0);
+                                        cell_2.appendChild(cellText_2);
+                                        row.appendChild(cell_0);
+                                        row.appendChild(cell_1);
+                                        row.appendChild(cell_2);
+                                        fragment.appendChild(row);
+                                        _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
+                                    }
+                                }.bind(this)); 
+                                /* Graphic Chart */
                                 let chart = Chart.getChart(chartID);
                                 // Se detecto que la ejecución carga antes que la librería CHARTJS
                                 if(chart ?? false) {
@@ -524,32 +552,6 @@ require([
                         if( this.diagnosisCount == _count) {
                             this.ID_Load.style.display = "none";
                             this.ID_TABLE_Resumen.style.display = "block";
-                            /* Sort JSON */
-                            _sortJSON(configSummary_Temp, 'cantidad','desc');
-                            /* Se limpiar TABLE */
-                            _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
-                            configSummary_Temp.map(function(_lyr) {
-                                _elementById("ID_GraphicSummary").click();
-                                if(_lyr.cantidad > 0 && typeof _lyr.cantidad !== "undefined") {
-                                    /*_index = _index + 1;*/
-                                    let fragment = document.createDocumentFragment();
-                                    let row = document.createElement("tr");
-                                    let cell_0 = document.createElement("td");
-                                    /*let cellText_0 = document.createTextNode(_index);*/
-                                    cell_0.innerHTML = `<span style="color: ${_lyr.rgb}">■</span>`;
-                                    /*cell_0.appendChild(cellText_0);*/
-                                    let cell_1 = document.createElement("td");
-                                    cell_1.innerHTML = _lyr.name;
-                                    let cell_2 = document.createElement("td");
-                                    let cellText_2 = document.createTextNode(_lyr.cantidad || 0);
-                                    cell_2.appendChild(cellText_2);
-                                    row.appendChild(cell_0);
-                                    row.appendChild(cell_1);
-                                    row.appendChild(cell_2);
-                                    fragment.appendChild(row);
-                                    _elementById(`ID_TABLE_Resumen_Tbody`).appendChild(fragment);
-                                }
-                            }.bind(this)); 
                         }                         
                     } catch (error) {
                         console.error(`Error: _queryTask always => ${error.name} - ${error.message}`);
