@@ -36,7 +36,7 @@ require([
     ready,
     on
 ) {
-    esriConfig.defaults.io.proxyUrl = 'proxy/proxy.ashx';
+    esriConfig.defaults.io.proxyUrl = 'https://sigrid.cenepred.gob.pe/sigridv3/php/proxy.php';
     esriConfig.defaults.io.alwaysUseProxy = false;
     esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 
