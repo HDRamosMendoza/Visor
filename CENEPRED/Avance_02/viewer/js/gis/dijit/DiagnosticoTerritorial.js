@@ -812,15 +812,36 @@ define([
                         try {
                             if (this.diagnosisRandom == _random) {
                                 let _attr = response.features[0].attributes;
-                                this.diagnosisResult = this.diagnosisResult + _attr.cantidad;
-                                this.ID_Count.innerText = this.diagnosisResult;
+                                this.ID_Count.innerText = this.diagnosisResult = this.diagnosisResult + _attr.cantidad;
                                 this.ID_CountText.innerHTML = this.textAmbito;
                                 this._elementById(`${_id}_Total`).innerText = this.diagnosisResult;
                                 this.ID_Percentage.innerHTML = this._loadTime(this.diagnosisCount, _total);
                                 this.diagnosisCount++;
                                 _lyr.cantidad = _attr.cantidad;
+                                /* Delete Tbody */
+                                this._elementById(`${_id}_Tbody`).innerHTML = "";
                                 /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
                                 this._sortJSON(_temp, 'cantidad','desc'); 
+                                /* Inserta a la tabla */
+                                _temp.map(function(current, index) {
+                                    if(current.cantidad > 0) {
+                                        let fragment = document.createDocumentFragment();
+                                        let row = document.createElement("tr");
+                                        let cell_0 = document.createElement("td");
+                                        let cellText_0 = document.createTextNode(index + 1);
+                                        cell_0.appendChild(cellText_0);
+                                        let cell_1 = document.createElement("td");
+                                        cell_1.innerHTML = current.name;
+                                        let cell_2 = document.createElement("td");
+                                        let cellText_2 = document.createTextNode(current.cantidad || 0);
+                                        cell_2.appendChild(cellText_2);
+                                        row.appendChild(cell_0);
+                                        row.appendChild(cell_1);
+                                        row.appendChild(cell_2);
+                                        fragment.appendChild(row);
+                                        this._elementById(`${_id}_Tbody`).appendChild(fragment);
+                                    } 
+                                }.bind(this)); 
                             }
                         } catch (error) {
                             console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
@@ -831,27 +852,7 @@ define([
                     }
                 ).always(lang.hitch(this, function() {
                     try {
-                        if((this.diagnosisCount == _total) && (this.diagnosisRandom == _random)) {
-                            this._elementById(`${_id}_Tbody`).innerHTML = "";
-                            _temp.map(function(current, index) { /* Inserta a la tabla */
-                                if(current.cantidad > 0) {
-                                    let fragment = document.createDocumentFragment();
-                                    let row = document.createElement("tr");
-                                    let cell_0 = document.createElement("td");
-                                    let cellText_0 = document.createTextNode(index + 1);
-                                    cell_0.appendChild(cellText_0);
-                                    let cell_1 = document.createElement("td");
-                                    cell_1.innerHTML = current.name;
-                                    let cell_2 = document.createElement("td");
-                                    let cellText_2 = document.createTextNode(current.cantidad || 0);
-                                    cell_2.appendChild(cellText_2);
-                                    row.appendChild(cell_0);
-                                    row.appendChild(cell_1);
-                                    row.appendChild(cell_2);
-                                    fragment.appendChild(row);
-                                    this._elementById(`${_id}_Tbody`).appendChild(fragment);
-                                } 
-                            }.bind(this));   
+                        if((this.diagnosisCount == _total) && (this.diagnosisRandom == _random)) {   
                             this.ID_Load.style.display = "none";
                             this.ID_Table_Count.style.display = "block";
                         }
@@ -963,7 +964,6 @@ define([
                             let arrLong = [];
                             this.bufferCount = 0;
                             const sizeFeature = Math.ceil(_count/500);
-                            //console.log(sizeFeature);
                             for (let H = 0; H < sizeFeature; H++) {
                                 let queryTask_1k = new QueryTask(_url);
                                 let query_1k = new Query();
