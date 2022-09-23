@@ -619,7 +619,11 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500",
-                            
+                            "content": [
+                                {
+                                    "version_07": []
+                                }
+                            ]
                         },
                         {
                             "name": "Áreas de Exposición",
@@ -761,7 +765,12 @@
                                     "name": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201"                            
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201",
+                            "content": [
+                                {
+                                    "version_10": []
+                                }
+                            ]
                         }
                     ]
                 },
@@ -778,7 +787,43 @@
                                     "name": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080200"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080200",
+                            "content": [
+                                {
+                                    "version_11": [
+                                        {
+                                            "nota": "Son aquellos ámbitos no tipificados dentro de las clasificaciones de movimientos en masa como, por ejemplo: Arenamiento, Hundimiento, erosión fluvial, erosión marina y erosión de laderas. Estos son identificados por diferentes entidades mediante informes y/o estudios.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> áreas de exposición por otros peligros geológicos",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con áreas de exposición por otros peligros geológicos"
+                                                }
+                                            ],
+                                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
+                                            "fields": [
+                                                {
+                                                    "alias": "Población",
+                                                    "name": "pob_total",
+                                                    "note": "Población expuesta en áreas de exposición por otros peligros geológicos",
+                                                    "td": "Expuesto",
+                                                    "default": true                    
+                                                },
+                                                {
+                                                    "alias": "Vivienda",
+                                                    "name": "num_viv_part",
+                                                    "note": "Viviendas expuestas en áreas de exposición por otros peligros geológicos",
+                                                    "td": "Expuesto"
+                                                }
+                                            ],
+                                            "analysis": [
+                                                {
+                                                    "field": "shape"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },
