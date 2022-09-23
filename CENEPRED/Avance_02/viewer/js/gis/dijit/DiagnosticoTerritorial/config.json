@@ -311,17 +311,17 @@
                     "name": "Vulcanismo",
                     "srv": [
                         {
-                            "position": 5050203,
-                            "name": "Caídas de Ceniza y Pómez",
-                            "objectid": "objectid_1",
+                            "position": 5050201,
+                            "name": "Niveles de peligro",
+                            "objectid": "objectid",
                             "rgb": "rgb(241,196,15)",
                             "fields":[
                                 {
-                                    "alias": "objectid_1",
-                                    "name": "objectid_1"
+                                    "alias": "objectid",
+                                    "name": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050203"                            
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201"                            
                         }
                     ]
                 },
@@ -392,7 +392,7 @@
                     "srv": [
                         {
                             "position": 6010100,
-                            "name": "Poblados Afectados",
+                            "name": "Puntos de Control Geológico",
                             "objectid": "objectid",
                             "rgb": "rgb(231,76,60)",
                             "fields":[
