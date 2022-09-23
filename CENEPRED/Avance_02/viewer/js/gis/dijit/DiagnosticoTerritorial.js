@@ -9,7 +9,6 @@ define([
     'dijit/form/FilteringSelect',
     'dijit/form/TextBox',
     'dijit/form/Button',
-
     'dojo/text!./DiagnosticoTerritorial/templates/DiagnosticoTerritorial.html',
     'dojo/json',
     'dojo/dom',
@@ -17,30 +16,26 @@ define([
     'dojo/text!./DiagnosticoTerritorial/config.json',
     'dojo/aspect',
     'dojo/dom-construct',
-    "esri/config",
-    "esri/graphic",
-
-    "esri/geometry/geometryEngine",
-
-    "esri/geometry/normalizeUtils",
-    "esri/tasks/GeometryService",
-    
-    "esri/tasks/BufferParameters",
-    "esri/SpatialReference",
-
-    "esri/toolbars/draw",
-    "esri/symbols/SimpleMarkerSymbol",
-
+    'esri/config',
+    'esri/graphic',
+    'esri/geometry/geometryEngine',
+    'esri/geometry/normalizeUtils',
+    'esri/tasks/GeometryService',    
+    'esri/tasks/BufferParameters',
+    'esri/SpatialReference',
+    'esri/toolbars/draw',
+    'esri/symbols/SimpleMarkerSymbol',
     'esri/tasks/query',
     'esri/tasks/QueryTask',
-    "esri/layers/FeatureLayer",
-    "esri/symbols/SimpleLineSymbol",
-    "esri/symbols/SimpleFillSymbol",
-    "esri/symbols/TextSymbol",
-    "esri/geometry/Point",
-    "esri/renderers/SimpleRenderer",
-    "esri/layers/LabelClass",
-    "dojo/_base/Color",
+    'esri/tasks/StatisticDefinition',
+    'esri/layers/FeatureLayer',
+    'esri/symbols/SimpleLineSymbol',
+    'esri/symbols/SimpleFillSymbol',
+    'esri/symbols/TextSymbol',
+    'esri/geometry/Point',
+    'esri/renderers/SimpleRenderer',
+    'esri/layers/LabelClass',
+    'dojo/_base/Color',
     'dojox/layout/TableContainer',
     'dojo/store/Memory',
     'dojo/topic',
@@ -55,7 +50,6 @@ define([
     FilteringSelect,
     TextBox,
     Button,
-
     drawTemplate,
     JSON,
     dom,
@@ -65,19 +59,16 @@ define([
     domConstruct,
     esriConfig,
     Graphic,
-
     geometryEngine,
-
     normalizeUtils,
     GeometryService,
     BufferParameters,
     SpatialReference,
-
     Draw,
     SimpleMarkerSymbol,
-
     Query,
     QueryTask,
+    StatisticDefinition,
     FeatureLayer,
     SimpleLineSymbol,
     SimpleFillSymbol,
@@ -99,56 +90,45 @@ define([
         templateString: drawTemplate,
         baseClass: 'hdrm_dt',
         lyrTotal: 0,
-
         confDiagnosis: [],
         confDiagnosis_Temp: [],
-
         confAnalysis: [],
         confAnalysis_Temp: [],
-        
-
         reportItemCount: 1,
         reportItemTotal: 0,
         reportItemRandom: null,
         reportItemResult: 0,
         reportGeometry: null,
         reportGeometryIntersect: null,
-
         diagnosisCount: 1,
         diagnosisTotal: 0,
         diagnosisRandom: null,
         diagnosisResult: 0,
         diagnosisTemp: [],
-
         analysisCount: 1,
         analysisTotal: 0,
         analysisRandom: null,
         analysisResult: 0,
         analysisTemp: [],
         ramos: "",
-
         bufferCount: 1,
         bufferTotal: 0,
         bufferRandom: null,
         bufferResult: 0,
         bufferTemp: [],
-
         bufferSelect_id: "",
         bufferSelect_name: "",
         bufferSelect_long: "",
         bufferSelect_color: "",
         bufferSelect_url: "",
         bufferSelect_geometry: null,
-
         countAnalysis_Cantidad: 0,
         countAnalysis_Km: [],
         textAmbito: "",
         geometryIntersect: "",
         geometrySRV: null,
-        
         IDTableCount_Name: "",
         IDTableBuffer_Name: "",
-
         lyrDefinition: [],
      
         postCreate: function () {
@@ -673,6 +653,7 @@ define([
                     try {
                         features.map(function(cValue) {
                             this.reportGeometry = cValue.geometry;
+                            console.log(cValue.geometry);
                             this.map.setExtent(cValue.geometry.getExtent().expand(1.4));
                         }.bind(this));
                     } catch (error) {
@@ -711,6 +692,8 @@ define([
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
+                            console.log("cValue.geometry");
+                            console.log(cValue.geometry);
                             this.geometryIntersect = cValue.geometry;
                             this.diagnosisTemp.map(function(lyr) {
                                 this._intersectDiagnosis(
@@ -734,26 +717,32 @@ define([
         _intersectDiagnosis: function(_id, _temp, _lyr, _total, _random) {
             try {
                 /*this.ID_Table_Count.style.display = "none";
-                this.ID_Load.style.display = "block";*/        
+                this.ID_Load.style.display = "block";*/                 
+                let diagnosisCOUNT = new StatisticDefinition();
+                diagnosisCOUNT.statisticType = "count";
+                diagnosisCOUNT.onStatisticField = "shape";
+                diagnosisCOUNT.outStatisticFieldName = "cantidad";
+
                 let queryTask = new QueryTask(_lyr.url);
                 let query = new Query();
                 query.outFields = _lyr.fields.map(x => x.field);
                 query.geometry = this.geometryIntersect;
                 query.spatialRelationship = "esriSpatialRelIntersects";
                 query.geometryType = "esriGeometryEnvelope";
-
-                this.deferredDiagnosis = queryTask.executeForCount(query);
+                query.outStatistics = [ diagnosisCOUNT ];
+                this.deferredDiagnosis = queryTask.execute(query);
                 this.deferredDiagnosis.then(
-                    (count) => {
+                    (response) => {
                         try {
                             if (this.diagnosisRandom == _random) {
-                                this.diagnosisResult = this.diagnosisResult + count;
+                                let _attr = response.features[0].attributes;
+                                this.diagnosisResult = this.diagnosisResult + _attr.cantidad;
                                 this.ID_Count.innerText = this.diagnosisResult;
                                 this.ID_CountText.innerHTML = this.textAmbito;
                                 this._elementById(`${_id}_Total`).innerText = this.diagnosisResult;
                                 this.ID_Percentage.innerHTML = this._loadTime(this.diagnosisCount, _total);
                                 this.diagnosisCount++;
-                                _lyr.cantidad = count;
+                                _lyr.cantidad = _attr.cantidad;
                                 /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
                                 this._sortJSON(_temp, 'cantidad','desc'); 
                             }
