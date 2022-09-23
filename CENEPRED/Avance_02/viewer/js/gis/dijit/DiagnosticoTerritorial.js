@@ -200,11 +200,13 @@ define([
                         this.ID_Clear.click();
                         return false;
                     }         
-                    selPro.reset();                               
+                    selPro.reset(); 
+                    selDis.reset();                            
                     let itemDep = selDep.get('displayedValue');
                     let queryWhere = `UPPER(${srvPro.depName}) = UPPER('${itemDep}')`;
                     selPro.store = this._ambitoUpdate(lyrDep.htmlPH, srvPro.order, srvPro.objectID, srvPro.item, srvPro.url, queryWhere);
                     selPro.attr("placeholder", lyrPro.htmlPH);
+                    selDis.attr("placeholder", lyrPro.htmlPH_Alias);
                     this._zoomLayer(featureLayerDep, evt);
                 } catch (error) {
                     console.error(`Error: selDep change => ${error.name} - ${error.message}`);
@@ -225,6 +227,7 @@ define([
                         selDis.attr("placeholder", lyrPro.htmlPH_Alias);
                         return false;
                     }
+                    selDis.reset();
                     featureLayerDep.clearSelection();                
                     let nameDep = selDep.get('displayedValue');
                     let namePro = selPro.get('displayedValue');
