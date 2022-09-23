@@ -28,6 +28,8 @@ define([
     'esri/tasks/query',
     'esri/tasks/QueryTask',
     'esri/tasks/StatisticDefinition',
+    'esri/tasks/Geoprocessor',
+    'esri/tasks/FeatureSet',
     'esri/layers/FeatureLayer',
     'esri/symbols/SimpleLineSymbol',
     'esri/symbols/SimpleFillSymbol',
@@ -69,6 +71,8 @@ define([
     Query,
     QueryTask,
     StatisticDefinition,
+    Geoprocessor,
+    FeatureSet,
     FeatureLayer,
     SimpleLineSymbol,
     SimpleFillSymbol,
@@ -130,12 +134,14 @@ define([
         IDTableCount_Name: "",
         IDTableBuffer_Name: "",
         lyrDefinition: [],
+        gpExtractData: null,
      
         postCreate: function () {
             this.inherited(arguments);
             /* Servicio de Geometria */
             //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
             esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+            this.gpExtractData = new Geoprocessor("http://geo.ana.gob.pe/arcgis/rest/services/ExtraerDatos/ExtractDataTask/GPServer/Extract%20Data%20Task");
 
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
@@ -190,7 +196,8 @@ define([
             let featureLayerPro = this._loadLayer(lyrPro.srv[0].objectID, srvPro.url, fillPro, lyrPro.srv[0].proName);
             /* Load DISTRITO */
             let fillDis = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,255,255,0]);
-            let featureLayerDis = this._loadLayer(lyrDis.srv[0].objectID, srvDis.url, fillDis, lyrDis.srv[0].disName);            
+            let featureLayerDis = this._loadLayer(lyrDis.srv[0].objectID, srvDis.url, fillDis, lyrDis.srv[0].disName);
+                     
             /* Filter DEPARTAMENTO */            
             let selDep = this._ambito(lyrDep.htmlID, lyrDep.htmlPH, lyrDep.htmlPH, lyrDep.htmlLBL, srvDep.order, srvDep.objectID, srvDep.item, srvDep.url, '1=1');
             selDep.on("change", function(evt) {
@@ -445,7 +452,34 @@ define([
                         width:'120px',
                     },
                     onClick: function() {
+                        let featureSet = new FeatureSet();
+                        let features = [];
+                        features.push(this.map.graphics.graphics[0]);
+                        featureSet.features = features;
+                        /* Validar el poligono */
+                        try {
+                            let geomtryPolygon  = featureSet.features[0].geometry.rings;
+                            if (typeof(geomtryPolygon) == "undefined") {
+                                console.log('CAMPO OBLIGATORIO', '=> 2. Seleccionar el área de interés');
+                                return;
+                            }
+                        } catch (error) {
+                            console.log('CAMPO OBLIGATORIO', '=> 2. Seleccionar el área de interés');
+                            return;
+                        }
+
                         console.log("BUTTON");
+                        this.gpExtractData.submitJob (
+                            {
+                                "Layers_to_Clip": "checkboxActived",
+                                "Area_of_Interest": featureSet,
+                                "Feature_Format": "this.formatBox.options[this.formatBox.selectedIndex].getAttribute('val')"
+                            },
+                            this._completeCallback.bind(this),
+                            this._statusCallback.bind(this),
+                            this._errorCallback.bind(this)
+                        );
+
                     }
                 });
 
@@ -497,7 +531,6 @@ define([
                         console.log(this);
                     });
                 } else {
-                    
                     filteringSelect.on("change", function(evt) {
                         let lyrJson = this.bufferTemp[evt];
                         this.bufferSelect_id     = lyrJson.id;
@@ -512,6 +545,47 @@ define([
                 tableContainer.startup();
             } catch (error) {
                 console.error(`Error: _loadSelect => ${error.name} - ${error.message}`);
+            }
+        },
+        _completeCallback: function(jobInfo) {
+            try {
+                console.log("ESTA TRAENDO LOS DATOS");
+                if ( jobInfo.jobStatus !== "esriJobFailed" ) {
+                    this.gpExtractData.getResultData(jobInfo.jobId, "Output_Zip_File", function(outputFile) {
+                        try {
+                            /*
+                          this.map.graphics.clear();
+                          let theurl = outputFile.value.url;  
+                          window.location = theurl;*/
+                        } catch (error) {
+                          console.log("Error: _downloadFile " + error.message);
+                        }
+                    }.bind(this));
+                }
+            } catch (error) {
+              console.log("Error: _completeCallback " + error.message);
+            }
+        },      
+        _statusCallback: function(jobInfo) {
+            try {
+                /*
+                var status = jobInfo.jobStatus;
+                if ( status === "esriJobFailed" ) {
+                    alert(status);
+                    domStyle.set(dom.byId("loading"), "display", "none");
+                } else if (status === "esriJobSucceeded"){
+                    domStyle.set(dom.byId("loading"), "display", "none");
+                }*/
+            } catch (error) {
+                console.log("Error: _statusCallback " + error.message);
+            }
+        },    
+        _errorCallback: function(jobInfo) {
+            try {
+                //alert(error);
+                //domStyle.set(dom.byId("loading"), "display", "none");
+            } catch (error) {
+                console.log("Error: _errorCallback " + error.message);
             }
         },
         _ambito: function(htmlID, htmlPH, htmlPHAlter, htmlLBL, order, oID, item, svr, queryWhere) {
@@ -656,7 +730,6 @@ define([
                     try {
                         features.map(function(cValue) {
                             this.reportGeometry = cValue.geometry;
-                            console.log(cValue.geometry);
                             this.map.setExtent(cValue.geometry.getExtent().expand(1.4));
                         }.bind(this));
                     } catch (error) {
