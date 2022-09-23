@@ -63,7 +63,6 @@
                                     ]
                                 }
                             ]
-
                         }
                     ]
                 }
@@ -90,6 +89,10 @@
                             "name": "nom_dist"
                         },
                         {
+                            "alias": "Ámbito",
+                            "name": "ambito"
+                        },
+                        {
                             "alias": "Nombre de EVAR",
                             "name": "nombre"
                         },
@@ -114,17 +117,49 @@
                         {
                             "version_02": [
                                 {
+                                    "imagen":"https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca",
                                     "objectid": "id_documento",
+                                    "field": "ambito",
+                                    "nota": "Es un instrumento técnico que contribuye a la implementación del proceso de estimación del riesgo, que permite identificar los niveles de riesgo de desastres, previa identificación y caracterización del peligro, así como el análisis de los factores de vulnerabilidad.",                                    
+                                    "documento": "id_documento",
+                                    "cuenta": [
+                                        {
+                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> evaluaciones de riesgos",
+                                            "negacion": "seleccionado <strong>NO CUENTA</strong> con evaluaciones de riesgos"
+                                        }
+                                    ],
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
                                     "fields": [
                                         {
-                                            "alias": "Vivienda",
-                                            "name": "num_viv_part",
-                                            "default": true
+                                            "alias": "Población",
+                                            "name": "pob_total",
+                                            "default": true,
+                                            "item": [
+                                                {
+                                                    "alias": "Riesgo alto",
+                                                    "name": "pa"
+                                                },
+                                                {
+                                                    "alias": "Riesgo muy alto",
+                                                    "name": "pma"
+                                                }
+                                                
+                                            ]
                                         },
                                         {
-                                            "alias": "Población",
-                                            "name": "pob_total"
+                                            "alias": "Vivienda",
+                                            "name": "num_viv_part",
+                                            "item": [
+                                                {
+                                                    "alias": "Riesgo alto",
+                                                    "name": "va"
+                                                },
+                                                {
+                                                    "alias": "Riesgo muy alto",
+                                                    "name": "vma"
+                                                }
+                                                
+                                            ]
                                         }
                                     ]
                                 }
@@ -157,31 +192,76 @@
                         {
                             "alias": "Nombre de la ZRNM",
                             "name": "nom_predio"
+                        },
+                        {		
+                            "alias": "Documento Imagen",
+                            "name": "url_img",
+                            "visible": false,
+                            "format": {
+                                "template": "<center><a href=\"${value}\" target=\"_blank\"><i class=\"fa fa-cloud-download\" style=\"font-size:18px\"></i> Descargar Imagen</a></center>"
+                            }
+                        },
+                        {		
+                            "alias": "Documento",
+                            "name": "url",
+                            "format": {
+                                "template": "<center><a href=\"${value}\" target=\"_blank\"><i class=\"fa fa-cloud-download\" style=\"font-size:18px\"></i> Descargar</a></center>"
+                            }
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4020000",
                     "content": [
                         {
-                            "tab": [
+                            "version_03": [
                                 {
+                                    "imagen": "url_img",
+                                    "nota": "La zona de riesgo intangible para fines de vivienda es aquella zona de riesgo no mitigable, cuyo uso, posesión, transferencia para fines de vivienda queda expresamente prohibida, y el CENEPRED declara la intangibilidad para fines de vivienda en zonas declaradas de riesgo no mitigables.",
+                                    "field": "ambito",
+                                    "cuenta": [
+                                        {
+                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> zonas de riesgo no mitigable",
+                                            "negacion": "seleccionado <strong>NO CUENTA</strong> con zonas de riesgos no mitigables"
+                                        }
+                                    ],
+                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
                                     "fields": [
                                         {
-                                            "alias": "Vivienda",
-                                            "name": "viviendaa",
-                                            "default": true
-                                        },
-                                        {
                                             "alias": "Población",
-                                            "name": "poblacionn"
+                                            "name": "pob_total",
+                                            "note": "Población expuesta en zonas de riesgos no mitigables",
+                                            "td": "Zona de Riesgos No Mitigables",
+                                            "default": true                    
                                         },
                                         {
-                                            "alias": "Manzanas",
-                                            "name": "manzanas"
+                                            "alias": "Vivienda",
+                                            "name": "num_viv_part",
+                                            "note": "Viviendas expuestas en zonas de riesgos no mitigables",
+                                            "td": "Zona de Riesgos No Mitigables"
+                                        }
+                                    ],
+                                    "ambit":[
+                                        {
+                                            "name": "nom_dep",
+                                            "alias": "DEPA"
+                                        },
+                                        {
+                                            
+                                            "name": "nom_prov",
+                                            "alias": "PROV"
+                                        },
+                                        {
+                                            
+                                            "name": "nom_dist",
+                                            "alias": "DIST"
+                                        }
+                                    ],
+                                    "analysis": [
+                                        {
+                                            "field": "shape"
                                         }
                                     ]
                                 }
                             ]
-
                         }
                     ]
                 }
@@ -687,10 +767,10 @@
                 },
                 {
                     "name": "Programas de Ciudades Sostenibles Estudios",
-                    "objectid": "id_documento",
                     "srv": [
                         {
                             "name": "Estudios",
+                            "objectid": "id_documento",
                             "rgb": "rgb(151,154,154)",
                             "fields":[
                                 {
