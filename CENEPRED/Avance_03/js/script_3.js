@@ -1152,17 +1152,17 @@ require([
                                     _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
                                     configAnalysis_Temp.forEach(function(cValue) {
                                        /* Statistic Analysis */
-                                        let analysisSUM = new StatisticDefinition();
-                                        analysisSUM.statisticType = "count";
-                                        analysisSUM.onStatisticField = _version.analysis[0].field;
-                                        analysisSUM.outStatisticFieldName = "cantidad";                                    
+                                        let analysisCOUNT = new StatisticDefinition();
+                                        analysisCOUNT.statisticType = "count";
+                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
                                         /* Statistic Analysis */
                                         let queryTask_Analysis = new QueryTask(cValue.url);
                                         let query_Analysis = new Query();
                                         query_Analysis.outFields = cValue.fields.map(x => x.name)
                                         query_Analysis.geometry = _geometry;
                                         query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
-                                        query_Analysis.outStatistics = [ analysisSUM ];
+                                        query_Analysis.outStatistics = [ analysisCOUNT ];
                                         queryTask_Analysis.execute(query_Analysis).then(
                                             (response) => {
                                                 try {
@@ -1256,6 +1256,561 @@ require([
                                 _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
                             }
                             /* </ZRNM> */
+
+                            /* <PCI> */
+                            if(typeof lyr.content[0].version_04 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_04[0];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+                                
+                                /* Statistic Total */
+                                let ambitoCOUNT = new StatisticDefinition();
+                                ambitoCOUNT.statisticType = "count";
+                                ambitoCOUNT.onStatisticField = "shape";
+                                ambitoCOUNT.outStatisticFieldName = "countAmbito";
+                                /* Statistic Familia */
+                                let familiaSUM = new StatisticDefinition();
+                                familiaSUM.statisticType = "sum";
+                                familiaSUM.onStatisticField = _version.fields[0].name;
+                                familiaSUM.outStatisticFieldName = "sumfamilia";
+                                /* Statistic Vivienda */
+                                let viviendaSUM = new StatisticDefinition();
+                                viviendaSUM.statisticType = "count";
+                                viviendaSUM.onStatisticField = _version.fields[1].name;
+                                viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                /* Statistic Response */
+                                let queryTask_Engine = new QueryTask(lyr.url);
+                                let query_Engine = new Query();
+                                query_Engine.outFields = _version.fields.map(x => x.name);
+                                query_Engine.geometry = new Polygon(_geometryAmbito);
+                                query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_Engine.outStatistics = [ familiaSUM, viviendaSUM, ambitoCOUNT ];
+                                query_Engine.returnGeometry = false;
+                                queryTask_Engine.execute(query_Engine).then(
+                                    (response) => {
+                                        try {
+                                            let _contentTab01 = []; let _contentTab02 = [];
+                                            let _attr = response.features[0].attributes;
+                                            
+                                            if(_attr.countambito == 0) {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);  
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _attr.countambito)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            } 
+
+                                            /* Poblacion */
+                                            _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumfamilia;
+                                            _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumfamilia});
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumfamilia;
+                                            _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                            /* Vivienda */
+                                            _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda;   
+                                            _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda});
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda;
+                                            _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                        } catch (error) {
+                                            console.error(`Count: Statistic ZRNM => ${error.name}`);
+                                        }                    
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Statistic ZRNM => ${error.name}`);
+                                    }
+                                );
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divNota.style.textAlign = "left";
+                                divColumn_02.appendChild(divNota);                                
+                                /* HEADER */
+                                lyr.content[0].version_04[0].fields.map(function(current) {
+                                    const inputText = document.createElement("input");
+                                    inputText.type = "radio";
+                                    inputText.className = "tabs-horiz";
+                                    inputText.id = `tab${lyr.tag}${current.name}`;
+                                    inputText.name = `tabs-2${lyr.tag}`;
+                                    if(typeof current.default !== "undefined") {
+                                        inputText.setAttribute("checked","");
+                                    }
+                                    const label = document.createElement("label");
+                                    label.innerText = current.alias;
+                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                    
+                                    divMain.appendChild(inputText);
+                                    divMain.appendChild(label);                            
+                                }.bind(this));
+                                /* CONTENT */
+                                lyr.content[0].version_04[0].fields.map(function(current) {
+                                    const sect = document.createElement("section");
+                                    sect.id = `content${lyr.tag}${current.name}`;
+                                    const div = document.createElement("div");
+                                    
+                                    const divCenter = document.createElement("center");
+                                    const divOBS = document.createElement("p");
+                                    divOBS.style.fontSize = "14px";
+                                    divOBS.innerText = current.note;
+                                    divCenter.appendChild(divOBS);
+                                    div.appendChild(divCenter);
+
+                                    const divCenterTotal = document.createElement("center");
+                                    const divTotal = document.createElement("p");
+                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                    divTotal.style.fontSize = "65px";
+                                    divTotal.style.margin = "5px 0px";
+                                    divTotal.innerText = 0;
+                                    divCenterTotal.appendChild(divTotal);
+                                    div.appendChild(divCenterTotal);
+                                    
+                                    const divTable = document.createElement("div");
+                                    divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    div.appendChild(divTable);
+
+                                    sect.appendChild(div);                            
+                                    divMain.appendChild(sect);                            
+                                }.bind(this));
+                                
+                                const tagStyle = document.createElement("style"); let _css = "";
+                            
+                                lyr.content[0].version_04[0].fields.map(function(current) {
+                                    _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;  
+                                }.bind(this));
+                            
+                                if(_css !== "") {
+                                    let _cssStyle = _css.substring(0, _css.length - 1);
+                                    tagStyle.textContent = _cssStyle.concat("{display: block;};");
+                                    divMain.appendChild(tagStyle);
+                                } 
+                                divColumn_01.appendChild(divMain);
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "N° Puntos Críticos", "Familias Expuesta");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "N° Puntos Críticos", "Viviendas Expuestas");
+                            }
+                            /* </PCI> */
+
+                            /* <AEI> */
+                            if(typeof lyr.content[0].version_05 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_05[0];
+                                let _boolean = true;
+                                let unionGeometry = [];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+                                
+                                let queryTask_AEI = new QueryTask(lyr.url);
+                                let query_AEI = new Query();
+                                query_AEI.returnGeometry = true;
+                                query_AEI.geometry = new Polygon(_geometryAmbito);
+                                query_AEI.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                queryTask_AEI.execute(query_AEI).then(
+                                    (response) => {
+                                        try {
+                                            let _length = response.features.length;
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
+
+                                            if(_length == 0) {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);  
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                            
+                                            if(_boolean) {                            
+                                                const divNota = document.createElement("p");
+                                                divNota.className = "sect-nota";
+                                                divNota.innerHTML = _version.nota;
+                                                divColumn_01.appendChild(divNota);
+                                            }                             
+                                        } catch (error) {
+                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
+                                        }                    
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
+                                    }
+                                ).always(lang.hitch(this, () => { 
+                                    let countTabItem = 1;
+                                    let countTabItemTotal = 0;
+                                    /* Union Geometry */
+                                    let _geometry = geometryEngine.union(unionGeometry);
+                                    /* Statistic Poblacion */
+                                    let poblacionSUM = new StatisticDefinition();
+                                    poblacionSUM.statisticType = "sum";
+                                    poblacionSUM.onStatisticField = _version.fields[0].name;
+                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                    /* Statistic Vivienda */
+                                    let viviendaSUM = new StatisticDefinition();
+                                    viviendaSUM.statisticType = "sum";
+                                    viviendaSUM.onStatisticField = _version.fields[1].name;
+                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                    /* Statistic Response */
+                                    let queryTask_Engine = new QueryTask(_version.url);
+                                    let query_Engine = new Query();
+                                    query_Engine.outFields = _version.fields.map(x => x.name);
+                                    query_Engine.geometry = _geometry;
+                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                    query_Engine.returnGeometry = false;
+                                    queryTask_Engine.execute(query_Engine).then(
+                                        (response) => {
+                                            try {
+                                                let _contentTab01 = []; let _contentTab02 = [];
+                                                let _attr = response.features[0].attributes;
+                                                /* Poblacion */
+                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion;
+                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                /* Vivienda */
+                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda;   
+                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                            } catch (error) {
+                                                console.error(`Count: Statistic AEI => ${error.name}`);
+                                            }                    
+                                        },
+                                        (error) => {
+                                            console.error(`Error: Statistic AEI => ${error.name}`);
+                                        }
+                                    );                                    
+                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                    configAnalysis_Temp.forEach(function(cValue) {
+                                       /* Statistic Analysis */
+                                        let analysisCOUNT = new StatisticDefinition();
+                                        analysisCOUNT.statisticType = "count";
+                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                        /* Statistic Analysis */
+                                        let queryTask_Analysis = new QueryTask(cValue.url);
+                                        let query_Analysis = new Query();
+                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                        query_Analysis.geometry = _geometry;
+                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.outStatistics = [ analysisCOUNT ];
+                                        queryTask_Analysis.execute(query_Analysis).then(
+                                            (response) => {
+                                                try {
+                                                    let _attr = response.features[0].attributes;
+                                                    if(_attr.cantidad > 0) {
+                                                        let _contentTab = [];
+                                                        let _id = `ID_TBcontent${lyr.tag}`;
+                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
+                                                        _htmlTable_ADD(`${_id}`,_contentTab);
+                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                            }
+                                        );
+                                    });
+                                }));
+                                
+                                const divTable = document.createElement("div");
+                                divTable.id = `ID_TBcontent${lyr.tag}`;
+                                divTable.className = "form-scroll-resumen2";
+                                divColumn_02.appendChild(divTable);
+                                
+                                /* HEADER */
+                                lyr.content[0].version_05[0].fields.map(function(current) {
+                                    const inputText = document.createElement("input");
+                                    inputText.type = "radio";
+                                    inputText.className = "tabs-horiz";
+                                    inputText.id = `tab${lyr.tag}${current.name}`;
+                                    inputText.name = `tabs-2${lyr.tag}`;
+                                    if(typeof current.default !== "undefined") {
+                                        inputText.setAttribute("checked","");
+                                    }
+                                    const label = document.createElement("label");
+                                    label.innerText = current.alias;
+                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                    
+                                    divMain.appendChild(inputText);
+                                    divMain.appendChild(label);                            
+                                }.bind(this));
+                                /* CONTENT */
+                                lyr.content[0].version_05[0].fields.map(function(current) {
+                                    const sect = document.createElement("section");
+                                    sect.id = `content${lyr.tag}${current.name}`;
+                                    const div = document.createElement("div");
+                                    
+                                    const divCenter = document.createElement("center");
+                                    const divOBS = document.createElement("p");
+                                    divOBS.style.fontSize = "14px";
+                                    divOBS.innerText = current.note;
+                                    divCenter.appendChild(divOBS);
+                                    div.appendChild(divCenter);
+
+                                    const divCenterTotal = document.createElement("center");
+                                    const divTotal = document.createElement("p");
+                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                    divTotal.style.fontSize = "65px";
+                                    divTotal.style.margin = "5px 0px";
+                                    divTotal.innerText = 0;
+                                    divCenterTotal.appendChild(divTotal);
+                                    div.appendChild(divCenterTotal);
+                                    const divTable = document.createElement("div");
+                                    divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    div.appendChild(divTable);
+
+                                    sect.appendChild(div);                            
+                                    divMain.appendChild(sect);                            
+                                }.bind(this));
+                                
+                                const tagStyle = document.createElement("style"); let _css = "";
+                            
+                                lyr.content[0].version_05[0].fields.map(function(current) {
+                                    _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;  
+                                }.bind(this));
+                            
+                                if(_css !== "") {
+                                    let _cssStyle = _css.substring(0, _css.length - 1);
+                                    tagStyle.textContent = _cssStyle.concat("{display: block;};");
+                                    divMain.appendChild(tagStyle);
+                                } 
+                                divColumn_01.appendChild(divMain);
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Inundación", "Población Expuesta");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Inundación", "Viviendas Expuestas");
+
+                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                            }
+                            /* </AEI> */
+
+                            /* <FM> */
+                            if(typeof lyr.content[0].version_06 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_06[0];
+                                let _boolean = true;
+                                let unionGeometry = [];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+                                
+                                let queryTask_FM = new QueryTask(lyr.url);
+                                let query_FM = new Query();
+                                query_FM.returnGeometry = true;
+                                query_FM.geometry = new Polygon(_geometryAmbito);
+                                query_FM.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                queryTask_FM.execute(query_FM).then(
+                                    (response) => {
+                                        try {
+                                            let _length = response.features.length;
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
+
+                                            if(_length == 0) {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);  
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                            
+                                            if(_boolean) {                            
+                                                const divNota = document.createElement("p");
+                                                divNota.className = "sect-nota";
+                                                divNota.innerHTML = _version.nota;
+                                                divColumn_01.appendChild(divNota);
+                                            }                             
+                                        } catch (error) {
+                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
+                                        }                    
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
+                                    }
+                                ).always(lang.hitch(this, () => { 
+                                    let countTabItem = 1;
+                                    let countTabItemTotal = 0;
+                                    /* Union Geometry */
+                                    let _geometry = geometryEngine.union(unionGeometry);
+                                    /* Statistic Poblacion */
+                                    let poblacionSUM = new StatisticDefinition();
+                                    poblacionSUM.statisticType = "sum";
+                                    poblacionSUM.onStatisticField = _version.fields[0].name;
+                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                    /* Statistic Vivienda */
+                                    let viviendaSUM = new StatisticDefinition();
+                                    viviendaSUM.statisticType = "sum";
+                                    viviendaSUM.onStatisticField = _version.fields[1].name;
+                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                    /* Statistic Response */
+                                    let queryTask_Engine = new QueryTask(_version.url);
+                                    let query_Engine = new Query();
+                                    query_Engine.outFields = _version.fields.map(x => x.name);
+                                    query_Engine.geometry = _geometry;
+                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                    query_Engine.returnGeometry = false;
+                                    queryTask_Engine.execute(query_Engine).then(
+                                        (response) => {
+                                            try {
+                                                let _contentTab01 = []; let _contentTab02 = [];
+                                                let _attr = response.features[0].attributes;
+                                                /* Poblacion */
+                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                /* Vivienda */
+                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                            } catch (error) {
+                                                console.error(`Count: Statistic FM => ${error.name}`);
+                                            }                    
+                                        },
+                                        (error) => {
+                                            console.error(`Error: Statistic FM => ${error.name}`);
+                                        }
+                                    );                                    
+                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                    configAnalysis_Temp.forEach(function(cValue) {
+                                       /* Statistic Analysis */
+                                        let analysisCOUNT = new StatisticDefinition();
+                                        analysisCOUNT.statisticType = "count";
+                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                        /* Statistic Analysis */
+                                        let queryTask_Analysis = new QueryTask(cValue.url);
+                                        let query_Analysis = new Query();
+                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                        query_Analysis.geometry = _geometry;
+                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.outStatistics = [ analysisCOUNT ];
+                                        queryTask_Analysis.execute(query_Analysis).then(
+                                            (response) => {
+                                                try {
+                                                    let _attr = response.features[0].attributes;
+                                                    if(_attr.cantidad > 0) {
+                                                        let _contentTab = [];
+                                                        let _id = `ID_TBcontent${lyr.tag}`;
+                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                        _htmlTable_ADD(`${_id}`,_contentTab);
+                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                            }
+                                        );
+                                    });
+                                }));
+                                
+                                const divTable = document.createElement("div");
+                                divTable.id = `ID_TBcontent${lyr.tag}`;
+                                divTable.className = "form-scroll-resumen2";
+                                divColumn_02.appendChild(divTable);
+                                
+                                /* HEADER */
+                                lyr.content[0].version_06[0].fields.map(function(current) {
+                                    const inputText = document.createElement("input");
+                                    inputText.type = "radio";
+                                    inputText.className = "tabs-horiz";
+                                    inputText.id = `tab${lyr.tag}${current.name}`;
+                                    inputText.name = `tabs-2${lyr.tag}`;
+                                    if(typeof current.default !== "undefined") {
+                                        inputText.setAttribute("checked","");
+                                    }
+                                    const label = document.createElement("label");
+                                    label.innerText = current.alias;
+                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                    
+                                    divMain.appendChild(inputText);
+                                    divMain.appendChild(label);                            
+                                }.bind(this));
+                                /* CONTENT */
+                                lyr.content[0].version_06[0].fields.map(function(current) {
+                                    const sect = document.createElement("section");
+                                    sect.id = `content${lyr.tag}${current.name}`;
+                                    const div = document.createElement("div");
+                                    
+                                    const divCenter = document.createElement("center");
+                                    const divOBS = document.createElement("p");
+                                    divOBS.style.fontSize = "14px";
+                                    divOBS.innerText = current.note;
+                                    divCenter.appendChild(divOBS);
+                                    div.appendChild(divCenter);
+
+                                    const divCenterTotal = document.createElement("center");
+                                    const divTotal = document.createElement("p");
+                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                    divTotal.style.fontSize = "65px";
+                                    divTotal.style.margin = "5px 0px";
+                                    divTotal.innerText = 0;
+                                    divCenterTotal.appendChild(divTotal);
+                                    div.appendChild(divCenterTotal);
+                                    const divTable = document.createElement("div");
+                                    divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    div.appendChild(divTable);
+
+                                    sect.appendChild(div);                            
+                                    divMain.appendChild(sect);                            
+                                }.bind(this));
+                                
+                                const tagStyle = document.createElement("style"); let _css = "";
+                            
+                                lyr.content[0].version_06[0].fields.map(function(current) {
+                                    _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;  
+                                }.bind(this));
+                            
+                                if(_css !== "") {
+                                    let _cssStyle = _css.substring(0, _css.length - 1);
+                                    tagStyle.textContent = _cssStyle.concat("{display: block;};");
+                                    divMain.appendChild(tagStyle);
+                                } 
+                                divColumn_01.appendChild(divMain);
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Fajas marginales", "Población");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Fajas marginales", "Viviendas");
+
+                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                            }
+                            /* </FM> */
 
                         }
                         //_elementById(`IDTable_${lyr.tag}`).appendChild(); 
