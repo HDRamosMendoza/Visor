@@ -468,10 +468,10 @@ input.tabs-horiz:checked + label {
 }
 .column_01 {
   text-align: left;
-  width: 55%;
+  width: 60%;
 }
 .column_02 {
-  width: 38%;
+  width: 33%;
 }
 .column_02 img {
   width: 100%;
@@ -553,3 +553,10 @@ input.tabs-horiz:checked + label {
 }
 
 /* /ACORDEON */
+
+a:link, a:visited, a:active {
+  text-decoration:none;
+}
+a:hover {
+  text-decoration:none !important;
+}
