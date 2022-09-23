@@ -366,26 +366,32 @@
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010200",
                             "content": [
                                 {
-                                    "tab": [
+                                    "version_04": [
                                         {
+                                            "nota": "Son los ámbitos, en los cuales se han identificado desbordamiento de cauces por la recurrencia de fenómenos hidrometeorológicos y de eventos extremos, que hacen necesaria la ejecución de actividades permanentes de descolmatación de cauces, mantenimiento de las pendientes de equilibrio y construcción de obras permanentes de control y corrección de cauce.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> puntos críticos por inundación",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con puntos críticos por inundación"
+                                                }
+                                            ],
                                             "fields": [
                                                 {
+                                                    "alias": "Familias",
+                                                    "name": "familias_e",
+                                                    "note": "Familias expuestas en puntos críticos por inundación",
+                                                    "td": "Inundación",
+                                                    "default": true                    
+                                                },
+                                                {
                                                     "alias": "Vivienda",
-                                                    "name": "viviendaa",
-                                                    "default": true
-                                                },
-                                                {
-                                                    "alias": "Población",
-                                                    "name": "poblacionn"
-                                                },
-                                                {
-                                                    "alias": "Manzanas",
-                                                    "name": "manzanas"
+                                                    "name": "vivendas_e",
+                                                    "note": "Viviendas expuestas en puntos críticos por inundación",
+                                                    "td": "Inundación"
                                                 }
                                             ]
                                         }
                                     ]
-        
                                 }
                             ]
                         },
@@ -438,26 +444,54 @@
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010300",
                             "content": [
                                 {
-                                    "tab": [
+                                    "version_05": [
                                         {
+                                            "nota": "Las áreas de exposición por inundación: Son ámbitos  identificados como propensos a inundaciones debido a que fueron reportadas históricamente o que han sido identificadas mediante informes y/o estudios por las diferentes entidades técnicas científicas.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> áreas de exposición por inundación",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con áreas de exposición por inundación"
+                                                }
+                                            ],
+                                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
                                             "fields": [
                                                 {
-                                                    "alias": "Vivienda",
-                                                    "name": "viviendaa",
-                                                    "default": true
-                                                },
-                                                {
                                                     "alias": "Población",
-                                                    "name": "poblacionn"
+                                                    "name": "pob_total",
+                                                    "note": "Población expuesta en áreas de exposición por inundación",
+                                                    "td": "Inundación",
+                                                    "default": true                    
                                                 },
                                                 {
-                                                    "alias": "Manzanas",
-                                                    "name": "manzanas"
+                                                    "alias": "Vivienda",
+                                                    "name": "num_viv_part",
+                                                    "note": "Viviendas expuestas en áreas de exposición por inundación",
+                                                    "td": "Inundación"
+                                                }
+                                            ],
+                                            "ambit":[
+                                                {
+                                                    "name": "nom_dep",
+                                                    "alias": "DEPA"
+                                                },
+                                                {
+                                                    
+                                                    "name": "nom_prov",
+                                                    "alias": "PROV"
+                                                },
+                                                {
+                                                    
+                                                    "name": "nom_dist",
+                                                    "alias": "DIST"
+                                                }
+                                            ],
+                                            "analysis": [
+                                                {
+                                                    "field": "shape"
                                                 }
                                             ]
                                         }
                                     ]
-        
                                 }
                             ]
                         },
@@ -494,26 +528,54 @@
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010400",
                             "content": [
                                 {
-                                    "tab": [
+                                    "version_06": [
                                         {
+                                            "nota": "Las fajas marginales son espacios en las riberas de las fuentes de agua delimitados por la ANA para la protección del recurso hídrico, en donde se prohíben actividades agrícolas, industriales y/o de urbanización (uso poblacional). Durante el fenómeno de El Niño Costero las mayores afectaciones se produjeron en fajas marginales ocupadas con fines de vivienda. (Según la Ley de Recursos Hídricos).",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> fajas marginales",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con fajas marginales"
+                                                }
+                                            ],
+                                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
                                             "fields": [
                                                 {
-                                                    "alias": "Vivienda",
-                                                    "name": "viviendaa",
-                                                    "default": true
-                                                },
-                                                {
                                                     "alias": "Población",
-                                                    "name": "poblacionn"
+                                                    "name": "pob_total",
+                                                    "note": "Población expuesta en fajas marginales",
+                                                    "td": "Expuesto",
+                                                    "default": true                    
                                                 },
                                                 {
-                                                    "alias": "Manzanas",
-                                                    "name": "manzanas"
+                                                    "alias": "Vivienda",
+                                                    "name": "num_viv_part",
+                                                    "note": "Viviendas expuesta en fajas marginales",
+                                                    "td": "Expuesto"
+                                                }
+                                            ],
+                                            "ambit":[
+                                                {
+                                                    "name": "nom_dep",
+                                                    "alias": "DEPA"
+                                                },
+                                                {
+                                                    
+                                                    "name": "nom_prov",
+                                                    "alias": "PROV"
+                                                },
+                                                {
+                                                    
+                                                    "name": "nom_dist",
+                                                    "alias": "DIST"
+                                                }
+                                            ],
+                                            "analysis": [
+                                                {
+                                                    "field": "shape"
                                                 }
                                             ]
                                         }
                                     ]
-        
                                 }
                             ]
                         }
