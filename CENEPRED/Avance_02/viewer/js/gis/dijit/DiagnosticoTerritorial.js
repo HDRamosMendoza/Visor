@@ -473,9 +473,9 @@ define([
                         console.log("BUTTON");
                         this.gpExtractData.submitJob (
                             {
-                                "Layers_to_Clip": "checkboxActived",
+                                "Layers_to_Clip": checkboxActived,
                                 "Area_of_Interest": featureSet,
-                                "Feature_Format": "this.formatBox.options[this.formatBox.selectedIndex].getAttribute('val')"
+                                "Feature_Format": this.formatBox.options[this.formatBox.selectedIndex].getAttribute('val')
                             },
                             this._completeCallback.bind(this),
                             this._statusCallback.bind(this),
