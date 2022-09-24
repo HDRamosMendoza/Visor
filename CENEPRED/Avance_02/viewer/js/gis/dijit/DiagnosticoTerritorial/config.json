@@ -443,36 +443,6 @@
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400"
                         }
                     ]
-                },
-                {
-                    "name": "Programas de Ciudades Sostenibles Estudios",
-                    "srv": [
-                        {
-                            "position": 6090100,
-                            "name": "Estudios",
-                            "rgb": "rgb(151,154,154)",
-                            "objectid": "id_documento",
-                            "fields":[
-                                {
-                                    "alias": "Documento",
-                                    "name": "id_documento"
-                                },
-                                {
-                                    "alias": "Nombre",
-                                    "name": "nombre"
-                                },
-                                {
-                                    "alias": "Tipo Documento",
-                                    "name": "tipo_documento"
-                                },
-                                {
-                                    "alias": "Descripción",
-                                    "name": "descripcion"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6090100"
-                        }
-                    ]
                 }
             ]
         }
