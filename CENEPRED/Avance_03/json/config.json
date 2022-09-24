@@ -1,4 +1,30 @@
 {
+    "color": [
+        "rgb(88, 214, 141)",
+        "rgb(245, 176, 65)",
+        "rgb(220, 118, 51)",
+        "rgb(202, 207, 210)",
+        "rgb(153, 163, 164)",
+        "rgb(86, 101, 115)",
+        "rgb(52, 73, 94)",
+        "rgb(231, 76, 60)",
+        "rgb(142, 68, 173)",
+        "rgb(52, 152, 219)",
+        "rgb(22, 160, 133)",
+        "rgb(88, 214, 141)",
+        "rgb(26, 188, 156)",
+        "rgb(39, 174, 96)",
+        "rgb(241, 196, 15)",
+        "rgb(230, 126, 34)",
+        "rgb(236, 240, 241)",
+        "rgb(149, 165, 166)",
+        "rgb(127, 179, 213)",
+        "rgb(171, 235, 198)",
+        "rgb(171, 178, 185)",
+        "rgb(192, 57, 43)",
+        "rgb(155, 89, 182)",
+        "rgb(41, 128, 185)"
+    ],
     "lyrDiagnosis" : [
         { 
             "name": "Información CENEPRED",
@@ -621,7 +647,32 @@
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500",
                             "content": [
                                 {
-                                    "version_07": []
+                                    "version_07": [
+                                        {
+                                            "nota": "Las <strong>zonas críticas</strong> son áreas o lugares que luego de la evaluación de las características geológicas-geotécnicas, tipo, frecuencia y daños producidos por los procesos naturales que causan desastres, entre otros factores, se consideran más proclives a ser afectadas por eventos de movimientos en masa o peligros geológicos.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> zonas críticas por movimientos en masa",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con zonas críticas por movimientos en masa"
+                                                }
+                                            ],
+                                            "title" : "<strong>Zonas críticas por movimientos en masa</strong>",
+                                            "fields": [
+                                                {
+                                                    "alias": "Familias",
+                                                    "name": "familias_e",
+                                                    "td": "Inundación",
+                                                    "default": true                    
+                                                },
+                                                {
+                                                    "alias": "Vivienda",
+                                                    "name": "vivendas_e",
+                                                    "td": "Inundación"
+                                                }
+                                            ],
+                                            "static": "tipo_pel"
+                                        }
+                                    ]
                                 }
                             ]
                         },
