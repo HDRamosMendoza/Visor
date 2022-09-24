@@ -280,7 +280,7 @@ require([
             const idTable = ID_Table.getAttribute("id"); 
             const tbl = document.createElement("table");
             tbl.className = "tbl";
-            tbl.style.margin = "10px 0px";
+            /*tbl.style.margin = "10px 0px";*/
             /* Head */
             const tblHead = document.createElement("thead");
             const rowHead = document.createElement("tr");
@@ -1814,11 +1814,109 @@ require([
                             }
                             /* </FM> */
 
+                            /* <MM> */
+                            if(typeof lyr.content[0].version_07 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_07[0];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+                                
+                                let cantCOUNT = new StatisticDefinition();
+                                cantCOUNT.statisticType = "count";
+                                cantCOUNT.onStatisticField = _version.static;
+                                cantCOUNT.outStatisticFieldName = "cantidad";
+                              
+                                let queryTask_MM = new QueryTask(lyr.url);
+                                let query_MM = new Query();
+                                query_MM.geometry = new Polygon(_geometryAmbito);
+                                query_MM.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_MM.outStatistics = [ cantCOUNT ];
+                                query_MM.orderByFields = [`COUNT(${_version.static}) DESC`];
+                                query_MM.groupByFieldsForStatistics = [_version.static];
+                                query_MM.returnGeometry = false;
+                                queryTask_MM.execute(query_MM).then(
+                                    (response) => {
+                                        try {
+                                            let _contentTab = []; let _contentTotal = 0; let _chartData = []; let _chartLabel = [];
+                                            let _features = response.features; 
+                                            if(_features.length > 0) {
+                                                _features.forEach(function(_item) {
+                                                    _contentTab.push({"item": _item.attributes[_version.static],"val": _item.attributes["cantidad"]});
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
+                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _chartLabel.push(_item.attributes[_version.static]);
+                                                });
+                                                _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
+                                                _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
+                                                new Chart(`TB_GraphicContent_heber_${lyr.tag}`, { 
+                                                    type: 'doughnut',
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    options: {
+                                                        responsive: false,
+                                                        plugins: {
+                                                            legend: { display:false, position:'bottom' },
+                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                                                        }
+                                                    }
+                                                });
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                        } catch (error) {
+                                            console.error(`Count: Statistic ZRNM => ${error.name}`);
+                                        }                    
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Statistic ZRNM => ${error.name}`);
+                                    }
+                                );
+                                
+                                const divCenter = document.createElement("center");
+                                const divOBS = document.createElement("p");
+                                divOBS.style.fontSize = "16px";
+                                divOBS.innerHTML = _version.title;
+                                divCenter.appendChild(divOBS);
+                                divColumn_01.appendChild(divCenter);
 
+                                const divCenterGraphic = document.createElement("center");
+                                const divCanvasGraphic = document.createElement("canvas");
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_heber_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("width","370");
+                                divCenterGraphic.appendChild(divCanvasGraphic);
+                                divColumn_01.appendChild(divCenterGraphic);
 
+                                const divTable = document.createElement("div");
+                                divTable.id = `TB_content${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_02.appendChild(divTable); 
 
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divNota.style.textAlign = "left";
+                                divNota.style.marginTop = "15px";
+                                divColumn_01.appendChild(divNota);                                
+                              
+                                divColumn_01.appendChild(divMain);
 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
+                                _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Peligro", "Cantidad");
+                            }
+                            /* </MM> */
 
                             /* <AE> */
                             if(typeof lyr.content[0].version_08 !== "undefined") {

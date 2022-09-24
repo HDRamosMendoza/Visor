@@ -429,7 +429,7 @@ input.tabs-horiz:checked + label {
   width: 60%;
 }
 .form-scroll-resumen {
-  max-height: 220px !important;
+  max-height: 220px;
   overflow-y: scroll;  
   border: 1px solid #aaa;    
   margin-top: 5px;
@@ -455,6 +455,36 @@ input.tabs-horiz:checked + label {
   border: 2px solid #f1f2f3;
 }
 .form-scroll-resumen::-webkit-scrollbar-track {
+  border-radius: 10px;  
+}
+
+
+.form-scroll-tab {
+  max-height: 390px;
+  overflow-y: scroll;  
+  border: 1px solid #aaa;
+  overflow: auto;
+  box-sizing: border-box;
+}
+.form-scroll-tab::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+.form-scroll-tab::-webkit-scrollbar:vertical {
+  width:10px;
+}
+.form-scroll-tab::-webkit-scrollbar-button:increment,
+.form-scroll-tab::-webkit-scrollbar-button {
+  display: none;
+} 
+.form-scroll-tab::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+.form-scroll-tab::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 20px;
+  border: 2px solid #f1f2f3;
+}
+.form-scroll-tab::-webkit-scrollbar-track {
   border-radius: 10px;  
 }
 
