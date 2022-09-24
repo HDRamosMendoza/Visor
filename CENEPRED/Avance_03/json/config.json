@@ -891,10 +891,27 @@
                                     "name": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090100"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090100",
+                            "content": [
+                                {
+                                    "version_12": [
+                                        {
+                                            "nota": "<strong>Pasivos ambientales mineros</strong> son aquellas instalaciones, efluentes, emisiones, restos o depósitos de residuos producidos por operaciones mineras, que en la actualidad están abandonadas o inactivas y constituyen un riesgo permanente y potencial para la salud de la población, el ecosistema circundante y la propiedad.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> pasivos ambientales mineros",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con pasivos ambientales mineros"
+                                                }
+                                            ],
+                                            "title" : "<strong>Pasivos ambientales mineros</strong>",
+                                            "static": "tipo"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "name": "Pasivos ambientales hidrocarburos",
+                            "name": "Pasivos Ambientales Hidrocarburos",
                             "objectid": "objectid",
                             "rgb": "rgb(26,188,156)",
                             "fields":[
@@ -903,7 +920,35 @@
                                     "name": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090200"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090200",
+                            "content": [
+                                {
+                                    "version_13": [
+                                        {
+                                            "nota": "Se consideran pasivos ambientales en las actividades del subsector hidrocarburos a los pozos e instalaciones mal abandonados, los suelos contaminados, los efluentes, emisiones, restos o depósitos de residuos ubicados en cualquier lugar del territorio nacional, incluyendo el zócalo marino, producidos como consecuencia de operaciones en el subsector hidrocarburos, realizadas por parte de empresas que han cesado sus actividades en el área donde se produjeron dichos impactos.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> pasivos ambientales por hidrocarburos",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con pasivos ambientales por hidrocarburos"
+                                                }
+                                            ],
+                                            "title" : "<strong>Pasivos ambientales por hidrocarburos - Nivel de riesgo seguridad de la población</strong>",
+                                            "static_01": [
+                                                { "field":"nriesgo_sa" },
+                                                { "alias":"Nivel de riesgo Salud" }
+                                            ],
+                                            "static_02": [
+                                                { "field":"nriesgo_se" },
+                                                { "alias":"Nivel de riesgo Seguridad de la población" }
+                                            ],
+                                            "static_03": [
+                                                { "field":"nriesgo_ca" },
+                                                { "alias":"ivel de riesgo Calidad ambiental" }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "name": "Inventario de Incendios Forestales",
@@ -915,12 +960,29 @@
                                     "name": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090300"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090300",
+                            "content": [
+                                {
+                                    "version_14": [
+                                        {
+                                            "nota": "Son aquellos registros históricos de incendios sobre la cobertura vegetal acontecidos entre los años 2000 – 2018.",
+                                            "title": "<strong>Inventario de incendios forestales</strong>",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> puntos de inventario por incendios forestales",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con puntos de inventario por incendios forestales"
+                                                }
+                                            ],
+                                            "static": "tipo_pel"
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },
                 {
-                    "name": "Zonas afectadas por el niño costero 2017",
+                    "name": "Zonas Afectadas Por El Niño Costero 2017",
                     "srv": [
                         {
                             "name": "Puntos de control geológico",
@@ -932,7 +994,23 @@
                                     "name": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010100"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010100",
+                            "content": [
+                                {
+                                    "version_15": [
+                                        {
+                                            "nota": "Los puntos de control geodésico registran ocurrencias de movimientos en masa, otros peligros geológicos e inundaciones asociadas al fenómeno del niño costero presentado en el año 2017.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> ocurrencias de movimientos en masa en el FEN 2017",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con ocurrencias de movimientos en masa en el FEN 2017"
+                                                }
+                                            ],
+                                            "static": "tipo_pel"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "name": "Poblados Afectados",
@@ -944,7 +1022,23 @@
                                     "name": "objectid_1"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200",
+                            "content": [
+                                {
+                                    "version_16": [
+                                        {
+                                            "nota": "Estos son los poblados afectados por movimientos en masa, otros peligros geológicos e inundaciones asociadas al fenómeno del niño costero presentado en el año 2017, y las acciones realizadas.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> poblados afectados en el FEN 2017",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con poblados afectados en el FEN 2017"
+                                                }
+                                            ],
+                                            "static": "tipo_pel"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "name": "Tramos de Carreteras Afectadas",
@@ -956,7 +1050,23 @@
                                     "name": "objectid_1"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300",
+                            "content": [
+                                {
+                                    "version_17": [
+                                        {
+                                            "nota": "Son puntos que identifican los tramos de carretera afectados por movimientos en masa, otros peligros geológicos e inundaciones asociadas al fenómeno del niño costero presentado en el año 2017.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> tramos de carretera afectada en el FEN 2017",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con tramos de carretera afectada en el FEN 2017"
+                                                }
+                                            ],
+                                            "static": "tipo_pel"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "name": "Obras de Infraestructura Afectadas",
@@ -968,36 +1078,23 @@
                                     "name": "objectid_1"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400"
-                        }
-                    ]
-                },
-                {
-                    "name": "Programas de Ciudades Sostenibles Estudios",
-                    "srv": [
-                        {
-                            "name": "Estudios",
-                            "objectid": "id_documento",
-                            "rgb": "rgb(151,154,154)",
-                            "fields":[
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400",
+                            "content": [
                                 {
-                                    "alias": "Documento",
-                                    "name": "id_documento"
-                                },
-                                {
-                                    "alias": "Nombre",
-                                    "name": "nombre"
-                                },
-                                {
-                                    "alias": "Tipo Documento",
-                                    "name": "tipo_documento"
-                                },
-                                {
-                                    "alias": "Descripción",
-                                    "name": "descripcion"
+                                    "version_18": [
+                                        {
+                                            "nota": "Son las obras de infraestructuras afectadas por movimientos en masa, otros peligros geológicos e inundaciones asociadas al fenómeno del niño costero presentado en el año 2017.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> obras de infraestructura en el FEN 2017",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con obras de infraestructura en el FEN 2017"
+                                                }
+                                            ],
+                                            "static": "tipo_infraestructura"
+                                        }
+                                    ]
                                 }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6090100"
+                            ]
                         }
                     ]
                 }

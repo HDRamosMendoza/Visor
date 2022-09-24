@@ -497,8 +497,8 @@ require([
                             if(_attr.cantidad === 0) {
                                 _elementById(`Header_${lyr.tag}`).style.display="none";
                                 _elementById(`Content_${lyr.tag}`).style.display="none";
-                                //_elementById("ID_TAB_Header").childNodes[5+_index].style.display="none";
-                                //_elementById("ID_TAB_Content").childNodes[5+_index].style.display="none";
+                                /*_elementById("ID_TAB_Header").childNodes[5+_index].style.display="none";
+                                _elementById("ID_TAB_Content").childNodes[5+_index].style.display="none";*/
                             } else {
                                 /* Se limpiar TABLE */
                                 _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
@@ -1852,7 +1852,7 @@ require([
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 new Chart(`TB_GraphicContent_heber_${lyr.tag}`, { 
-                                                    type: 'doughnut',
+                                                    type: 'pie',
                                                     data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
                                                     options: {
                                                         responsive: false,
@@ -2333,8 +2333,6 @@ require([
 
 
 
-
-
                             /* <AEE> */
                             if(typeof lyr.content[0].version_11 !== "undefined") {
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
@@ -2540,6 +2538,726 @@ require([
                                 _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
                             }
                             /* </AEE> */
+
+                            /* <PAM> */
+                            if(typeof lyr.content[0].version_12 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_12[0];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+                                
+                                let cantCOUNT = new StatisticDefinition();
+                                cantCOUNT.statisticType = "count";
+                                cantCOUNT.onStatisticField = _version.static;
+                                cantCOUNT.outStatisticFieldName = "cantidad";
+                              
+                                let queryTask_PAM = new QueryTask(lyr.url);
+                                let query_PAM = new Query();
+                                query_PAM.geometry = new Polygon(_geometryAmbito);
+                                query_PAM.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_PAM.outStatistics = [ cantCOUNT ];
+                                query_PAM.orderByFields = [`COUNT(${_version.static}) DESC`];
+                                query_PAM.groupByFieldsForStatistics = [_version.static];
+                                query_PAM.returnGeometry = false;
+                                queryTask_PAM.execute(query_PAM).then(
+                                    (response) => {
+                                        try {
+                                            let _contentTab = []; let _contentTotal = 0; let _chartData = []; let _chartLabel = [];
+                                            let _features = response.features; 
+                                            if(_features.length > 0) {
+                                                _features.forEach(function(_item) {
+                                                    _contentTab.push({"item": _item.attributes[_version.static],"val": _item.attributes["cantidad"]});
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
+                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _chartLabel.push(_item.attributes[_version.static]);
+                                                });
+                                                _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
+                                                _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
+                                                new Chart(`TB_GraphicContent_heber_${lyr.tag}`, { 
+                                                    type: 'pie',
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    options: {
+                                                        responsive: false,
+                                                        plugins: {
+                                                            legend: { display:false, position:'bottom' },
+                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                                                        }
+                                                    }
+                                                });
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                        } catch (error) {
+                                            console.error(`Count: Statistic ZRNM => ${error.name}`);
+                                        }                    
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Statistic ZRNM => ${error.name}`);
+                                    }
+                                );
+                                
+                                const divCenter = document.createElement("center");
+                                const divOBS = document.createElement("p");
+                                divOBS.style.fontSize = "16px";
+                                divOBS.innerHTML = _version.title;
+                                divCenter.appendChild(divOBS);
+                                divColumn_01.appendChild(divCenter);
+
+                                const divCenterGraphic = document.createElement("center");
+                                const divCanvasGraphic = document.createElement("canvas");
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_heber_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("width","370");
+                                divCenterGraphic.appendChild(divCanvasGraphic);
+                                divColumn_01.appendChild(divCenterGraphic);
+
+                                const divTable = document.createElement("div");
+                                divTable.id = `TB_content${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_02.appendChild(divTable); 
+
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divNota.style.textAlign = "left";
+                                divNota.style.marginTop = "15px";
+                                divColumn_01.appendChild(divNota);                                
+                              
+                                divColumn_01.appendChild(divMain);
+
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Tipos", "Cantidad");
+                            }
+                            /* </PAM> */
+
+                            /* <PAH> */
+                            if(typeof lyr.content[0].version_13 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_13[0];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+
+                                let cantCOUNT_01 = new StatisticDefinition();
+                                cantCOUNT_01.statisticType = "count";
+                                cantCOUNT_01.onStatisticField = _version.static_01[0].field;
+                                cantCOUNT_01.outStatisticFieldName = "cantidad";
+                                /*
+                                let cantCOUNT_02 = new StatisticDefinition();
+                                cantCOUNT_02.statisticType = "count";
+                                cantCOUNT_02.onStatisticField = _version.static_02[0].field;
+                                cantCOUNT_02.outStatisticFieldName = "cantidad";
+
+                                let cantCOUNT_03 = new StatisticDefinition();
+                                cantCOUNT_03.statisticType = "count";
+                                cantCOUNT_03.onStatisticField = _version.static_03[0].field;
+                                cantCOUNT_03.outStatisticFieldName = "cantidad";
+                                */                              
+                                let queryTask_PAH = new QueryTask(lyr.url);
+                                let query_PAH = new Query();
+                                query_PAH.geometry = new Polygon(_geometryAmbito);
+                                query_PAH.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_PAH.outStatistics = [ cantCOUNT_01 ];
+                                query_PAH.orderByFields = [`COUNT(${_version.static_01[0].field}) DESC`];
+                                query_PAH.groupByFieldsForStatistics = [_version.static_01[0].field ];
+                                query_PAH.returnGeometry = false;
+                                queryTask_PAH.execute(query_PAH).then(
+                                    (response) => {
+                                        try {
+                                            let _contentTab = []; let _contentTotal = 0; let _chartData = []; let _chartLabel = [];
+                                            let _features = response.features;
+                                            if(_features.length > 0) {
+                                                _features.forEach(function(_item) {
+                                                    _contentTab.push({
+                                                        "item": `${_item.attributes[_version.static_01[0].field]}`,
+                                                        "val": _item.attributes["cantidad"]
+                                                    });
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
+                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _chartLabel.push(_item.attributes[_version.static_01[0].field]);
+                                                });
+                                                _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
+                                                _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
+                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
+                                                    type: 'pie',
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    options: {
+                                                        responsive: false,
+                                                        plugins: {
+                                                            legend: { display:false, position:'bottom' },
+                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                                                        }
+                                                    }
+                                                });
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                        } catch (error) {
+                                            console.error(`Count: Statistic ZRNM => ${error.name}`);
+                                        }                    
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Statistic ZRNM => ${error.name}`);
+                                    }
+                                );
+                                
+                                const divCenter = document.createElement("center");
+                                const divOBS = document.createElement("p");
+                                divOBS.style.fontSize = "16px";
+                                divOBS.innerHTML = _version.title;
+                                divCenter.appendChild(divOBS);
+                                divColumn_01.appendChild(divCenter);
+
+                                const divCenterGraphic = document.createElement("center");
+                                const divCanvasGraphic = document.createElement("canvas");
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("width","370");
+                                divCenterGraphic.appendChild(divCanvasGraphic);
+                                divColumn_01.appendChild(divCenterGraphic);
+
+                                const divTable = document.createElement("div");
+                                divTable.id = `TB_content${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_02.appendChild(divTable); 
+
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divNota.style.textAlign = "left";
+                                divNota.style.marginTop = "15px";
+                                divColumn_01.appendChild(divNota);                                
+                              
+                                divColumn_01.appendChild(divMain);
+
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Tipos", "Cantidad");
+                            }
+                            /* </PAH> */
+
+                            /* <IIFO> */
+                            if(typeof lyr.content[0].version_14 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_14[0];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+
+                                let cantCOUNT_IIFO = new StatisticDefinition();
+                                cantCOUNT_IIFO.statisticType = "count";
+                                cantCOUNT_IIFO.onStatisticField = "shape";
+                                cantCOUNT_IIFO.outStatisticFieldName = "cantidad";
+                                                            
+                                let queryTask_IIFO = new QueryTask(lyr.url);
+                                let query_IIFO = new Query();
+                                query_IIFO.geometry = new Polygon(_geometryAmbito);
+                                query_IIFO.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_IIFO.outStatistics = [ cantCOUNT_IIFO ];
+                                query_IIFO.returnGeometry = false;
+                                queryTask_IIFO.execute(query_IIFO).then(
+                                    (response) => {
+                                        try {
+                                            let _features = response.features[0].attributes;
+                                            if(_features.cantidad > 0) {
+                                                _elementById(`IDTOTALcontent_${lyr.tag}`).innerText = _features.cantidad;
+                                                /*
+                                                _contentTab.push({
+                                                    "item": `${_item.attributes[_version.static]}`,
+                                                    "val": _item.attributes["cantidad"]
+                                                });
+                                                _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];                                                
+                                                _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
+                                                _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
+                                                */
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                            
+                                        } catch (error) {
+                                            console.error(`Count: Statistic IIFO => ${error.name}`);
+                                        }                    
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Statistic IIFO => ${error.name}`);
+                                    }
+                                );
+
+                                const divCenter = document.createElement("center");
+                                const divOBS = document.createElement("p");
+                                divOBS.style.fontSize = "16px";
+                                divOBS.innerHTML = _version.title;
+                                divCenter.appendChild(divOBS);
+                                divColumn_01.appendChild(divCenter);
+
+                                const divCenterTotal = document.createElement("center");
+                                const divTotal = document.createElement("p");
+                                divTotal.id = `IDTOTALcontent_${lyr.tag}`;
+                                divTotal.style.fontSize = "65px";
+                                divTotal.style.margin = "5px 0px";
+                                divTotal.innerText = 0;
+                                divCenterTotal.appendChild(divTotal);
+                                divColumn_01.appendChild(divCenterTotal);
+                                
+                                const divTable = document.createElement("div");
+                                divTable.id = `TB_content${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_01.appendChild(divTable); 
+
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divNota.style.textAlign = "left";
+                                divNota.style.marginTop = "15px";
+                                divColumn_02.appendChild(divNota);
+                              
+                                divColumn_01.appendChild(divMain);
+
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Inventario de incendios forestales", "Población expuesta");
+                            }
+                            /* </IIFO> */
+
+                            /* <ZAPENC> */
+                            if(typeof lyr.content[0].version_15 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_15[0];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+
+                                let cantCOUNT_ZAPENC = new StatisticDefinition();
+                                cantCOUNT_ZAPENC.statisticType = "count";
+                                cantCOUNT_ZAPENC.onStatisticField = _version.static;
+                                cantCOUNT_ZAPENC.outStatisticFieldName = "cantidad";
+                                                            
+                                let queryTask_ZAPENC = new QueryTask(lyr.url);
+                                let query_ZAPENC = new Query();
+                                query_ZAPENC.geometry = new Polygon(_geometryAmbito);
+                                query_ZAPENC.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_ZAPENC.outStatistics = [ cantCOUNT_ZAPENC ];
+                                query_ZAPENC.orderByFields = [`COUNT(${_version.static}) DESC`];
+                                query_ZAPENC.groupByFieldsForStatistics = [_version.static];
+                                query_ZAPENC.returnGeometry = false;
+                                queryTask_ZAPENC.execute(query_ZAPENC).then(
+                                    (response) => {
+                                        try {
+                                            let _contentTab = []; let _contentTotal = 0;
+                                            let _chartData = []; let _chartLabel = [];
+                                            let _features = response.features;
+                                            if(_features.length > 0) {
+                                                _features.forEach(function(_item) {
+                                                    _contentTab.push({
+                                                        "item": `${_item.attributes[_version.static]}`,
+                                                        "val": _item.attributes["cantidad"]
+                                                    });
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
+                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _chartLabel.push(_item.attributes[_version.static]);
+                                                });
+                                                _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
+                                                _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
+                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
+                                                    type: 'pie',
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    options: {
+                                                        responsive: false,
+                                                        plugins: {
+                                                            legend: { display:false, position:'bottom' },
+                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                                                        }
+                                                    }
+                                                });
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                        } catch (error) {
+                                            console.error(`Count: Statistic ZAPENC => ${error.name}`);
+                                        }                    
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Statistic ZAPENC => ${error.name}`);
+                                    }
+                                );
+                                
+                                const divCenterGraphic = document.createElement("center");
+                                const divCanvasGraphic = document.createElement("canvas");
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("width","370");
+                                divCenterGraphic.appendChild(divCanvasGraphic);
+                                divColumn_01.appendChild(divCenterGraphic);
+
+                                const divTable = document.createElement("div");
+                                divTable.id = `TB_content${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_02.appendChild(divTable); 
+
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divNota.style.textAlign = "left";
+                                divNota.style.marginTop = "15px";
+                                divColumn_01.appendChild(divNota);                                
+                              
+                                divColumn_01.appendChild(divMain);
+
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Tipos", "Cantidad");
+                            }
+                            /* </ZAPENC> */
+
+                            /* <PAF> */
+                            if(typeof lyr.content[0].version_16 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_16[0];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+
+                                let cantCOUNT_TCA = new StatisticDefinition();
+                                cantCOUNT_TCA.statisticType = "count";
+                                cantCOUNT_TCA.onStatisticField = _version.static;
+                                cantCOUNT_TCA.outStatisticFieldName = "cantidad";
+                                                            
+                                let queryTask_PAF = new QueryTask(lyr.url);
+                                let query_PAF = new Query();
+                                query_PAF.geometry = new Polygon(_geometryAmbito);
+                                query_PAF.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_PAF.outStatistics = [ cantCOUNT_TCA ];
+                                query_PAF.orderByFields = [`COUNT(${_version.static}) DESC`];
+                                query_PAF.groupByFieldsForStatistics = [_version.static];
+                                query_PAF.returnGeometry = false;
+                                queryTask_PAF.execute(query_PAF).then(
+                                    (response) => {
+                                        try {
+                                            let _contentTab = []; let _contentTotal = 0;
+                                            let _chartData = []; let _chartLabel = [];
+                                            let _features = response.features;
+                                            if(_features.length > 0) {
+                                                _features.forEach(function(_item) {
+                                                    _contentTab.push({
+                                                        "item": `${_item.attributes[_version.static]}`,
+                                                        "val": _item.attributes["cantidad"]
+                                                    });
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
+                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _chartLabel.push(_item.attributes[_version.static]);
+                                                });
+                                                _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
+                                                _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
+                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
+                                                    type: 'pie',
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    options: {
+                                                        responsive: false,
+                                                        plugins: {
+                                                            legend: { display:false, position:'bottom' },
+                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                                                        }
+                                                    }
+                                                });
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                        } catch (error) {
+                                            console.error(`Count: Statistic PAF => ${error.name}`);
+                                        }                    
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Statistic PAF => ${error.name}`);
+                                    }
+                                );
+                                
+                                const divCenterGraphic = document.createElement("center");
+                                const divCanvasGraphic = document.createElement("canvas");
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("width","370");
+                                divCenterGraphic.appendChild(divCanvasGraphic);
+                                divColumn_01.appendChild(divCenterGraphic);
+
+                                const divTable = document.createElement("div");
+                                divTable.id = `TB_content${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_02.appendChild(divTable); 
+
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divNota.style.textAlign = "left";
+                                divNota.style.marginTop = "15px";
+                                divColumn_01.appendChild(divNota);                                
+                              
+                                divColumn_01.appendChild(divMain);
+
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Tipos", "Cantidad");
+                            }
+                            /* </PAF> */
+
+                            /* <TCA> */
+                            if(typeof lyr.content[0].version_17 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_17[0];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+
+                                let cantCOUNT_TCA = new StatisticDefinition();
+                                cantCOUNT_TCA.statisticType = "count";
+                                cantCOUNT_TCA.onStatisticField = _version.static;
+                                cantCOUNT_TCA.outStatisticFieldName = "cantidad";
+                                                            
+                                let queryTask_TCA = new QueryTask(lyr.url);
+                                let query_TCA = new Query();
+                                query_TCA.geometry = new Polygon(_geometryAmbito);
+                                query_TCA.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_TCA.outStatistics = [ cantCOUNT_TCA ];
+                                query_TCA.orderByFields = [`COUNT(${_version.static}) DESC`];
+                                query_TCA.groupByFieldsForStatistics = [_version.static];
+                                query_TCA.returnGeometry = false;
+                                queryTask_TCA.execute(query_TCA).then(
+                                    (response) => {
+                                        try {
+                                            let _contentTab = []; let _contentTotal = 0;
+                                            let _chartData = []; let _chartLabel = [];
+                                            let _features = response.features;
+                                            if(_features.length > 0) {
+                                                _features.forEach(function(_item) {
+                                                    _contentTab.push({
+                                                        "item": `${_item.attributes[_version.static]}`,
+                                                        "val": _item.attributes["cantidad"]
+                                                    });
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
+                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _chartLabel.push(_item.attributes[_version.static]);
+                                                });
+                                                _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
+                                                _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
+                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
+                                                    type: 'pie',
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    options: {
+                                                        responsive: false,
+                                                        plugins: {
+                                                            legend: { display:false, position:'bottom' },
+                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                                                        }
+                                                    }
+                                                });
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                        } catch (error) {
+                                            console.error(`Count: Statistic TCA => ${error.name}`);
+                                        }                    
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Statistic TCA => ${error.name}`);
+                                    }
+                                );
+                                
+                                const divCenterGraphic = document.createElement("center");
+                                const divCanvasGraphic = document.createElement("canvas");
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("width","370");
+                                divCenterGraphic.appendChild(divCanvasGraphic);
+                                divColumn_01.appendChild(divCenterGraphic);
+
+                                const divTable = document.createElement("div");
+                                divTable.id = `TB_content${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_02.appendChild(divTable); 
+
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divNota.style.textAlign = "left";
+                                divNota.style.marginTop = "15px";
+                                divColumn_01.appendChild(divNota);                                
+                              
+                                divColumn_01.appendChild(divMain);
+
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Tipos", "Cantidad de Tramos");
+                            }
+                            /* </TCA> */
+
+                            /* <OIA> */
+                            if(typeof lyr.content[0].version_18 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_18[0];
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+
+                                let cantCOUNT_OIA = new StatisticDefinition();
+                                cantCOUNT_OIA.statisticType = "count";
+                                cantCOUNT_OIA.onStatisticField = _version.static;
+                                cantCOUNT_OIA.outStatisticFieldName = "cantidad";
+                                
+                                
+                                let queryTask_OIA = new QueryTask(lyr.url);
+                                let query_OIA = new Query();
+                                query_OIA.geometry = new Polygon(_geometryAmbito);
+                                query_OIA.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_OIA.outStatistics = [ cantCOUNT_OIA ];
+                                query_OIA.orderByFields = [`COUNT(${_version.static}) DESC`];
+                                query_OIA.groupByFieldsForStatistics = [_version.static];
+                                query_OIA.returnGeometry = false;
+                                queryTask_OIA.execute(query_OIA).then(
+                                    (response) => {
+                                        try {
+                                            let _contentTab = []; let _contentTotal = 0;
+                                            let _chartData = []; let _chartLabel = [];
+                                            let _features = response.features;
+                                            if(_features.length > 0) {
+                                                _features.forEach(function(_item) {
+                                                    _contentTab.push({
+                                                        "item": `${_item.attributes[_version.static]}`,
+                                                        "val": _item.attributes["cantidad"]
+                                                    });
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
+                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _chartLabel.push(_item.attributes[_version.static]);
+                                                });
+                                                _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
+                                                _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
+                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
+                                                    type: 'pie',
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    options: {
+                                                        responsive: false,
+                                                        plugins: {
+                                                            legend: { display:false, position:'bottom' },
+                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                                                        }
+                                                    }
+                                                });
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);
+                                            }
+                                        } catch (error) {
+                                            console.error(`Count: Statistic OIA => ${error.name}`);
+                                        }                    
+                                    },
+                                    (error) => {
+                                        console.error(`Error: Statistic OIA => ${error.name}`);
+                                    }
+                                );
+                                
+                                const divCenterGraphic = document.createElement("center");
+                                const divCanvasGraphic = document.createElement("canvas");
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("width","370");
+                                divCenterGraphic.appendChild(divCanvasGraphic);
+                                divColumn_01.appendChild(divCenterGraphic);
+
+                                const divTable = document.createElement("div");
+                                divTable.id = `TB_content${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_02.appendChild(divTable); 
+
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divNota.style.textAlign = "left";
+                                divNota.style.marginTop = "15px";
+                                divColumn_01.appendChild(divNota);                                
+                              
+                                divColumn_01.appendChild(divMain);
+
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Tipos", "Cantidad de Obras");
+                            }
+                            /* </OIA> */
 
                         }
                         //_elementById(`IDTable_${lyr.tag}`).appendChild(); 
