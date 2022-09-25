@@ -2,31 +2,38 @@
     "download": [
         {
             "name": "XLS",
-            "value": "XLS"
+            "value": "XLS",
+            "boolean": false 
         },
         {
             "name": "CSV",
-            "value": "CSV"
+            "value": "CSV",
+            "boolean": false
         },
         {
             "name": "JSON",
-            "value": "JSON"
+            "value": "JSON",
+            "boolean": false
         },
         {
             "name": "SHP (.zip)",
-            "value": "SHP (.zip)"
+            "value": "SHP (.zip)",
+            "boolean": false
         },
         {
             "name": "KMZ",
-            "value": "KMZ"
+            "value": "KMZ",
+            "boolean": true
         },
         {
             "name": "GeoJSON",
-            "value": "GeoJSON"
+            "value": "GeoJSON",
+            "boolean": false
         },
         {
             "name": "WKT",
-            "value": "WKT"
+            "value": "WKT",
+            "boolean": false
         }
     ],
     "lyrFilter": [
