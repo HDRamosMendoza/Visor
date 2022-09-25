@@ -311,17 +311,22 @@
                     "name": "Vulcanismo",
                     "srv": [
                         {
-                            "position": 5050201,
-                            "name": "Niveles de peligro",
-                            "objectid": "objectid",
-                            "rgb": "rgb(241,196,15)",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "name": "objectid"
+                            "name": "Niveles de Peligro",
+                            "srv": [
+                                { 
+                                    "position": 5050201,
+                                    "name": "Peligros multiples (zona proximal)",
+                                    "objectid": "objectid",
+                                    "rgb": "rgb(241,196,15)",
+                                    "fields":[
+                                        {
+                                            "alias": "objectid",
+                                            "name": "objectid"
+                                        }
+                                    ],
+                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201"
                                 }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201"                            
+                            ]
                         }
                     ]
                 },
