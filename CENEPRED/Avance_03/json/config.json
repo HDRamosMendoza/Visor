@@ -1,5 +1,5 @@
 {
-    "color": [
+    "backgroundColor": [
         "rgb(88, 214, 141)",
         "rgb(245, 176, 65)",
         "rgb(220, 118, 51)",
@@ -25,6 +25,32 @@
         "rgb(155, 89, 182)",
         "rgb(41, 128, 185)"
     ],
+    "borderColor": [
+        "rgb(88, 214, 141, 0.2)",
+        "rgb(245, 176, 65, 0.2)",
+        "rgb(220, 118, 51, 0.2)",
+        "rgb(202, 207, 210, 0.2)",
+        "rgb(153, 163, 164, 0.2)",
+        "rgb(86, 101, 115, 0.2)",
+        "rgb(52, 73, 94, 0.2)",
+        "rgb(231, 76, 60, 0.2)",
+        "rgb(142, 68, 173, 0.2)",
+        "rgb(52, 152, 219, 0.2)",
+        "rgb(22, 160, 133, 0.2)",
+        "rgb(88, 214, 141, 0.2)",
+        "rgb(26, 188, 156, 0.2)",
+        "rgb(39, 174, 96, 0.2)",
+        "rgb(241, 196, 15, 0.2)",
+        "rgb(230, 126, 34, 0.2)",
+        "rgb(236, 240, 241, 0.2)",
+        "rgb(149, 165, 166, 0.2)",
+        "rgb(127, 179, 213, 0.2)",
+        "rgb(171, 235, 198, 0.2)",
+        "rgb(171, 178, 185, 0.2)",
+        "rgb(192, 57, 43, 0.2)",
+        "rgb(155, 89, 182, 0.2)",
+        "rgb(41, 128, 185, 0.2)"
+    ],    
     "lyrDiagnosis" : [
         { 
             "name": "Información CENEPRED",
@@ -819,7 +845,48 @@
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201",
                             "content": [
                                 {
-                                    "version_10": []
+                                    "version_10": [
+                                        {
+                                            "nota": "La zonificación de peligros del mapa proximal se realizó para peligros múltiples, es decir para el emplazamiento de flujos piroclásticos, flujos de lava y eyección de proyectiles balísticos.",
+                                            "cuenta": [
+                                                {
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> mapas de peligros múltiples por vulcanismo",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con mapa de peligros múltiples por vulcanismo"
+                                                }
+                                            ],
+                                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
+                                            "fields": [
+                                                {
+                                                    "alias": "Población",
+                                                    "name": "pob_total",
+                                                    "default": true                    
+                                                },
+                                                {
+                                                    "alias": "Vivienda",
+                                                    "name": "num_viv_part"
+                                                }
+                                            ],
+                                            "graphic": [
+                                                { 
+                                                    "field":"alto",
+                                                    "alias":"Alto Riesgo"
+                                                },
+                                                {
+                                                    "field":"medio",
+                                                    "alias":"Medio Riesgo"
+                                                },
+                                                { 
+                                                    "field":"bajo",
+                                                    "alias":"Alto Riesgo"
+                                                }
+                                            ],
+                                            "analysis": [
+                                                {
+                                                    "field": "shape"
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ]
                         }
