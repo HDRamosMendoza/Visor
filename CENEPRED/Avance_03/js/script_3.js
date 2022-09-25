@@ -41,6 +41,8 @@ require([
     esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 
     const config = JSON.parse(configJSON);
+    let configBackgroundColor = config.backgroundColor;
+    let configBorderColor = config.borderColor;
     let configDiagnosis = config.lyrDiagnosis;
     let configDiagnosis_Temp = [];
     let configAnalysis = config.lyrAnalysis;
@@ -74,7 +76,18 @@ require([
     let _ambitoQuery =  _ambitoArr.length == 3 ? `DEPA = '${_ambitoArr[2].trim()}' AND PROV = '${_ambitoArr[1].trim()}' AND DIST = '${_ambitoArr[0].trim()}'`: 
                         _ambitoArr.length == 2 ? `DEPA = '${_ambitoArr[1].trim()}' AND PROV = '${_ambitoArr[0].trim()}' AND DIST IS NULL`: 
                         `DEPA = '${_ambitoArr[0].trim()}' AND PROV IS NULL AND DIST IS NULL`;
-
+    /* Generate Array 0 */
+    let _generateArray = function(_length) {
+        try {
+            let _arr = [];
+            for (let index = 0; index < _length; index++) {
+                _arr.push[0];                
+            }
+            return _arr;
+        } catch(error) {
+            console.error(`_generateArray: ${error.name} - ${error.message}`);
+        }
+    };
     /* Validated ID */
     let _elementById = function (paramId) {
         try { /* Valida el ID */
@@ -112,13 +125,40 @@ require([
         }
     };
     _title(_ambitoName);
-    /* Create GRAPHIC */
-    let _graphic = function(_id) {
+    /* Create graphic BAR */
+    let _graphicChartBar = function(_node, _label, _data) {
         try {
-            const data = { labels:[], datasets:[{ data:[], backgroundColor:[],borderWidth: 1 }]};
-            new Chart(_id, { 
+            new Chart(_node, { 
+                type: 'bar',
+                data: {
+                    labels: _label,
+                    datasets: [{
+                    label: 'Cantidad',
+                    data: _data,
+                    backgroundColor: configBackgroundColor,
+                    borderColor: configBorderColor,
+                    borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: false,
+                    plugins: {
+                        legend: { display:false, position:'bottom' },
+                        title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                    }
+                }
+            });
+        } catch(error) {
+            console.error(`_graphicChartBar: ${error.name} - ${error.message}`);
+        }
+    };
+    /* Create graphic DOUGHNOUT */
+    let _graphicPie = function(_node, _backgroundColor) {
+        try {
+            new Chart(_node, { 
                 type: 'doughnut',
-                data,
+                data: { labels:[], datasets:[{ data:[], backgroundColor:_backgroundColor, borderWidth: 1 }]},
                 options: {
                     responsive: false,
                     plugins: {
@@ -131,7 +171,8 @@ require([
             console.error(`_graphicPie: ${error.name} - ${error.message}`);
         }
     };
-    //_graphic(graphicID);
+    /* Create Graphic DOUGHNOUT MAIN */
+    _graphicPie(chartID,configBackgroundColor,_generateArray(1));
     /* Load LIST JSON */
     let _reportJson = function(json, _conf, _count, _name = "") {
         try { /* Recorre un arból de n hijos */
@@ -497,16 +538,12 @@ require([
                             if(_attr.cantidad === 0) {
                                 _elementById(`Header_${lyr.tag}`).style.display="none";
                                 _elementById(`Content_${lyr.tag}`).style.display="none";
-                                /*_elementById("ID_TAB_Header").childNodes[5+_index].style.display="none";
-                                _elementById("ID_TAB_Content").childNodes[5+_index].style.display="none";*/
                             } else {
                                 /* Se limpiar TABLE */
                                 _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
                                 /* Sort JSON */
-                                _sortJSON(configSummary_Temp, 'cantidad','desc');
-                                
+                                _sortJSON(configSummary_Temp, 'cantidad','desc');                                
                                 configSummary_Temp.map(function(_lyr) {
-                                    _elementById("ID_GraphicSummary").click();
                                     if(_lyr.cantidad > 0 && typeof _lyr.cantidad !== "undefined") {
                                         /*_index = _index + 1;*/
                                         let fragment = document.createDocumentFragment();
@@ -529,16 +566,13 @@ require([
                                 }.bind(this)); 
                                 /* Graphic Chart */
                                 let chart = Chart.getChart(chartID);
-                                // Se detecto que la ejecución carga antes que la librería CHARTJS
-                                if(chart ?? false) {
-                                    chartData.push(lyr.cantidad);
-                                    chartLabel.push(lyr.name.replace(/<[^>]+>/g, ''));
-                                    chartBackgroundColor.push(lyr.rgb);
-                                    chart.data.datasets[0].data = chartData;
-                                    chart.data.datasets[0].backgroundColor = chartBackgroundColor;
-                                    chart.data.labels = chartLabel;
-                                    chart.update();
-                                }
+                                chartData.push(lyr.cantidad);
+                                chartLabel.push(lyr.name.replace(/<[^>]+>/g, ''));
+                                chartBackgroundColor.push(lyr.rgb);
+                                chart.data.datasets[0].data = chartData;
+                                chart.data.datasets[0].backgroundColor = chartBackgroundColor;
+                                chart.data.labels = chartLabel;
+                                chart.update();
                             }
                         } catch (error) {
                             console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
@@ -660,7 +694,6 @@ require([
             } else {
                 _elementById("ID_Alert").style.display = "none";
                 this.diagnosisCount = 1;
-                _elementById("ID_GraphicSummary").click();
                 configSummary_Temp.map(function(lyr, index) {
                     //!lyr.default || _featureTable(lyr.url,lyr.objectid,lyr.fields);
                     _queryTask(lyr, this.diagnosisTotal, _ambito, index);
@@ -671,34 +704,12 @@ require([
         }
     };    
     _summaryGeneral(JSON.parse(localStorage.getItem("reportGeometry")));
-
-    let _graphicPie = function() {
-        try {
-            /*const data = { labels:[], datasets:[{ data:[], backgroundColor:[],borderWidth: 1 }]};*/
-            new Chart(chartID, { 
-                type: 'doughnut',
-                data: { labels:[], datasets:[{ data:[], backgroundColor:[],borderWidth: 1 }]},
-                options: {
-                    responsive: false,
-                    plugins: {
-                        legend: { display:false, position:'bottom' },
-                        title: { display:false, text:'GRÁFICO DE RESUMEN' }
-                    }
-                }
-            });
-        } catch(error) {
-            console.error(`_graphicPie: ${error.name} - ${error.message}`);
-        }
-    };
-
+    /* Se crea dinamicamente el TAB y CONTENT del TAB */
     let _jsonTravelTree = function(_json, _name = "") {
-		try {/* Se crea dinamicamente el TAB y CONTENT del TAB */
-            
-
+		try {
             let jsonLS = JSON.parse(localStorage.getItem("reportTitle_request"));
             let litAmbito = jsonLS.search("(distrito)") > 0 ? "DISTRITO" : 
             jsonLS.search("(provincia)") > 0 ? "PROVINCIA" : "DEPARTAMENTO";
-
             /* ANALIZAR */
             let _nameTemp = "";
             _json.map(function(lyr, index) {
@@ -730,8 +741,7 @@ require([
                         let nodeHeader = document.getElementById(HeaderID);
                         nodeHeader.classList.add("active"); /* HEADER */
                         document.getElementById(ContentID).style.display = "block"; /* CONTENT */
-                        document.getElementById(ContentID).classList.add("active"); /* CONTENT */
-                        
+                        document.getElementById(ContentID).classList.add("active"); /* CONTENT */                        
                         //featureTable.destroy();
                         if(featureTable !== null) {
                             featureTable.destroy();
@@ -743,7 +753,6 @@ require([
                         );
                         
                         if(lyr.content ?? false) {
-
                             /* <PPRRD> */
                             if(typeof lyr.content[0].version_01 !== "undefined") {
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
@@ -785,8 +794,7 @@ require([
                                                     _boolean = false;
                                                     break;
                                                 }
-                                                _boolean = true;
-                                                
+                                                _boolean = true;                                                
                                             }
 
                                             if(_boolean) {
@@ -801,8 +809,7 @@ require([
                                                 const divImg = document.createElement("img");
                                                 divImg.setAttribute("src", `./images/documento.png`);
                                                 divColumn_02.appendChild(divImg);
-                                            }
-                                            
+                                            }                                            
                                         } catch (error) {
                                             console.error(`Count: PPRRD => ${error.name} - ${error.message}`);
                                         }                    
@@ -918,7 +925,8 @@ require([
                                     divCanvas.setAttribute("id",`IDcontent${lyr.tag}${current.name}`);
                                     divCanvas.setAttribute("height","120");
                                     divCanvas.setAttribute("width","370");
-                                    divCenter.appendChild(divCanvas);
+
+                                    divCenter.appendChild(divCanvas);                                    
                                     const divTable = document.createElement("div");
                                     divTable.id = `TBcontent${lyr.tag}${current.name}`;
                                     div.appendChild(divCenter);
@@ -1851,9 +1859,9 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                new Chart(`TB_GraphicContent_heber_${lyr.tag}`, { 
+                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
                                                         responsive: false,
                                                         plugins: {
@@ -1890,7 +1898,7 @@ require([
 
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
-                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_heber_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
                                 divCanvasGraphic.setAttribute("height","190");
                                 divCanvasGraphic.setAttribute("width","370");
                                 divCenterGraphic.appendChild(divCanvasGraphic);
@@ -2330,8 +2338,216 @@ require([
                             }
                             /* </AET> */
 
+                            /* <NP> */
+                            if(typeof lyr.content[0].version_10 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_10[0];
+                                let _boolean = true;
+                                let unionGeometry = [];
 
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+                                                                
+                                const divTable = document.createElement("div");
+                                divTable.id = `ID_TBcontent${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_02.appendChild(divTable);
+                                
+                                /* HEADER */
+                                lyr.content[0].version_10[0].fields.map(function(current) {
+                                    const inputText = document.createElement("input");
+                                    inputText.type = "radio";
+                                    inputText.className = "tabs-horiz";
+                                    inputText.id = `tab${lyr.tag}${current.name}`;
+                                    inputText.name = `tabs-2${lyr.tag}`;
+                                    if(typeof current.default !== "undefined") {
+                                        inputText.setAttribute("checked","");
+                                    }
+                                    const label = document.createElement("label");
+                                    label.innerText = current.alias;
+                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                    
+                                    divMain.appendChild(inputText);
+                                    divMain.appendChild(label);                            
+                                }.bind(this));
+                                /* CONTENT */
+                                lyr.content[0].version_10[0].fields.map(function(current) {
+                                    const sect = document.createElement("section");
+                                    sect.id = `content${lyr.tag}${current.name}`;
+                                    const div = document.createElement("div");
+                                    
+                                    const divCenterGraphic = document.createElement("center");
+                                    const divCanvasGraphic = document.createElement("canvas");
+                                    divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}${current.name}`);
+                                    divCanvasGraphic.setAttribute("height","150");
+                                    divCanvasGraphic.setAttribute("width","380");
+                                    
+                                    _graphicChartBar(
+                                        divCanvasGraphic,
+                                        [_version.graphic[0].alias,_version.graphic[1].alias,_version.graphic[2].alias],
+                                        _generateArray(3)
+                                    );
 
+                                    divCenterGraphic.appendChild(divCanvasGraphic);
+                                    div.appendChild(divCenterGraphic);
+                                    
+                                    const divTable = document.createElement("div");
+                                    divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    div.appendChild(divTable);
+
+                                    sect.appendChild(div);                            
+                                    divMain.appendChild(sect);                            
+                                }.bind(this));
+                                
+                                const tagStyle = document.createElement("style"); let _css = "";
+                            
+                                lyr.content[0].version_10[0].fields.map(function(current) {
+                                    _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;  
+                                }.bind(this));
+                            
+                                if(_css !== "") {
+                                    let _cssStyle = _css.substring(0, _css.length - 1);
+                                    tagStyle.textContent = _cssStyle.concat("{display: block;};");
+                                    divMain.appendChild(tagStyle);
+                                } 
+                                divColumn_01.appendChild(divMain);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota);
+
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Niveles de Peligro", "Población");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Niveles de Peligro", "Vivienda");
+
+                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+
+                                let queryTask_NP = new QueryTask(lyr.url);
+                                let query_NP = new Query();
+                                query_NP.returnGeometry = true;
+                                query_NP.geometry = new Polygon(_geometryAmbito);
+                                query_NP.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                queryTask_NP.execute(query_NP).then(
+                                    (response) => {
+                                        try {
+                                            let _length = response.features.length;
+                                            console.log(response.features);
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
+
+                                            if(_length == 0) {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-warning";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                divColumn_01.prepend(divOBS);  
+                                            } else {
+                                                const divOBS = document.createElement("p");
+                                                divOBS.className = "sect-nota-info";
+                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
+                                                divColumn_01.prepend(divOBS);
+                                            }                
+                                        } catch (error) {
+                                            console.error(`Count: NP => ${error.name} - ${error.message}`);
+                                        }                    
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: NP => ${error.name} - ${error.message}`);
+                                    }
+                                ).always(lang.hitch(this, () => { 
+                                    let countTabItem = 1;
+                                    let countTabItemTotal = 0;
+                                    /* Union Geometry */
+                                    let _geometry = geometryEngine.union(unionGeometry);
+                                    /* Statistic Poblacion */
+                                    let poblacionSUM = new StatisticDefinition();
+                                    poblacionSUM.statisticType = "sum";
+                                    poblacionSUM.onStatisticField = _version.fields[0].name;
+                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                    /* Statistic Vivienda */
+                                    let viviendaSUM = new StatisticDefinition();
+                                    viviendaSUM.statisticType = "sum";
+                                    viviendaSUM.onStatisticField = _version.fields[1].name;
+                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                    /* Statistic Response */
+                                    let queryTask_Engine = new QueryTask(_version.url);
+                                    let query_Engine = new Query();
+                                    query_Engine.outFields = _version.fields.map(x => x.name);
+                                    query_Engine.geometry = _geometry;
+                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                    query_Engine.returnGeometry = false;
+                                    queryTask_Engine.execute(query_Engine).then(
+                                        (response) => {
+                                            try {
+                                                /*
+                                                let _contentTab01 = []; let _contentTab02 = [];
+                                                let _attr = response.features[0].attributes;
+                                                //Poblacion
+                                                
+                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                // Vivienda
+                                                
+                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                                */
+                                            } catch (error) {
+                                                console.error(`Count: Statistic FM => ${error.name}`);
+                                            }                    
+                                        },
+                                        (error) => {
+                                            console.error(`Error: Statistic FM => ${error.name}`);
+                                        }
+                                    );                                    
+                                    //_elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                    /*
+                                    configAnalysis_Temp.forEach(function(cValue) {
+                                       
+                                        let analysisCOUNT = new StatisticDefinition();
+                                        analysisCOUNT.statisticType = "count";
+                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                        
+                                        let queryTask_Analysis = new QueryTask(cValue.url);
+                                        let query_Analysis = new Query();
+                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                        query_Analysis.geometry = _geometry;
+                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.outStatistics = [ analysisCOUNT ];
+                                        queryTask_Analysis.execute(query_Analysis).then(
+                                            (response) => {
+                                                try {
+                                                    let _attr = response.features[0].attributes;
+                                                    if(_attr.cantidad > 0) {
+                                                        let _contentTab = [];
+                                                        let _id = `ID_TBcontent${lyr.tag}`;
+                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                        _htmlTable_ADD(`${_id}`,_contentTab);
+                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                            }
+                                        );
+                                    });
+                                    */
+                                }));
+                            }
+                            /* </NP> */
 
                             /* <AEE> */
                             if(typeof lyr.content[0].version_11 !== "undefined") {
@@ -2576,9 +2792,9 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                new Chart(`TB_GraphicContent_heber_${lyr.tag}`, { 
+                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
                                                         responsive: false,
                                                         plugins: {
@@ -2615,7 +2831,7 @@ require([
 
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
-                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_heber_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
                                 divCanvasGraphic.setAttribute("height","190");
                                 divCanvasGraphic.setAttribute("width","370");
                                 divCenterGraphic.appendChild(divCanvasGraphic);
@@ -2695,7 +2911,7 @@ require([
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
                                                         responsive: false,
                                                         plugins: {
@@ -2897,7 +3113,7 @@ require([
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
                                                         responsive: false,
                                                         plugins: {
@@ -2998,7 +3214,7 @@ require([
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
                                                         responsive: false,
                                                         plugins: {
@@ -3099,7 +3315,7 @@ require([
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
                                                         responsive: false,
                                                         plugins: {
@@ -3201,7 +3417,7 @@ require([
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:config.color, borderWidth:1 }]},
+                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
                                                         responsive: false,
                                                         plugins: {
@@ -3427,7 +3643,6 @@ require([
               
                 }
                 */
-
                 divContent.appendChild(divTitle);
                 divContent.appendChild(divHR);                
                 divContent.appendChild(divAside);
@@ -3470,6 +3685,6 @@ require([
 		});
 	} 
     */   
-    map.on("load", () => { _graphicPie(); });
+    //map.on("load", () => { _graphicPie(); });
 });
 //https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca/6495_img.jpg

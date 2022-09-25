@@ -528,7 +528,7 @@ input.tabs-horiz:checked + label {
 .column_01 p.sect-nota {
   font-size : 14px;
   padding : 0px 5px 0px 5px;
-  margin : 0px 0px 15px 0px;
+  margin : 15px 0px;
   border-left : 3px solid #555555;
 }
 

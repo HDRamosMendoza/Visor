@@ -833,63 +833,69 @@
                     "name": "Vulcanismo",
                     "srv": [
                         {
-                            "name": "Niveles de Peligro",
-                            "objectid": "objectid",
-                            "rgb": "rgb(241,196,15)",
-                            "fields":[
-                                {
-                                    "alias": "objectid",
-                                    "name": "objectid"
-                                }
-                            ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201",
-                            "content": [
-                                {
-                                    "version_10": [
+                            "name": "Niveles de Peligros",
+                            "srv": [
+                                { 
+                                    "name": "Peligros multiples (zona proximal)",
+                                    "objectid": "objectid",
+                                    "rgb": "rgb(241,196,15)",
+                                    "fields":[
                                         {
-                                            "nota": "La zonificación de peligros del mapa proximal se realizó para peligros múltiples, es decir para el emplazamiento de flujos piroclásticos, flujos de lava y eyección de proyectiles balísticos.",
-                                            "cuenta": [
+                                            "alias": "objectid",
+                                            "name": "objectid"
+                                        }
+                                    ],
+                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201",
+                                    "content": [
+                                        {
+                                            "version_10": [
                                                 {
-                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> mapas de peligros múltiples por vulcanismo",
-                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con mapa de peligros múltiples por vulcanismo"
-                                                }
-                                            ],
-                                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
-                                            "fields": [
-                                                {
-                                                    "alias": "Población",
-                                                    "name": "pob_total",
-                                                    "default": true                    
-                                                },
-                                                {
-                                                    "alias": "Vivienda",
-                                                    "name": "num_viv_part"
-                                                }
-                                            ],
-                                            "graphic": [
-                                                { 
-                                                    "field":"alto",
-                                                    "alias":"Alto Riesgo"
-                                                },
-                                                {
-                                                    "field":"medio",
-                                                    "alias":"Medio Riesgo"
-                                                },
-                                                { 
-                                                    "field":"bajo",
-                                                    "alias":"Alto Riesgo"
-                                                }
-                                            ],
-                                            "analysis": [
-                                                {
-                                                    "field": "shape"
+                                                    "nota": "La zonificación de peligros del mapa proximal se realizó para peligros múltiples, es decir para el emplazamiento de flujos piroclásticos, flujos de lava y eyección de proyectiles balísticos.",
+                                                    "cuenta": [
+                                                        {
+                                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> mapas de peligros múltiples por vulcanismo",
+                                                            "negacion": "seleccionado <strong>NO CUENTA</strong> con mapa de peligros múltiples por vulcanismo"
+                                                        }
+                                                    ],
+                                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
+                                                    "fields": [
+                                                        {
+                                                            "alias": "Población",
+                                                            "name": "pob_total",
+                                                            "default": true                    
+                                                        },
+                                                        {
+                                                            "alias": "Vivienda",
+                                                            "name": "num_viv_part"
+                                                        }
+                                                    ],
+                                                    "graphic": [
+                                                        { 
+                                                            "field":"alto",
+                                                            "alias":"Alto"
+                                                        },
+                                                        {
+                                                            "field":"medio",
+                                                            "alias":"Medio"
+                                                        },
+                                                        { 
+                                                            "field":"bajo",
+                                                            "alias":"Bajo"
+                                                        }
+                                                    ],
+                                                    "analysis": [
+                                                        {
+                                                            "field": "shape"
+                                                        }
+                                                    ]
                                                 }
                                             ]
                                         }
                                     ]
+
                                 }
                             ]
-                        }
+                        }                        
                     ]
                 },
                 {
