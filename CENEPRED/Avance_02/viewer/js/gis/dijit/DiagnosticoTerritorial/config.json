@@ -464,6 +464,7 @@
             "name": "Infraestructura vial y transporte",
             "srv": [
                 { 
+                    "position": 2060200,
                     "id": "ID_RedFerroviaria",
                     "name": "Red Ferroviaria",
                     "long": "longitud",
@@ -481,6 +482,7 @@
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060200"
                 },
                 { 
+                    "position": 2060300,
                     "id": "ID_RedVial",
                     "name": "Red víal",
                     "long": "longitud",
