@@ -1,4 +1,9 @@
 {
+    "lyrGroup": [
+        "cartografiaPeligros",
+        "cartografiaRiesgos",
+        "informacionCENEPRED"
+    ],
     "download": [
         {
             "name": "XLS",
