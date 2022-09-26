@@ -766,6 +766,7 @@ define([
         },
         _diagnosisLayer: function(GPL) {
             try { /* Intersección de las capas operativas */
+                this.groupLayer_count = 1;
                 this.map.graphics.remove(this.bufferSelect_geometry);
                 this._htmlTable(this.ID_Table_Analysis);                
                 let [id, srv] = GPL;
