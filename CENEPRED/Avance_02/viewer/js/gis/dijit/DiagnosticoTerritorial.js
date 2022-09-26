@@ -1,4 +1,5 @@
 let ramos;
+this.heber = "hola";
 define([
     'dojo/_base/declare',
     'dojo/on',
@@ -137,6 +138,8 @@ define([
         IDTableBuffer_Name: "",
         lyrDefinition: [],
         gpExtractData: null,
+        groupLayer: null,
+        groupLayer_count: 1,
      
         postCreate: function () {
             this.inherited(arguments);
@@ -154,7 +157,6 @@ define([
             this.IDTableCount_Name  = this.ID_Table_Count.getAttribute("data-dojo-attach-point");
             this.IDTableBuffer_Name = this.ID_Table_Buffer.getAttribute("data-dojo-attach-point");
             this.IDTableAnalysis_Name = this.ID_Table_Analysis.getAttribute("data-dojo-attach-point");
-            
             /* Setup DEPARTAMENTO */
             const lyrDep = config.lyrFilter[0];
             const srvDep = lyrDep.srv[0];
@@ -164,8 +166,7 @@ define([
             /* Setup DISTRITO */
             const lyrDis = config.lyrFilter[2];
             const srvDis = lyrDis.srv[0];
-            /* Setup List Layer DIAGNOSIS */
-           
+            
             /* Asigna en un solo nivel a confAnalysis_Temp */
             //this._loadJson(this.confAnalysis, this.confAnalysis_Temp);
 
@@ -175,21 +176,12 @@ define([
             this._loadJson(config.lyrBuffer,     this.bufferTemp,    "bufferTotal");
             /* DownLoad Data */ 
             this._loadSelect(config.download, this.ID_Diagnosis_Format);
-            this._loadSelect(config.download, this.ID_Analysis_Format);
-            this._loadSelect(this.bufferTemp, this.ID_Analysis_Buffer);
+            //this._loadSelect(config.download, this.ID_Analysis_Format);
+            //this._loadSelect(this.bufferTemp, this.ID_Analysis_Buffer);
             /* Asigna en un solo nivel a confReport_Temp */
-            //this._reportJson(this.confReport, this.confReport_Temp);
-
-            console.log(this.diagnosisTemp);
-            /*
-            let dynamicLayer = this.map.getLayer("cartografiaPeligros");
-            console.log(dynamicLayer);
-            var layerDefs = []; layerDefs[5010100] = "iobjectid_1=(1)";
-            dynamicLayer.setLayerDefinitions(layerDefs);
-            dynamicLayer.setVisibleLayers([5010100],true);
-            dynamicLayer.refresh();
-            */
-
+            //this._reportJson(this.confReport, this.confReport_Temp);            
+            /* Create group */
+            this.groupLayer = this._activedLayer(this);            
             /* Load DEPARTAMENTO */
             let fillDep = this._fillLineColor("solid", "solid", "#04EDFE", 2.5, [255,97,97,0]);
             let featureLayerDep = this._loadLayer(lyrDep.srv[0].objectID, srvDep.url, fillDep, lyrDep.srv[0].depName);
@@ -291,6 +283,13 @@ define([
                     this.ID_CountText.innerHTML  = this.textAmbito = "";
                     this.ID_Table_Count.innerHTML = '';
                     this._htmlTable(this.ID_Table_Count);
+                    /* Clean group layer */
+                    this.groupLayer.forEach(element => {
+                        if(config.lyrGroup.indexOf(element.group.name) !== -1) {
+                            element.group.lyr().setDefaultLayerDefinitions();
+                            element.group.lyr().setDefaultVisibleLayers();
+                        }
+                    });
                 } catch (error) {
                     console.error(`Error: button/ID_Filter_Clear (click) => ${error.name} - ${error.message}`);
                 }
@@ -436,6 +435,17 @@ define([
         startup: function() {
             console.log("in startup");
         },
+        _activedLayer(_this) {
+            try {
+                return this.map.layerIds.map(function(item) { 
+                    return {group:{ name:item , id:[], lyrDefinitions: [], lyr: function() {
+                        return _this.map.getLayer(item);
+                    }}} 
+                });
+            } catch (error) {
+                console.error(`Error: _activedLayer => ${error.name} - ${error.message}`);
+            }
+        },
         _loadSelect(formatOption, formatId) {
             try {
                 let htmlID = formatId.getAttribute("data-dojo-attach-point")
@@ -456,8 +466,8 @@ define([
                     onClick: function() {
                         let featureSet = new FeatureSet();
                         let features = [];
-                        features.push(this.map.graphics.graphics[0]);
-                        featureSet.features = features;
+                        //features.push(this.map.graphics.graphics[0]);
+                        //featureSet.features = features;
                         /* Validar el poligono */
                         try {
                             let geomtryPolygon  = featureSet.features[0].geometry.rings;
@@ -504,10 +514,13 @@ define([
                     fragment.appendChild(row);
                     formatId.appendChild(fragment); */
                     booleanButton = typeof item.long == "undefined" && !booleanButton == true ? false: true;
-                    options.push({ 
-                        name: item.name.replace(/<[^>]+>/g, ''),
-                        id:   typeof item.value == "undefined"? index: item.value
-                    });
+                    /* Filtra su visualización */
+                    if(item.boolean) {
+                        options.push({ 
+                            name: item.name.replace(/<[^>]+>/g, ''),
+                            id:   typeof item.value == "undefined"? index: item.value
+                        });
+                    }                    
                 }); 
 
                 const stateStore = new Memory({data: options });
@@ -754,8 +767,7 @@ define([
         _diagnosisLayer: function(GPL) {
             try { /* Intersección de las capas operativas */
                 this.map.graphics.remove(this.bufferSelect_geometry);
-                this._htmlTable(this.ID_Table_Analysis);
-                
+                this._htmlTable(this.ID_Table_Analysis);                
                 let [id, srv] = GPL;
                 let query = new Query();
                 query.objectIds = [id];
@@ -770,9 +782,15 @@ define([
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
-                            console.log("cValue.geometry");
-                            console.log(cValue.geometry);
-                            this.geometryIntersect = cValue.geometry;
+                            this.geometryIntersect = new Polygon(cValue.geometry.rings,new SpatialReference({wkid:102100}));
+                            let graphic = new Graphic(
+                                cValue.geometry.rings,
+                                new SimpleFillSymbol(
+                                    SimpleFillSymbol.STYLE_SOLID,
+                                    new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,new Color([55,55,55,0.9]),4),new Color([55,55,55,0.5])
+                                )
+                            );
+                            this.map.graphics.add(graphic)
                             this.diagnosisTemp.map(function(lyr) {
                                 this._intersectDiagnosis(
                                     this.IDTableCount_Name,
@@ -786,8 +804,7 @@ define([
                     } catch (error) {
                         console.error(`Error: _diagnosisLayer/selectFeatures => ${error.name} - ${error.message}`);
                     }
-                }.bind(this));
-                
+                }.bind(this));                
             } catch (error) {
                 console.error(`Error: _diagnosisLayer => ${error.name} - ${error.message}`);
             }
@@ -804,11 +821,12 @@ define([
                 let queryTask = new QueryTask(_lyr.url);
                 let query = new Query();
                 query.outFields = _lyr.fields.map(x => x.field);
-                /*console.log(this.geometryIntersect);*/ /* DANIEL */
+                //console.log(_lyr.name);
+                //console.log(new Polygon(this.geometryIntersect));
                 query.geometry = new Polygon(this.geometryIntersect);
-                query.spatialRelationship = "esriSpatialRelIntersects";
-                query.geometryType = "esriGeometryEnvelope";
+                query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                 query.outStatistics = [ diagnosisCOUNT ];
+                //console.log(query);
                 this.deferredDiagnosis = queryTask.execute(query);
                 this.deferredDiagnosis.then(
                     (response) => {
@@ -864,21 +882,23 @@ define([
                     } 
                 }.bind(this)));
 
-                this.deferredDiagnosisMap = queryTask.executeForIds(query);
+                let queryTask_ID = new QueryTask(_lyr.url);
+                let query_ID = new Query();
+                query_ID.outFields = _lyr.fields.map(x => x.field);
+                query_ID.geometry = new Polygon(this.geometryIntersect);
+                query_ID.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                this.deferredDiagnosisMap = queryTask_ID.executeForIds(query_ID);
                 this.deferredDiagnosisMap.then(
                     (ids) => {
                         try {
-                            //if (this.diagnosisRandom == _random && (ids ?? false)) {
+                            this.groupLayer_count++;
                             if (ids ?? false) {
-                                console.log(_lyr.id);
-                                let lyr = this.map.getLayer(_lyr.id);
-                                /*if(_lyr.type == "ArcGISDynamicMapServiceLayer") {
-                                console.log(_lyr.type);console.log(_lyr.id);console.log(lyr);console.log(_lyr.url);console.log(_lyr.objectid);
-                                console.log(_lyr.position);console.log(ids.toString()); lyr.setVisibleLayers([_lyr.position],true);*/
-                                this.lyrDefinition[_lyr.position] = `${_lyr.objectid} IN (${ids.toString()})`;
-                                lyr.setLayerDefinitions(this.lyrDefinition);
-                                lyr.show();
-                                lyr.refresh();
+                                this.groupLayer.forEach(element => {
+                                    if(element.group.name == _lyr.id) {
+                                        element.group.id.push(_lyr.position);
+                                        element.group.lyrDefinitions[_lyr.position] = `${_lyr.objectid} IN (${ids.toString()})`;
+                                    }
+                                });
                             }
                         } catch (error) {
                             console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
@@ -887,7 +907,17 @@ define([
                     (error) => {  
                         console.error(`Error: _queryTask ERROR - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
                     }
-                );
+                ).always(lang.hitch(this, () => {                                    
+                    if ((this.diagnosisRandom == _random) && (this.groupLayer_count == this.diagnosisTotal)) {
+                        this.groupLayer.forEach(element => {
+                            if(element.group.name == _lyr.id) {
+                                element.group.lyr().setLayerDefinitions(element.group.lyrDefinitions);
+                                element.group.lyr().setVisibleLayers(element.group.id);
+                                element.group.lyr().refresh();
+                            }
+                        });
+                    }                              
+                }));
                 
             } catch (error) { 
                 console.error(`Error: _intersectLaye => ${error.name} - ${error.message}`); 
