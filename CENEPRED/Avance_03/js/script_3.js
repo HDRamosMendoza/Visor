@@ -434,7 +434,7 @@ require([
                     let queryTaskSummary = new QueryTask(lyr.url);
                     let querySummary = new Query();
                     querySummary.geometry = new Polygon(this.geometryAmbito);
-                    querySummary.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                    querySummary.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                     querySummary.returnGeometry = false;
                     queryTaskSummary.executeForCount(querySummary).then(
                         (response) => {
@@ -522,7 +522,7 @@ require([
                 query.outFields = lyr.fields.map(x => x.name);
                 /*console.log(_ambito);*/ /* DANIEL */
                 query.geometry = new Polygon(_ambito);
-                query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                 query.returnGeometry = false;
                 query.outStatistics = [ diagnosisSUM ];
                 //this.deferredReport = queryTask.executeForCount(query);
@@ -619,7 +619,7 @@ require([
             let _idQueryTask = null;
             let query = new Query();
             query.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
-            query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+            query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
             query.returnGeometry = false;
             query.where = "1=1";
             queryTask.executeForIds(query).then(
@@ -766,7 +766,7 @@ require([
                                 let query_PPRD = new Query();
                                 query_PPRD.outFields = ["*"];
                                 query_PPRD.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
-                                query_PPRD.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_PPRD.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_PPRD.returnGeometry = false;
                                 queryTask_PPRD.execute(query_PPRD).then(
                                     (response) => {
@@ -837,8 +837,8 @@ require([
                                 let queryTask_EVAR = new QueryTask(lyr.url);
                                 let query_EVAR = new Query();
                                 query_EVAR.outFields = ["*"];
-                                query_EVAR.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
-                                query_EVAR.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_EVAR.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")));
+                                query_EVAR.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_EVAR.returnGeometry = false;
                                 queryTask_EVAR.execute(query_EVAR).then(
                                     (response) => {
@@ -976,7 +976,7 @@ require([
                                 let query_EVAR_EST = new Query();
                                 query_EVAR_EST.outFields = ["*"];                                    
                                 query_EVAR_EST.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
-                                query_EVAR_EST.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_EVAR_EST.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_EVAR_EST.outStatistics = [ poblacionSD_PA, poblacionSD_PMA, poblacionSD_VA, poblacionSD_VMA];
                                 query_EVAR_EST.returnGeometry = false;
                                 queryTask_EVAR_EST.execute(query_EVAR_EST).then(
@@ -1070,10 +1070,11 @@ require([
                                 const divMain = document.createElement("main");
                                 
                                 let queryTask_ZRNM = new QueryTask(lyr.url);
-                                let query_ZRNM = new Query();
+                                let query_ZRNM = new Query();  
+                                query_ZRNM.outFields = ['*'];/*_version.fields.map(x => x.name);*/
+                                query_ZRNM.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")));
+                                query_ZRNM.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_ZRNM.returnGeometry = true;
-                                query_ZRNM.geometry = new Polygon(_geometryAmbito);
-                                query_ZRNM.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
                                 queryTask_ZRNM.execute(query_ZRNM).then(
                                     (response) => {
                                         try {
@@ -1093,17 +1094,6 @@ require([
                                                 divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
                                                 divColumn_01.prepend(divOBS);
                                             }
-                                            
-                                            if(_boolean) {                            
-                                                const divNota = document.createElement("p");
-                                                divNota.className = "sect-nota";
-                                                divNota.innerHTML = _version.nota;
-                                                divColumn_01.appendChild(divNota);
-                                                /*
-                                                const divImg = document.createElement("img");
-                                                divImg.setAttribute("src", `./images/documento.png`);
-                                                divColumn_02.appendChild(divImg);*/
-                                            }                             
                                         } catch (error) {
                                             console.error(`Count: ZRNM => ${error.name} - ${error.message}`);
                                         }                    
@@ -1116,90 +1106,94 @@ require([
                                     let countTabItemTotal = 0;
                                     /* Union Geometry */
                                     let _geometry = geometryEngine.union(unionGeometry);
-                                    /* Statistic Poblacion */
-                                    let poblacionSUM = new StatisticDefinition();
-                                    poblacionSUM.statisticType = "sum";
-                                    poblacionSUM.onStatisticField = _version.fields[0].name;
-                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                    /* Statistic Vivienda */
-                                    let viviendaSUM = new StatisticDefinition();
-                                    viviendaSUM.statisticType = "sum";
-                                    viviendaSUM.onStatisticField = _version.fields[1].name;
-                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                    /* Statistic Response */
-                                    let queryTask_Engine = new QueryTask(_version.url);
-                                    let query_Engine = new Query();
-                                    query_Engine.outFields = _version.fields.map(x => x.name);
-                                    query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
-                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                    query_Engine.returnGeometry = false;
-                                    queryTask_Engine.execute(query_Engine).then(
-                                        (response) => {
-                                            try {
-                                                let _contentTab01 = []; let _contentTab02 = [];
-                                                let _attr = response.features[0].attributes;
-                                                /* Poblacion */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion;
-                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                /* Vivienda */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda;   
-                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                            } catch (error) {
-                                                console.error(`Count: Statistic ZRNM => ${error.name}`);
-                                            }                    
-                                        },
-                                        (error) => {
-                                            console.error(`Error: Statistic ZRNM => ${error.name}`);
-                                        }
-                                    );                                    
-                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                    configAnalysis_Temp.forEach(function(cValue) {
-                                       /* Statistic Analysis */
-                                        let analysisCOUNT = new StatisticDefinition();
-                                        analysisCOUNT.statisticType = "count";
-                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
-                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                        /* Statistic Analysis */
-                                        let queryTask_Analysis = new QueryTask(cValue.url);
-                                        let query_Analysis = new Query();
-                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                        query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
-                                        query_Analysis.outStatistics = [ analysisCOUNT ];
-                                        queryTask_Analysis.execute(query_Analysis).then(
+                                    if(_geometry ?? false) {
+                                        /* Statistic Poblacion */
+                                        let poblacionSUM = new StatisticDefinition();
+                                        poblacionSUM.statisticType = "sum";
+                                        poblacionSUM.onStatisticField = _version.fields[0].name;
+                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        /* Statistic Vivienda */
+                                        let viviendaSUM = new StatisticDefinition();
+                                        viviendaSUM.statisticType = "sum";
+                                        viviendaSUM.onStatisticField = _version.fields[1].name;
+                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                        /* Statistic Response */
+                                        let queryTask_Engine = new QueryTask(_version.url);
+                                        let query_Engine = new Query();
+                                        query_Engine.outFields = _version.fields.map(x => x.name);
+                                        query_Engine.geometry = _geometry;
+                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Engine.returnGeometry = false;
+                                        queryTask_Engine.execute(query_Engine).then(
                                             (response) => {
                                                 try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
                                                     let _attr = response.features[0].attributes;
-                                                    if(_attr.cantidad > 0) {
-                                                        let _contentTab = [];
-                                                        let _id = `ID_TBcontent${lyr.tag}`;
-                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
-                                                        _htmlTable_ADD(`${_id}`,_contentTab);
-                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
-                                                    }
+                                                    /* Poblacion */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    /* Vivienda */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
                                                 } catch (error) {
-                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    console.error(`Count: Statistic ZRNM => ${error.name}`);
                                                 }                    
                                             },
                                             (error) => {
-                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                console.error(`Error: Statistic ZRNM => ${error.name}`);
                                             }
-                                        );
-                                    });
+                                        ); 
+
+                                        configAnalysis_Temp.forEach(function(cValue) {
+                                            /* Statistic Analysis */
+                                             let analysisCOUNT = new StatisticDefinition();
+                                             analysisCOUNT.statisticType = "count";
+                                             analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                             analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                             /* Statistic Analysis */
+                                             let queryTask_Analysis = new QueryTask(cValue.url);
+                                             let query_Analysis = new Query();
+                                             query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                             query_Analysis.geometry = _geometry;
+                                             query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                             query_Analysis.outStatistics = [ analysisCOUNT ];
+                                             queryTask_Analysis.execute(query_Analysis).then(
+                                                 (response) => {
+                                                     try {
+                                                         let _attr = response.features[0].attributes;
+                                                         if(_attr.cantidad > 0) {
+                                                             let _contentTab = [];
+                                                             let _id = `ID_TBcontent${lyr.tag}`;
+                                                             _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
+                                                             _htmlTable_ADD(`${_id}`,_contentTab);
+                                                             _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
+                                                         }
+                                                     } catch (error) {
+                                                         console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                     }                    
+                                                 },
+                                                 (error) => {
+                                                     console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                 }
+                                             );
+                                         });
+                                    }                                  
+                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                    
                                 }));
-                                
+                                                                
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-resumen2";
+                                divTable.className = "form-scroll-tab";
                                 divColumn_02.appendChild(divTable);
-                                
+
                                 /* HEADER */
                                 lyr.content[0].version_03[0].fields.map(function(current) {
                                     const inputText = document.createElement("input");
@@ -1257,6 +1251,12 @@ require([
                                     divMain.appendChild(tagStyle);
                                 } 
                                 divColumn_01.appendChild(divMain);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -1297,7 +1297,7 @@ require([
                                 let query_Engine = new Query();
                                 query_Engine.outFields = _version.fields.map(x => x.name);
                                 query_Engine.geometry = new Polygon(_geometryAmbito);
-                                query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_Engine.outStatistics = [ familiaSUM, viviendaSUM, ambitoCOUNT ];
                                 query_Engine.returnGeometry = false;
                                 queryTask_Engine.execute(query_Engine).then(
@@ -1319,16 +1319,16 @@ require([
                                             } 
 
                                             /* Poblacion */
-                                            _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumfamilia;
-                                            _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumfamilia});
+                                            _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumfamilia ?? 0;
+                                            _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumfamilia ?? 0});
                                             _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                            _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumfamilia;
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumfamilia ?? 0;
                                             _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
                                             /* Vivienda */
-                                            _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda;   
-                                            _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda});
+                                            _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;   
+                                            _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
                                             _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                            _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda;
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
                                             _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
                                         } catch (error) {
                                             console.error(`Count: Statistic ZRNM => ${error.name}`);
@@ -1426,7 +1426,7 @@ require([
                                 let query_AEI = new Query();
                                 query_AEI.returnGeometry = true;
                                 query_AEI.geometry = new Polygon(_geometryAmbito);
-                                query_AEI.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_AEI.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 queryTask_AEI.execute(query_AEI).then(
                                     (response) => {
                                         try {
@@ -1480,7 +1480,7 @@ require([
                                     let query_Engine = new Query();
                                     query_Engine.outFields = _version.fields.map(x => x.name);
                                     query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                     query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
                                     query_Engine.returnGeometry = false;
                                     queryTask_Engine.execute(query_Engine).then(
@@ -1520,7 +1520,7 @@ require([
                                         let query_Analysis = new Query();
                                         query_Analysis.outFields = cValue.fields.map(x => x.name)
                                         query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                         query_Analysis.outStatistics = [ analysisCOUNT ];
                                         queryTask_Analysis.execute(query_Analysis).then(
                                             (response) => {
@@ -1632,7 +1632,7 @@ require([
                                 let query_FM = new Query();
                                 query_FM.returnGeometry = true;
                                 query_FM.geometry = new Polygon(_geometryAmbito);
-                                query_FM.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_FM.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 queryTask_FM.execute(query_FM).then(
                                     (response) => {
                                         try {
@@ -1686,7 +1686,7 @@ require([
                                     let query_Engine = new Query();
                                     query_Engine.outFields = _version.fields.map(x => x.name);
                                     query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                     query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
                                     query_Engine.returnGeometry = false;
                                     queryTask_Engine.execute(query_Engine).then(
@@ -1726,7 +1726,7 @@ require([
                                         let query_Analysis = new Query();
                                         query_Analysis.outFields = cValue.fields.map(x => x.name)
                                         query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                         query_Analysis.outStatistics = [ analysisCOUNT ];
                                         queryTask_Analysis.execute(query_Analysis).then(
                                             (response) => {
@@ -1840,7 +1840,7 @@ require([
                                 let queryTask_MM = new QueryTask(lyr.url);
                                 let query_MM = new Query();
                                 query_MM.geometry = new Polygon(_geometryAmbito);
-                                query_MM.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_MM.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_MM.outStatistics = [ cantCOUNT ];
                                 query_MM.orderByFields = [`COUNT(${_version.static}) DESC`];
                                 query_MM.groupByFieldsForStatistics = [_version.static];
@@ -1942,7 +1942,7 @@ require([
                                 let query_AE = new Query();
                                 query_AE.returnGeometry = true;
                                 query_AE.geometry = new Polygon(_geometryAmbito);
-                                query_AE.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_AE.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 queryTask_AE.execute(query_AE).then(
                                     (response) => {
                                         try {
@@ -1996,7 +1996,7 @@ require([
                                     let query_Engine = new Query();
                                     query_Engine.outFields = _version.fields.map(x => x.name);
                                     query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                     query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
                                     query_Engine.returnGeometry = false;
                                     queryTask_Engine.execute(query_Engine).then(
@@ -2036,7 +2036,7 @@ require([
                                         let query_Analysis = new Query();
                                         query_Analysis.outFields = cValue.fields.map(x => x.name)
                                         query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                         query_Analysis.outStatistics = [ analysisCOUNT ];
                                         queryTask_Analysis.execute(query_Analysis).then(
                                             (response) => {
@@ -2148,7 +2148,7 @@ require([
                                 let query_AET = new Query();
                                 query_AET.returnGeometry = true;
                                 query_AET.geometry = new Polygon(_geometryAmbito);
-                                query_AET.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_AET.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 queryTask_AET.execute(query_AET).then(
                                     (response) => {
                                         try {
@@ -2202,7 +2202,7 @@ require([
                                     let query_Engine = new Query();
                                     query_Engine.outFields = _version.fields.map(x => x.name);
                                     query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                     query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
                                     query_Engine.returnGeometry = false;
                                     queryTask_Engine.execute(query_Engine).then(
@@ -2242,7 +2242,7 @@ require([
                                         let query_Analysis = new Query();
                                         query_Analysis.outFields = cValue.fields.map(x => x.name)
                                         query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                         query_Analysis.outStatistics = [ analysisCOUNT ];
                                         queryTask_Analysis.execute(query_Analysis).then(
                                             (response) => {
@@ -2431,7 +2431,7 @@ require([
                                 let query_NP = new Query();
                                 query_NP.returnGeometry = true;
                                 query_NP.geometry = new Polygon(_geometryAmbito);
-                                query_NP.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_NP.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 queryTask_NP.execute(query_NP).then(
                                     (response) => {
                                         try {
@@ -2479,7 +2479,7 @@ require([
                                     let query_Engine = new Query();
                                     query_Engine.outFields = _version.fields.map(x => x.name);
                                     query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                     query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
                                     query_Engine.returnGeometry = false;
                                     queryTask_Engine.execute(query_Engine).then(
@@ -2565,7 +2565,7 @@ require([
                                 let query_AEE = new Query();
                                 query_AEE.returnGeometry = true;
                                 query_AEE.geometry = new Polygon(_geometryAmbito);
-                                query_AEE.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_AEE.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 queryTask_AEE.execute(query_AEE).then(
                                     (response) => {
                                         try {
@@ -2619,7 +2619,7 @@ require([
                                     let query_Engine = new Query();
                                     query_Engine.outFields = _version.fields.map(x => x.name);
                                     query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                     query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
                                     query_Engine.returnGeometry = false;
                                     queryTask_Engine.execute(query_Engine).then(
@@ -2659,7 +2659,7 @@ require([
                                         let query_Analysis = new Query();
                                         query_Analysis.outFields = cValue.fields.map(x => x.name)
                                         query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                         query_Analysis.outStatistics = [ analysisCOUNT ];
                                         queryTask_Analysis.execute(query_Analysis).then(
                                             (response) => {
@@ -2773,7 +2773,7 @@ require([
                                 let queryTask_PAM = new QueryTask(lyr.url);
                                 let query_PAM = new Query();
                                 query_PAM.geometry = new Polygon(_geometryAmbito);
-                                query_PAM.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_PAM.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_PAM.outStatistics = [ cantCOUNT ];
                                 query_PAM.orderByFields = [`COUNT(${_version.static}) DESC`];
                                 query_PAM.groupByFieldsForStatistics = [_version.static];
@@ -2887,7 +2887,7 @@ require([
                                 let queryTask_PAH = new QueryTask(lyr.url);
                                 let query_PAH = new Query();
                                 query_PAH.geometry = new Polygon(_geometryAmbito);
-                                query_PAH.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_PAH.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_PAH.outStatistics = [ cantCOUNT_01 ];
                                 query_PAH.orderByFields = [`COUNT(${_version.static_01[0].field}) DESC`];
                                 query_PAH.groupByFieldsForStatistics = [_version.static_01[0].field ];
@@ -2994,7 +2994,7 @@ require([
                                 let queryTask_IIFO = new QueryTask(lyr.url);
                                 let query_IIFO = new Query();
                                 query_IIFO.geometry = new Polygon(_geometryAmbito);
-                                query_IIFO.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_IIFO.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_IIFO.outStatistics = [ cantCOUNT_IIFO ];
                                 query_IIFO.returnGeometry = false;
                                 queryTask_IIFO.execute(query_IIFO).then(
@@ -3088,7 +3088,7 @@ require([
                                 let queryTask_ZAPENC = new QueryTask(lyr.url);
                                 let query_ZAPENC = new Query();
                                 query_ZAPENC.geometry = new Polygon(_geometryAmbito);
-                                query_ZAPENC.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_ZAPENC.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_ZAPENC.outStatistics = [ cantCOUNT_ZAPENC ];
                                 query_ZAPENC.orderByFields = [`COUNT(${_version.static}) DESC`];
                                 query_ZAPENC.groupByFieldsForStatistics = [_version.static];
@@ -3189,7 +3189,7 @@ require([
                                 let queryTask_PAF = new QueryTask(lyr.url);
                                 let query_PAF = new Query();
                                 query_PAF.geometry = new Polygon(_geometryAmbito);
-                                query_PAF.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_PAF.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_PAF.outStatistics = [ cantCOUNT_TCA ];
                                 query_PAF.orderByFields = [`COUNT(${_version.static}) DESC`];
                                 query_PAF.groupByFieldsForStatistics = [_version.static];
@@ -3290,7 +3290,7 @@ require([
                                 let queryTask_TCA = new QueryTask(lyr.url);
                                 let query_TCA = new Query();
                                 query_TCA.geometry = new Polygon(_geometryAmbito);
-                                query_TCA.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_TCA.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_TCA.outStatistics = [ cantCOUNT_TCA ];
                                 query_TCA.orderByFields = [`COUNT(${_version.static}) DESC`];
                                 query_TCA.groupByFieldsForStatistics = [_version.static];
@@ -3392,7 +3392,7 @@ require([
                                 let queryTask_OIA = new QueryTask(lyr.url);
                                 let query_OIA = new Query();
                                 query_OIA.geometry = new Polygon(_geometryAmbito);
-                                query_OIA.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                                query_OIA.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_OIA.outStatistics = [ cantCOUNT_OIA ];
                                 query_OIA.orderByFields = [`COUNT(${_version.static}) DESC`];
                                 query_OIA.groupByFieldsForStatistics = [_version.static];
@@ -3519,7 +3519,7 @@ require([
                         let query_PPRD = new Query();
                         query_PPRD.outFields = ["*"];
                         query_PPRD.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
-                        query_PPRD.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                        query_PPRD.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                         query_PPRD.returnGeometry = false;
 
                         queryTask_PPRD.execute(query_PPRD).then(
