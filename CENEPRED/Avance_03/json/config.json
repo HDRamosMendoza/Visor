@@ -1428,7 +1428,7 @@
             "name": "Predios Urbanos y Rurales ",
             "srv":[
                 { 
-                    "name": "Manzanas Referenciales 2017 01",
+                    "name": "Manzanas Referenciales 2017",
                     "fields":[
                         {
                             "alias": "objectid_1",
@@ -1438,7 +1438,7 @@
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300"
                 },
                 { 
-                    "name": "Manzanas Referenciales 2017 02",
+                    "name": "Manzanas Referenciales 2007",
                     "fields":[
                         {
                             "alias": "objectid",
