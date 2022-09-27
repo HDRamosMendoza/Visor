@@ -53,7 +53,7 @@
     ],    
     "lyrDiagnosis" : [
         { 
-            "name": "Información CENEPRED",
+            "name": "INFORMACIÓN CENEPRED",
             "srv": [
                 { 
                     "default": "active",
@@ -87,8 +87,8 @@
                             "name": "anio"
                         },
                         {
-                            "alias": "Autor Coorporativo",
-                            "name": "autor_corporativo_acronimo"
+                            "alias": "Autor Corporativo",
+                            "name": "autor_corporativo"
                         },
                         {		
                             "alias": "Documento",
@@ -121,7 +121,7 @@
             ]
         },
         { 
-            "name": "Cartografía Riesgos",
+            "name": "CARTOGRAFÍA DE RIESGOS",
             "srv": [
                 {
                     "name": "Evaluaciones de Riesgo",
@@ -154,7 +154,7 @@
                         },
                         {
                             "alias": "Autor Coorporativo",
-                            "name": "autor_corporativo_acronimo"
+                            "name": "autor_corporativo"
                         },
                         {		
                             "alias": "Documento",
@@ -320,7 +320,7 @@
             ]
         },
         {
-            "name": "Cartografía de Peligros",
+            "name": "CARTOGRAFÍA DE PELIGROS",
             "srv": [
                 {
                     "name": "Inundacion",
@@ -662,7 +662,7 @@
                                     "name": "tipo_pel"
                                 },
                                 {
-                                    "alias": "Expuesto",
+                                    "alias": "Elementos Expuestos",
                                     "name": "e_expuesto"
                                 },
                                 {

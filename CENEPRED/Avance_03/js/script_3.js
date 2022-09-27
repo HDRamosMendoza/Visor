@@ -63,6 +63,8 @@ require([
 
     this.summaryTotal = 0;
     this.summaryCount = 0;
+
+    let _cssLoad = "<div class='lds-ellipsis'><div></div><div></div><div></div><div></div></div>";
     
     map = new Map("map", { center: [-76, -10], zoom: 6, basemap: "topo" });
     /* Load GEOMETRY */
@@ -126,7 +128,7 @@ require([
     };
     _title(_ambitoName);
     /* Create graphic BAR */
-    let _graphicChartBar = function(_node, _label, _data) {
+    let _graphicChartBar = function(_node, _label, _data/*, _backgroundColor = null, _borderColor = null*/ ) {
         try {
             new Chart(_node, { 
                 type: 'bar',
@@ -135,6 +137,8 @@ require([
                     datasets: [{
                     label: 'Cantidad',
                     data: _data,
+                    /*backgroundColor: _backgroundColor ?? configBackgroundColor,
+                    borderColor: _borderColor ?? configBorderColor,*/
                     backgroundColor: configBackgroundColor,
                     borderColor: configBorderColor,
                     borderWidth: 1
@@ -223,11 +227,19 @@ require([
         if(typeof lyr.url === "undefined") {
             configAnalysis_Temp.splice(index, 1);
         }
-    });    
-    /* Lista de DIAGNOSIS */
-    //_reportJson(configDiagnosis,configSummary_Temp,"summaryTotal");
-    
-    /* Crear TABLE */
+    });
+    /* Number Formatter */
+    let _numberFormatter = function (value) {
+        try {
+            value = value.toString();
+            value = value.split(/(?=(?:...)*$)/);
+            value = value.join(',');
+            return value;
+        } catch (error) {
+            console.error(`Error: _numberFormatter => ${error.name} - ${error.message}`);
+        }
+    };
+    /* Crear Table */
     let _htmlTable = function(ID_Table, _lyrTitle = "Elementos Expuestos") {
         try { /* Se crea la tabla de resumen */
             ID_Table.innerHTML = "";
@@ -287,7 +299,7 @@ require([
             console.error(`Error: _htmlTable => ${error.name} - ${error.message}`);
         }
     }; 
-    _htmlTable(_elementById("ID_TABLE_Resumen"), "Información");
+    _htmlTable(_elementById("ID_TABLE_Resumen"), "Diagnóstico");
     /* Add row TABLE */
     let _htmlTable_ADD = function(_id,_arr) {
         try {
@@ -385,7 +397,8 @@ require([
                 let cellText_1 = document.createTextNode(element.item);
                 cell_1.appendChild(cellText_1);
                 let cell_2 = document.createElement("td");
-                cell_2.style.textAlign= "right";
+                cell_2.style.textAlign = "right";
+                cell_2.style.paddingRight = "10px";
                 let cellText_2 = document.createTextNode(element.val);
                 cell_2.appendChild(cellText_2);
                 row.appendChild(cell_1);
@@ -396,8 +409,7 @@ require([
         } catch (error) {
             console.error(`Error: _htmlTableTAB_ADD => ${error.name} - ${error.message}`);
         }
-    };    
-    //_htmlTable(_elementById("ID_CR_Summary"));
+    };
     /* Carga de la funcional del acordion */
     let _acordion = function() {
         try {
@@ -586,6 +598,12 @@ require([
                         if( this.diagnosisCount == _count) {
                             this.ID_Load.style.display = "none";
                             this.ID_TABLE_Resumen.style.display = "block";
+	                        let tabPanes = document.getElementsByClassName("tablinks");	
+	                        for(let i=0; i<tabPanes.length; i++) {
+                                if(typeof tabPanes[i].style["0"] === "undefined") {
+                                    tabPanes[i].click(); break;
+                                }
+                            } 
                         }                         
                     } catch (error) {
                         console.error(`Error: _queryTask always => ${error.name} - ${error.message}`);
@@ -598,7 +616,7 @@ require([
     };
     
     let _featureTable = function(srv,objectid,fields) {
-        try {   
+        try {
             let idTable = _elementById("ID_TableDetail");
             let tbl = document.createElement("div");
             tbl.id = "ID_TableDynamic";
@@ -742,16 +760,15 @@ require([
                         nodeHeader.classList.add("active"); /* HEADER */
                         document.getElementById(ContentID).style.display = "block"; /* CONTENT */
                         document.getElementById(ContentID).classList.add("active"); /* CONTENT */                        
-                        //featureTable.destroy();
-                        if(featureTable !== null) {
-                            featureTable.destroy();
-                        }
+                        
+                        if(featureTable !== null) { featureTable.destroy(); }
+
                         _featureTable(
                             nodeHeader.getAttribute("data-url"),
                             nodeHeader.getAttribute("data-objectid"),
                             JSON.parse(nodeHeader.getAttribute("data-fields"))
                         );
-                        
+
                         if(lyr.content ?? false) {
                             /* <PPRRD> */
                             if(typeof lyr.content[0].version_01 !== "undefined") {
@@ -773,24 +790,19 @@ require([
                                         try {
                                             let _features = "", _ambito = "";
                                             let _length = response.features.length;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
+                                            let _img = _elementById(`IDImg_${lyr.tag}`);
                                             for (let i = 0; i < _length; i++) {
                                                 _features = response.features[i];
                                                 _ambito = _features.attributes[_version.field];                                        
                                                 _ambito = _ambito.replace("DISTRITO ","");
                                                 _ambito = _ambito.replace("PROVINCIA ","");
                                                 _ambito = _ambito.replace("DEPARTAMENTO ","");
-                                                if(_ambito == _ambitoLS) {
-                                                    const divOBS = document.createElement("p");
-                                                    divOBS.className = "sect-nota-info";
-                                                    divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion}`;
-                                                    divColumn_01.appendChild(divOBS);
-                                                    const divNota = document.createElement("p");
-                                                    divNota.className = "sect-nota";
-                                                    divNota.innerHTML = _version.nota;
-                                                    divColumn_01.appendChild(divNota);                                            
-                                                    const divImg = document.createElement("img");
-                                                    divImg.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
-                                                    divColumn_02.appendChild(divImg);
+                                                if(_ambito == _ambitoLS) {                                                    
+                                                    //_note.className = "sect-nota-info";
+                                                    _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion}`;                                                                                              
+                                                    _img.className = "sect-nota-info";
+                                                    _img.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
                                                     _boolean = false;
                                                     break;
                                                 }
@@ -798,17 +810,9 @@ require([
                                             }
 
                                             if(_boolean) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.appendChild(divOBS);                                        
-                                                const divNota = document.createElement("p");
-                                                divNota.className = "sect-nota";
-                                                divNota.innerHTML = _version.nota;
-                                                divColumn_01.appendChild(divNota);                                        
-                                                const divImg = document.createElement("img");
-                                                divImg.setAttribute("src", `./images/documento.png`);
-                                                divColumn_02.appendChild(divImg);
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                _img.setAttribute("src", `./images/documento.png`);
                                             }                                            
                                         } catch (error) {
                                             console.error(`Count: PPRRD => ${error.name} - ${error.message}`);
@@ -818,6 +822,21 @@ require([
                                         console.error(`Error: PPRRD => ${error.name} - ${error.message}`);
                                     }
                                 );
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota); 
+                                
+                                const divImg = document.createElement("img");
+                                divImg.id = `IDImg_${lyr.tag}`;
+                                divColumn_02.appendChild(divImg);
+                                
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
                             }
@@ -845,6 +864,8 @@ require([
                                         try {
                                             let _features = "", _ambito = "";
                                             let _length = response.features.length;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
+                                            let _img = _elementById(`IDImg_${lyr.tag}`);
                                             for (let i = 0; i < _length; i++) {
                                                 _features = response.features[i];
                                                 _ambito = _features.attributes[_version.field];                                        
@@ -852,14 +873,7 @@ require([
                                                 _ambito = _ambito.replace("PROVINCIA ","");
                                                 _ambito = _ambito.replace("DEPARTAMENTO ","");
                                                 if(_ambito == _ambitoLS) {
-                                                    
-                                                    const divNota = document.createElement("p");
-                                                    divNota.className = "sect-nota";
-                                                    divNota.innerHTML = _version.nota;
-                                                    divColumn_01.appendChild(divNota);                                            
-                                                    const divImg = document.createElement("img");
-                                                    divImg.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
-                                                    divColumn_02.appendChild(divImg);
+                                                    _img.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
                                                     _boolean = false;
                                                     break;
                                                 }
@@ -867,25 +881,15 @@ require([
                                             }
 
                                             if(_length == 0) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);  
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
                                             }
 
-                                            if(_boolean) {                            
-                                                const divNota = document.createElement("p");
-                                                divNota.className = "sect-nota";
-                                                divNota.innerHTML = _version.nota;
-                                                divColumn_01.appendChild(divNota);                                        
-                                                const divImg = document.createElement("img");
-                                                divImg.setAttribute("src", `./images/documento.png`);
-                                                divColumn_02.appendChild(divImg);
+                                            if(_boolean) {
+                                                _img.setAttribute("src", `./images/documento.png`);
                                             }                                         
                                         } catch (error) {
                                             console.error(`Count: EVAR => ${error.name} - ${error.message}`);
@@ -925,6 +929,11 @@ require([
                                     divCanvas.setAttribute("id",`IDcontent${lyr.tag}${current.name}`);
                                     divCanvas.setAttribute("height","120");
                                     divCanvas.setAttribute("width","370");
+                                    _graphicChartBar(
+                                        divCanvas,
+                                        [current.item[0].alias,current.item[1].alias],
+                                        _generateArray(3)
+                                    );
 
                                     divCenter.appendChild(divCanvas);                                    
                                     const divTable = document.createElement("div");
@@ -946,8 +955,23 @@ require([
                                     tagStyle.textContent = _cssStyle.concat("{display: block;};");
                                     divMain.appendChild(tagStyle);
                                 }
-                                
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
+
                                 divColumn_01.appendChild(divMain);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota); 
+
+                                const divImg = document.createElement("img");
+                                divImg.id = `IDImg_${lyr.tag}`;
+                                divColumn_02.appendChild(divImg);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -984,60 +1008,30 @@ require([
                                         try {
                                             let _attr = response.features[0].attributes;
                                             /* POBLACION */
-                                            new Chart(_elementById(`IDcontent${lyr.tag}${_version.fields[0].name}`), { 
-                                                type: 'bar',
-                                                data: {
-                                                    labels: [_version.fields[0].item[0].alias, _version.fields[0].item[1].alias],
-                                                    datasets: [{
-                                                    label: 'Cantidad',
-                                                    data: [_attr.sumpa,_attr.sumpma],
-                                                    backgroundColor: ['rgba(255, 205, 86, 0.2)','rgba(255, 99, 132, 0.2)'],
-                                                    borderColor: ['rgb(255, 205, 86)','rgb(255, 99, 132)'],
-                                                    borderWidth: 1
-                                                    }]
-                                                },
-                                                options: {
-                                                    indexAxis: 'y',
-                                                    responsive: false,
-                                                    plugins: {
-                                                        legend: { display:false, position:'bottom' },
-                                                        title: { display:false, text:'GRÁFICO DE RESUMEN' }
-                                                    }
-                                                }
-                                            });
+                                            let chart_01 = Chart.getChart(`IDcontent${lyr.tag}${_version.fields[0].name}`);
+                                            chart_01.data.datasets[0].data = [_attr.sumpa ?? 0,_attr.sumpma ?? 0];
+                                            chart_01.data.datasets[0].backgroundColor = ['rgba(255, 205, 86, 0.2)','rgba(255, 99, 132, 0.2)'];
+                                            chart_01.data.datasets[0].borderColor = ['rgb(255, 205, 86)','rgb(255, 99, 132)'];
+                                            chart_01.data.labels = [_version.fields[0].item[0].alias, _version.fields[0].item[1].alias];
+                                            chart_01.update();                                            
                                             let _contentTab01 = [];
-                                            _contentTab01.push({"item": _version.fields[0].item[0].alias,"val": _attr.sumpa});
-                                            _contentTab01.push({"item": _version.fields[0].item[1].alias,"val": _attr.sumpma});
+                                            _contentTab01.push({"item": _version.fields[0].item[0].alias,"val": _attr.sumpa ?? 0});
+                                            _contentTab01.push({"item": _version.fields[0].item[1].alias,"val": _attr.sumpma ?? 0});
                                             _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                            _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpa + _attr.sumpma;
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpa ?? 0 + _attr.sumpma ?? 0;
                                             _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
                                             /* VIVIENDA */
-                                            new Chart(_elementById(`IDcontent${lyr.tag}${_version.fields[1].name}`), { 
-                                                type: 'bar',
-                                                data: {
-                                                    labels: [_version.fields[1].item[0].alias, _version.fields[1].item[1].alias],
-                                                    datasets: [{
-                                                    label: 'Cantidad',
-                                                    data: [_attr.sumva,_attr.sumvma],
-                                                    backgroundColor: ['rgba(255, 205, 86, 0.2)','rgba(255, 99, 132, 0.2)'],
-                                                    borderColor: ['rgb(255, 205, 86)','rgb(255, 99, 132)'],
-                                                    borderWidth: 1
-                                                    }]
-                                                },
-                                                options: {
-                                                    indexAxis: 'y',
-                                                    responsive: false,
-                                                    plugins: {
-                                                        legend: { display:false, position:'bottom' },
-                                                        title: { display:false, text:'GRÁFICO DE RESUMEN' }
-                                                    }
-                                                }
-                                            });
+                                            let chart_02 = Chart.getChart(`IDcontent${lyr.tag}${_version.fields[1].name}`);
+                                            chart_02.data.datasets[0].data = [_attr.sumva ?? 0,_attr.sumvma ?? 0];
+                                            chart_02.data.datasets[0].backgroundColor = ['rgba(255, 205, 86, 0.2)','rgba(255, 99, 132, 0.2)'];
+                                            chart_02.data.datasets[0].borderColor = ['rgb(255, 205, 86)','rgb(255, 99, 132)'];
+                                            chart_02.data.labels = [_version.fields[1].item[0].alias, _version.fields[1].item[1].alias];
+                                            chart_02.update();
                                             let _contentTab02 = [];
-                                            _contentTab02.push({"item": _version.fields[1].item[0].alias,"val": _attr.sumva});
-                                            _contentTab02.push({"item": _version.fields[1].item[1].alias,"val": _attr.sumvma});
+                                            _contentTab02.push({"item": _version.fields[1].item[0].alias,"val": _attr.sumva ?? 0});
+                                            _contentTab02.push({"item": _version.fields[1].item[1].alias,"val": _attr.sumvma ?? 0});
                                             _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                            _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumva + _attr.sumvma;
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumva ?? 0 + _attr.sumvma ?? 0;
                                             _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
                                         } catch (error) {
                                             console.error(`Count: EVAR => ${error.name} - ${error.message}`);
@@ -1079,20 +1073,18 @@ require([
                                     (response) => {
                                         try {
                                             let _length = response.features.length;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
+
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
 
                                             if(_length == 0) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);  
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
                                             }
                                         } catch (error) {
                                             console.error(`Count: ZRNM => ${error.name} - ${error.message}`);
@@ -1228,7 +1220,7 @@ require([
                                     divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
                                     divTotal.style.fontSize = "65px";
                                     divTotal.style.margin = "5px 0px";
-                                    divTotal.innerText = 0;
+                                    divTotal.innerHTML = _cssLoad;
                                     divCenterTotal.appendChild(divTotal);
                                     div.appendChild(divCenterTotal);
                                     const divTable = document.createElement("div");
@@ -1250,6 +1242,12 @@ require([
                                     tagStyle.textContent = _cssStyle.concat("{display: block;};");
                                     divMain.appendChild(tagStyle);
                                 } 
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS); 
+
                                 divColumn_01.appendChild(divMain);
 
                                 const divNota = document.createElement("p");
@@ -1305,19 +1303,14 @@ require([
                                         try {
                                             let _contentTab01 = []; let _contentTab02 = [];
                                             let _attr = response.features[0].attributes;
-                                            
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             if(_attr.countambito == 0) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);  
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _attr.countambito)}.`;
-                                                divColumn_01.prepend(divOBS);
-                                            } 
-
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _attr.countambito)}`;
+                                            }
                                             /* Poblacion */
                                             _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumfamilia ?? 0;
                                             _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumfamilia ?? 0});
@@ -1338,6 +1331,11 @@ require([
                                         console.error(`Error: Statistic ZRNM => ${error.name}`);
                                     }
                                 );
+                                /* MENSAJE */
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
@@ -1378,7 +1376,7 @@ require([
                                     divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
                                     divTotal.style.fontSize = "65px";
                                     divTotal.style.margin = "5px 0px";
-                                    divTotal.innerText = 0;
+                                    divTotal.innerHTML = _cssLoad;
                                     divCenterTotal.appendChild(divTotal);
                                     div.appendChild(divCenterTotal);
                                     
@@ -1405,7 +1403,7 @@ require([
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "N° Puntos Críticos", "Familias Expuesta");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "N° Puntos Críticos", "Familias Expuestas");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "N° Puntos Críticos", "Viviendas Expuestas");
                             }
                             /* </PCI> */
@@ -1414,7 +1412,6 @@ require([
                             if(typeof lyr.content[0].version_05 !== "undefined") {
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_05[0];
-                                let _boolean = true;
                                 let unionGeometry = [];
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
@@ -1431,28 +1428,19 @@ require([
                                     (response) => {
                                         try {
                                             let _length = response.features.length;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
 
                                             if(_length == 0) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);  
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
                                             }
-                                            
-                                            if(_boolean) {                            
-                                                const divNota = document.createElement("p");
-                                                divNota.className = "sect-nota";
-                                                divNota.innerHTML = _version.nota;
-                                                divColumn_01.appendChild(divNota);
-                                            }                             
+                                                                   
                                         } catch (error) {
                                             console.error(`Count: AEI => ${error.name} - ${error.message}`);
                                         }                    
@@ -1465,89 +1453,97 @@ require([
                                     let countTabItemTotal = 0;
                                     /* Union Geometry */
                                     let _geometry = geometryEngine.union(unionGeometry);
-                                    /* Statistic Poblacion */
-                                    let poblacionSUM = new StatisticDefinition();
-                                    poblacionSUM.statisticType = "sum";
-                                    poblacionSUM.onStatisticField = _version.fields[0].name;
-                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                    /* Statistic Vivienda */
-                                    let viviendaSUM = new StatisticDefinition();
-                                    viviendaSUM.statisticType = "sum";
-                                    viviendaSUM.onStatisticField = _version.fields[1].name;
-                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                    /* Statistic Response */
-                                    let queryTask_Engine = new QueryTask(_version.url);
-                                    let query_Engine = new Query();
-                                    query_Engine.outFields = _version.fields.map(x => x.name);
-                                    query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                    query_Engine.returnGeometry = false;
-                                    queryTask_Engine.execute(query_Engine).then(
-                                        (response) => {
-                                            try {
-                                                let _contentTab01 = []; let _contentTab02 = [];
-                                                let _attr = response.features[0].attributes;
-                                                /* Poblacion */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion;
-                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                /* Vivienda */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda;   
-                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                            } catch (error) {
-                                                console.error(`Count: Statistic AEI => ${error.name}`);
-                                            }                    
-                                        },
-                                        (error) => {
-                                            console.error(`Error: Statistic AEI => ${error.name}`);
-                                        }
-                                    );                                    
-                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                    configAnalysis_Temp.forEach(function(cValue) {
-                                       /* Statistic Analysis */
-                                        let analysisCOUNT = new StatisticDefinition();
-                                        analysisCOUNT.statisticType = "count";
-                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
-                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                        /* Statistic Analysis */
-                                        let queryTask_Analysis = new QueryTask(cValue.url);
-                                        let query_Analysis = new Query();
-                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                        query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                        query_Analysis.outStatistics = [ analysisCOUNT ];
-                                        queryTask_Analysis.execute(query_Analysis).then(
+                                    if(_geometry ?? false) {
+                                        /* Statistic Poblacion */
+                                        let poblacionSUM = new StatisticDefinition();
+                                        poblacionSUM.statisticType = "sum";
+                                        poblacionSUM.onStatisticField = _version.fields[0].name;
+                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        /* Statistic Vivienda */
+                                        let viviendaSUM = new StatisticDefinition();
+                                        viviendaSUM.statisticType = "sum";
+                                        viviendaSUM.onStatisticField = _version.fields[1].name;
+                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                        /* Statistic Response */
+                                        let queryTask_Engine = new QueryTask(_version.url);
+                                        let query_Engine = new Query();
+                                        query_Engine.outFields = _version.fields.map(x => x.name);
+                                        query_Engine.geometry = _geometry;
+                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Engine.returnGeometry = false;
+                                        queryTask_Engine.execute(query_Engine).then(
                                             (response) => {
                                                 try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
                                                     let _attr = response.features[0].attributes;
-                                                    if(_attr.cantidad > 0) {
-                                                        let _contentTab = [];
-                                                        let _id = `ID_TBcontent${lyr.tag}`;
-                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
-                                                        _htmlTable_ADD(`${_id}`,_contentTab);
-                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
-                                                    }
+                                                    console.log(_attr);
+                                                    /* Poblacion */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerHTML = _attr.sumpoblacion ?? 0;
+                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    /* Vivienda */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerHTML = _attr.sumvivienda ?? 0;
+                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
                                                 } catch (error) {
-                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    console.error(`Count: Statistic AEI => ${error.name}`);
                                                 }                    
                                             },
                                             (error) => {
-                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                console.error(`Error: Statistic AEI => ${error.name}`);
                                             }
-                                        );
-                                    });
+                                        );                                    
+                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        configAnalysis_Temp.forEach(function(cValue) {
+                                        /* Statistic Analysis */
+                                            let analysisCOUNT = new StatisticDefinition();
+                                            analysisCOUNT.statisticType = "count";
+                                            analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                            analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                            /* Statistic Analysis */
+                                            let queryTask_Analysis = new QueryTask(cValue.url);
+                                            let query_Analysis = new Query();
+                                            query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                            query_Analysis.geometry = _geometry;
+                                            query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                            query_Analysis.outStatistics = [ analysisCOUNT ];
+                                            queryTask_Analysis.execute(query_Analysis).then(
+                                                (response) => {
+                                                    try {
+                                                        let _attr = response.features[0].attributes;
+                                                        if(_attr.cantidad > 0) {
+                                                            let _contentTab = [];
+                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
+                                                            _htmlTable_ADD(`${_id}`,_contentTab);
+                                                            _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
+                                                        }
+                                                    } catch (error) {
+                                                        console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    }                    
+                                                },
+                                                (error) => {
+                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                }
+                                            );
+                                        });
+                                    }
                                 }));
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
                                 divTable.className = "form-scroll-resumen2";
                                 divColumn_02.appendChild(divTable);
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
                                 
                                 /* HEADER */
                                 lyr.content[0].version_05[0].fields.map(function(current) {
@@ -1583,7 +1579,7 @@ require([
                                     divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
                                     divTotal.style.fontSize = "65px";
                                     divTotal.style.margin = "5px 0px";
-                                    divTotal.innerText = 0;
+                                    divTotal.innerHTML = _cssLoad;
                                     divCenterTotal.appendChild(divTotal);
                                     div.appendChild(divCenterTotal);
                                     const divTable = document.createElement("div");
@@ -1605,7 +1601,14 @@ require([
                                     tagStyle.textContent = _cssStyle.concat("{display: block;};");
                                     divMain.appendChild(tagStyle);
                                 } 
+
                                 divColumn_01.appendChild(divMain);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -3362,8 +3365,7 @@ require([
                                 divNota.innerHTML = _version.nota;
                                 divNota.style.textAlign = "left";
                                 divNota.style.marginTop = "15px";
-                                divColumn_01.appendChild(divNota);                                
-                              
+                                divColumn_01.appendChild(divNota);
                                 divColumn_01.appendChild(divMain);
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
@@ -3387,7 +3389,6 @@ require([
                                 cantCOUNT_OIA.statisticType = "count";
                                 cantCOUNT_OIA.onStatisticField = _version.static;
                                 cantCOUNT_OIA.outStatisticFieldName = "cantidad";
-                                
                                 
                                 let queryTask_OIA = new QueryTask(lyr.url);
                                 let query_OIA = new Query();
@@ -3464,26 +3465,23 @@ require([
                                 divNota.innerHTML = _version.nota;
                                 divNota.style.textAlign = "left";
                                 divNota.style.marginTop = "15px";
-                                divColumn_01.appendChild(divNota);                                
-                              
+                                divColumn_01.appendChild(divNota);                              
                                 divColumn_01.appendChild(divMain);
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
-                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02);
 
                                 _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Tipos", "Cantidad de Obras");
                             }
                             /* </OIA> */
-
                         }
-                        //_elementById(`IDTable_${lyr.tag}`).appendChild(); 
-
+                        //_elementById(`IDTable_${lyr.tag}`).appendChild();
                     };
                     divHeader.innerHTML = lyr.name.replace(_nameTemp + " /", "");
                     divHeader.dataset.url = lyr.url;
                     divHeader.dataset.objectid = lyr.objectid;
                     divHeader.dataset.fields = JSON.stringify(lyr.fields);
-                    //divHeader.className = !lyr.default || "active";
+                    /*divHeader.className = !lyr.default || "active";*/
                 }
                 
                 let fragmentHeader = document.createDocumentFragment();
@@ -3493,8 +3491,7 @@ require([
                 const divContent = document.createElement("div");
                 divContent.className="tabcontent";
                 divContent.id = `Content_${lyr.tag}`;
-
-                //divContent.className = !lyr.default || "active";
+                /*divContent.className = !lyr.default || "active"; */
                 const divTitle = document.createElement("section");
                 divTitle.innerHTML = lyr.name;
                 const divHR = document.createElement("section");
@@ -3503,146 +3500,7 @@ require([
                 divAside.className = "report-table";
                 divAside.id = `IDTable_${lyr.tag}`;
                 divAside.style.backgroundColor = "#FFFFFF";
-                /*
-                if(lyr.content ?? false) {
-                    
-                    
-                    if(typeof lyr.content[0].version_01 !== "undefined") {
-                        let _boolean = false;
-                        let _version = lyr.content[0].version_01[0];
-                        const divColumn_01 = document.createElement("section");
-                        divColumn_01.className = "column_01";
-                        const divColumn_02 = document.createElement("section");
-                        divColumn_02.className = "column_02";
-                        
-                        let queryTask_PPRD = new QueryTask(lyr.url);
-                        let query_PPRD = new Query();
-                        query_PPRD.outFields = ["*"];
-                        query_PPRD.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
-                        query_PPRD.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                        query_PPRD.returnGeometry = false;
-
-                        queryTask_PPRD.execute(query_PPRD).then(
-                            (response) => {
-                                try {
-                                    let _features = "", _ambito = "";
-                                    let _length = response.features.length;
-                                    for (let i = 0; i < _length; i++) {
-                                        _features = response.features[i];
-                                        _ambito = _features.attributes[_version.field];                                        
-                                        _ambito = _ambito.replace("DISTRITO ","");
-                                        _ambito = _ambito.replace("PROVINCIA ","");
-                                        _ambito = _ambito.replace("DEPARTAMENTO ","");
-                                        if(_ambito == _ambitoLS) {
-                                            const divOBS = document.createElement("p");
-                                            divOBS.className = "sect-nota-info";
-                                            divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion}`;
-                                            divColumn_01.appendChild(divOBS);
-                                            const divNota = document.createElement("p");
-                                            divNota.className = "sect-nota";
-                                            divNota.innerHTML = _version.nota;
-                                            divColumn_01.appendChild(divNota);                                            
-                                            const divImg = document.createElement("img");
-                                            divImg.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
-                                            divColumn_02.appendChild(divImg);
-                                            _boolean = false;
-                                            break;
-                                        }
-                                        _boolean = true;
-                                        
-                                    }
-
-                                    if(_boolean) {
-                                        const divOBS = document.createElement("p");
-                                        divOBS.className = "sect-nota-warning";
-                                        divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                        divColumn_01.appendChild(divOBS);                                        
-                                        const divNota = document.createElement("p");
-                                        divNota.className = "sect-nota";
-                                        divNota.innerHTML = _version.nota;
-                                        divColumn_01.appendChild(divNota);                                        
-                                        const divImg = document.createElement("img");
-                                        divImg.setAttribute("src", `./images/documento.png`);
-                                        divColumn_02.appendChild(divImg);
-                                    }
-                                    
-                                } catch (error) {
-                                    console.error(`Count: PPRRD => ${error.name} - ${error.message}`);
-                                }                    
-                            },
-                            (error) => {  
-                                console.error(`Error: PPRRD => ${error.name} - ${error.message}`);
-                            }
-                        );
-                        divAside.appendChild(divColumn_01);
-                        divAside.appendChild(divColumn_02);
-                    }
-                   
-
-
-                
-                    if(typeof lyr.content[0].version_02 !== "undefined") {
-                        const divMain = document.createElement("main");
-                    //if(typeof lyr.content[0].tab[0].url == "undefined") {
-                        //console.log("CAMPOS");
-                        //console.log(lyr.content[0].tab[0].fields);
-                        lyr.content[0].version_02[0].fields.map(function(current, ind) {
-                            //ind = ind + 1;
-                            const inputText = document.createElement("input");
-                            inputText.type = "radio";
-                            inputText.className = "tabs-horiz";
-                            inputText.id = `tab${lyr.tag}${current.name}`;
-                            inputText.name = `tabs-2${lyr.tag}`;
-                            if(typeof current.default !== "undefined") {
-                                inputText.setAttribute("checked","");
-                            }
-                            const label = document.createElement("label");
-                            label.innerText = current.alias;
-                            label.setAttribute("for",`tab${lyr.tag}${current.name}`);
-                            
-                            divMain.appendChild(inputText);
-                            divMain.appendChild(label);                            
-                        }.bind(this));
-                    //}
-                 
-                    //if(typeof lyr.content[0].version_02 !== "undefined") {
-                        //console.log("CAMPOS");
-                        //console.log(lyr.content[0].tab[0].fields);
-                        lyr.content[0].version_02[0].fields.map(function(current, ind) {
-                            //ind = ind + 1;                            
-                            const sect = document.createElement("section");
-                            sect.id = `content${lyr.tag}${current.name}`;
-                            const div = document.createElement("div");
-                            div.innerText = current.alias;
-                            sect.appendChild(div);                            
-                            divMain.appendChild(sect);                            
-                        }.bind(this));
-                    //}
-
-                    const tagStyle = document.createElement("style");
-                    let abc = "";
-                    //if(typeof lyr.content[0].version_02 !== "undefined") {
-                        //console.log("STYLE");
-                        //console.log(lyr.content[0].tab[0].fields);
-                        lyr.content[0].version_02[0].fields.map(function(current, ind) {
-                            //ind = ind + 1;
-                            //console.log(current.name);
-                            abc += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;
-                            //console.log(abc);                            
-                        }.bind(this));
-              
-                    //if(typeof lyr.content[0].version_02 !== "undefined") {
-                        if(abc !== "") {
-                            let abc_2 = abc.substring(0, abc.length - 1);
-                            //console.log(abc_2);
-                            tagStyle.textContent = abc_2.concat("{display: block;};");
-                            divMain.appendChild(tagStyle);
-                        }
-                        divAside.appendChild(divMain); 
-                    }
-              
-                }
-                */
+               
                 divContent.appendChild(divTitle);
                 divContent.appendChild(divHR);                
                 divContent.appendChild(divAside);
@@ -3656,35 +3514,24 @@ require([
 			console.error(`Error: _jsonTravelTree => ${error.name} - ${error.message}`);
 		}
 	};
-	_jsonTravelTree(configDiagnosis_Temp);
-    
-    /*
-    _elementById("ID_TAB_Header").childNodes[4].className += "active";
-	_elementById("ID_TAB_Content").childNodes[4].className = "active";
-    */
-    /*
-    _elementById("ID_TAB_Header").childNodes[4].classList.add("active");
+	_jsonTravelTree(configDiagnosis_Temp);    
+    /*_elementById("ID_TAB_Header").childNodes[4].className += "active";
+	_elementById("ID_TAB_Content").childNodes[4].className = "active"; */
+    /* _elementById("ID_TAB_Header").childNodes[4].classList.add("active");
 	_elementById("ID_TAB_Content").childNodes[4].style.display = "block";
-    _elementById("ID_TAB_Content").childNodes[4].classList.add("active");
-    */
-   
-    /*
-    let _class = function(name) { return document.getElementsByClassName(name); };
+    _elementById("ID_TAB_Content").childNodes[4].classList.add("active"); */   
+    /* let _class = function(name) { return document.getElementsByClassName(name); };
 	let tabPanes = _class("tab-header")[0].getElementsByTagName("div");	
 	for(let i=0;i<tabPanes.length;i++) {
 		tabPanes[i].addEventListener("click", function() {
             if(typeof tabPanes[i].getAttribute("data-url") == "string") {
                 _class("tab-header")[0].getElementsByClassName("active")[0].classList.remove("active");
-                tabPanes[i].classList.add("active");
-                
+                tabPanes[i].classList.add("active");                
                 _class("tab-content")[0].getElementsByClassName("active")[0].classList.remove("active");
                 _class("tab-content")[0].getElementsByTagName("div")[i].classList.add("active");
                 featureTable.destroy();
                 _featureTable(tabPanes[i].getAttribute("data-url"), tabPanes[i].getAttribute("data-objectid"), JSON.parse(tabPanes[i].getAttribute("data-fields")));
             }
 		});
-	} 
-    */   
-    //map.on("load", () => { _graphicPie(); });
+	} */
 });
-//https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca/6495_img.jpg

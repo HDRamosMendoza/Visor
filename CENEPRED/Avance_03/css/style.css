@@ -3,7 +3,7 @@ html, body, header { margin: 0; padding: 0; }
 .map {
   box-sizing: border-box;
   position: relative;
-  height: 150px;
+  height: 90px;
   width: 100%;
 }
 body { background-color: #f6f6f6; position: relative;}
@@ -23,11 +23,12 @@ body { background-color: #f6f6f6; position: relative;}
 .report-main .report-title {
   background-color: #23545e;
   color: #FFFFFF;
-  padding: 1px 15px;
+  height: 45px;
   margin-bottom: 10px;
+  padding: 5px 15px 0px 15px;
 }
 .report-main .report-title h2 {
-  font-size: 15px;
+  font-size: 13px;
 }
 .report-main .report-subtitle {
   font-size: 13px;
@@ -54,6 +55,7 @@ body { background-color: #f6f6f6; position: relative;}
   width: 49.5%;
 }
 /* SUMMARY */
+/*
 .tbl {
   border-collapse: collapse;
   font-size: 13px;
@@ -94,14 +96,69 @@ body { background-color: #f6f6f6; position: relative;}
 .tbl tfoot tr {
   background-color: rgba(0,0,0,0.1);
   color: #555555;
+}*/
+
+.tbl {
+  border-collapse: collapse;
+  border: 1px solid #555555;;
+  font-size: 13px;
+  width: 100%;
+  color: #2a2929;
+}
+.tbl, 
+.tbl td, 
+.tbl th {
+
+  padding: 8px 10px;
+  font-size: 12px !important;
+}
+.tbl thead {
+  background-color: #555555;
+  color: #FFFFFF !important;
+}
+.tbl thead tr > th {
+  padding: 10px 5px;
+  text-transform: uppercase;
+}
+.tbl tbody tr > td:nth-child(1) {
+  text-align: right;
+  padding-right: 0px;
+  padding-left: px;
+  width: 5%;
+  font-weight: 780;
+}
+.tbl tbody tr > td:nth-child(2) {
+  width: 65%;
+  padding-right: 0px;
+}
+.tbl tbody tr > td:nth-child(3) {
+  text-align: right;
+  padding-left: 0px;   
+  width: 25%;
+}
+.tbl>tbody>tr>td,
+.tbl>tbody>tr>th,
+.tbl>tfoot>tr>td,
+.tbl>tfoot>tr>th,
+.tbl>thead>tr>td,
+.tbl>thead>tr>th {
+  border-top: 1px solid #ddd;
 }
 /* Feature Table - SHOW */
 .esri-feature-table {
   font-family: verdana;
   font-size: 12px;
   margin-top: 10px;
-  height: 450px;
+  height: 250px;
   width: 100% !important;
+}
+.esri-feature-table .dgrid-row-odd,
+.esri-feature-table .dgrid-row-even {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #ccc;
+}
+.esri-feature-table-column-header-title{
+  font-weight: 800;
 }
 .report-main .report-table {
   position: relative;
@@ -197,7 +254,7 @@ body { background-color: #f6f6f6; position: relative;}
 input.tabs-horiz:checked + label {
   color: #555;
   border: 1px solid #ddd;
-  border-top: 2px solid orange;
+  border-top: 2px solid #D68910;
   border-bottom: 1px solid #fff;
 }
 #tab1:checked ~ #content1,
@@ -274,7 +331,7 @@ input.tabs-horiz:checked + label {
   width: 100%;
   height: 500px;
   padding: 0px;
-  background-color: #F5F5F5;
+  /*background-color: #F5F5F5;*/
   margin-top: 10px;
   overflow: hidden;
 }
@@ -286,7 +343,8 @@ input.tabs-horiz:checked + label {
   padding: 0px 0px 5px;
 }
 .tabs .tab-header > div {
-  background-color: rgba(246,246,246);
+  /*background-color: rgba(246,246,246);*/
+  background-color: #F6F6F6;
   border-top: 4px solid rgba(205,224,201,0.0);
   color: #555555;
   color: #181818;
@@ -298,16 +356,17 @@ input.tabs-horiz:checked + label {
 {
   background-color: #2c6975 !important;
   border-top: 0px solid #2c6975 !important;
-  color: #ffa500 !important;
-  font-weight: 700 !important;
+  /*color: #ffa500 !important;*/
+  color: #FFFFFF !important;
+  font-weight: 780 !important;
   cursor: default;
   padding: 15px 10px;  
 }
 .tabs .tab-header > div:hover,
 .tabs .tab-header > div.active {
-  color: white;
-  background-color: #23545e;
-  border-top: 4px solid #68B2A0;
+  color: #2A2929;
+  background-color: #FFFFFF;
+  border-top: 4px solid #D68910;
 }
 .tabs .tab-header div i {
   display: inline-block;
@@ -315,7 +374,7 @@ input.tabs-horiz:checked + label {
   margin-right: 5px;
 }
 .tabs .tab-content {
-  color: #555555;
+  color: #2A2929;
   background-color: rgba(246,246,246,0);
   position: relative;
   height: 100%;
@@ -335,7 +394,7 @@ input.tabs-horiz:checked + label {
 .tabs .tab-content > div {
   position: absolute;
   text-align: center;
-  padding: 15px;
+  padding: 5px 0px;
   top: -200%;
   transition: all 500ms ease-in-out;
 }
@@ -353,7 +412,7 @@ input.tabs-horiz:checked + label {
 }
 .tabs .tab-content .div-hr {
   border-bottom: 2px solid #23545E;
-  margin: 10px auto;
+  margin: 10px  auto 0px auto;
   width: 100px;
   text-align: center;
 }
@@ -525,7 +584,8 @@ input.tabs-horiz:checked + label {
   padding : 10px;
   margin : 0px 0px 15px 0px;
 }
-.column_01 p.sect-nota {
+.column_01 p.sect-nota,
+.column_02 p.sect-nota {
   font-size : 14px;
   padding : 0px 5px 0px 5px;
   margin : 15px 0px;
@@ -536,13 +596,13 @@ input.tabs-horiz:checked + label {
 .report-main button.accordion {
   background-color: #2c6975;
   border: none;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
+  font-weight: 780 !important;
   cursor: pointer;
   padding: 15px;  
-  font-weight: 750;
   text-align: left;
   outline: none;
-  font-size: 15px;
+  font-size: 13px;
   transition: 0.4s;
   width: 100%;
 }
@@ -564,6 +624,7 @@ input.tabs-horiz:checked + label {
   /* display: -ms-flex;
   display: -webkit-flex;
   display: flex; */
+  border-bottom: 3px solid #23545E;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
@@ -589,4 +650,62 @@ a:link, a:visited, a:active {
 }
 a:hover {
   text-decoration:none !important;
+}
+/***/
+
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  margin-left: 50% !important;
+  text-align: center !important;
+  height: 60px;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 33px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.4);
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
 }
