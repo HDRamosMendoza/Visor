@@ -481,7 +481,7 @@
                                     "name": "fech_inu"
                                 },
                                 {
-                                    "alias": "Descripción Situación",
+                                    "alias": "Descripción de la Situación",
                                     "name": "des_inu"
                                 },
                                 {
@@ -785,8 +785,44 @@
                             "rgb": "rgb(189,195,199)",
                             "fields":[
                                 {
-                                    "alias": "objectid",
-                                    "name": "objectid"
+                                    "alias": "Departamento",
+                                    "name": "nom_dep"
+                                },
+                                {
+                                    "alias": "Provincia",
+                                    "name": "nom_prov"
+                                },
+                                {
+                                    "alias": "Distrito",
+                                    "name": "nom_dist"
+                                },
+                                {
+                                    "alias": "Carta",
+                                    "name": "carta"
+                                },
+                                {
+                                    "alias": "Magnitud del evento",
+                                    "name": "magnitud"
+                                },
+                                {
+                                    "alias": "Área de Inundación",
+                                    "name": "areainundacion"
+                                },
+                                {
+                                    "alias": "Nombre de la carta",
+                                    "name": "archivo"
+                                },
+                                {
+                                    "alias": "Población",
+                                    "name": "pob_total"
+                                },
+                                {
+                                    "alias": "Total de Viviendas",
+                                    "name": "viv_total"
+                                },
+                                {
+                                    "alias": "fuente_log",
+                                    "name": "fuente_log"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030100",
@@ -841,8 +877,24 @@
                                     "rgb": "rgb(241,196,15)",
                                     "fields":[
                                         {
-                                            "alias": "objectid",
-                                            "name": "objectid"
+                                            "alias": "Nombre del Volcan",
+                                            "name": "volcan"
+                                        },
+                                        {
+                                            "alias": "Fuente",
+                                            "name": "fuente"
+                                        },
+                                        {
+                                            "alias": "Nivel del Peligro",
+                                            "name": "NIVEL"
+                                        },
+                                        {
+                                            "alias": "Descripción de la situación",
+                                            "name": "descripcion"
+                                        },
+                                        {
+                                            "alias": "Fuente Logo",
+                                            "name": "fuente_log"
                                         }
                                     ],
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201",
@@ -907,8 +959,32 @@
                             "rgb": "rgb(39,174,96)",
                             "fields":[
                                 {
-                                    "alias": "objectid",
-                                    "name": "objectid"
+                                    "alias": "Departamento",
+                                    "name": "nom_dep"
+                                },
+                                {
+                                    "alias": "Provincia",
+                                    "name": "nom_prov"
+                                },
+                                {
+                                    "alias": "Distrito",
+                                    "name": "nom_dist"
+                                },
+                                {
+                                    "alias": "Lugar",
+                                    "name": "nom_lugar"
+                                },
+                                {
+                                    "alias": "Tipo de Peligro",
+                                    "name": "tip_peligr"
+                                },
+                                {
+                                    "alias": "Peligro Específico",
+                                    "name": "peligro_es"
+                                },
+                                {
+                                    "alias": "Fuente (logo)",
+                                    "name": "fuente_log"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080200",
@@ -960,8 +1036,32 @@
                             "rgb": "rgb(22,160,133)",
                             "fields":[
                                 {
-                                    "alias": "objectid",
-                                    "name": "objectid"
+                                    "alias": "Departamento",
+                                    "name": "nom_dep"
+                                },
+                                {
+                                    "alias": "Provincia",
+                                    "name": "nom_prov"
+                                },
+                                {
+                                    "alias": "Distrito",
+                                    "name": "nom_dist"
+                                },
+                                {
+                                    "alias": "Ex Unidad Minera",
+                                    "name": "eum"
+                                },
+                                {
+                                    "alias": "Tipo",
+                                    "name": "tipo"
+                                },
+                                {
+                                    "alias": "Subtipo",
+                                    "name": "subtipo"
+                                },
+                                {
+                                    "alias": "Responsable",
+                                    "name": "responsabl"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090100",
@@ -989,8 +1089,36 @@
                             "rgb": "rgb(26,188,156)",
                             "fields":[
                                 {
-                                    "alias": "objectid",
-                                    "name": "objectid"
+                                    "alias": "Departamento",
+                                    "name": "nom_dep"
+                                },
+                                {
+                                    "alias": "Provincia",
+                                    "name": "nom_prov"
+                                },
+                                {
+                                    "alias": "Distrito",
+                                    "name": "nom_dist"
+                                },
+                                {
+                                    "alias": "Informe OEFA",
+                                    "name": "informe_oe"
+                                },
+                                {
+                                    "alias": "Descripción",
+                                    "name": "descripcio"
+                                },
+                                {
+                                    "alias": "Nivel de riesgo Salud",
+                                    "name": "nriesgo_sa"
+                                },
+                                {
+                                    "alias": "Nivel de Riesgo Seguridad de la Población",
+                                    "name": "nriesgo_se"
+                                },
+                                {
+                                    "alias": "Nivel de Riesgo Calidad Ambiental",
+                                    "name": "nriesgo_ca"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090200",
@@ -1029,8 +1157,28 @@
                             "rgb": "rgb(52,152,219)",
                             "fields":[
                                 {
-                                    "alias": "objectid",
-                                    "name": "objectid"
+                                    "alias": "Departamento",
+                                    "name": "nom_dep"
+                                },
+                                {
+                                    "alias": "Provincia",
+                                    "name": "nom_prov"
+                                },
+                                {
+                                    "alias": "Distrito",
+                                    "name": "nom_dist"
+                                },
+                                {
+                                    "alias": "Lugar",
+                                    "name": "localidad"
+                                },
+                                {
+                                    "alias": "Fecha de Emergencia",
+                                    "name": "fec_emerge"
+                                },
+                                {
+                                    "alias": "Descripción de la Emergencia",
+                                    "name": "des_emerge"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090300",
@@ -1063,8 +1211,16 @@
                             "rgb": "rgb(231,76,60)",
                             "fields":[
                                 {
-                                    "alias": "objectid",
-                                    "name": "objectid"
+                                    "alias": "Departamento",
+                                    "name": "nom_dep"
+                                },
+                                {
+                                    "alias": "Tipo de Peligro",
+                                    "name": "tipo_pel"
+                                },
+                                {
+                                    "alias": "Fuente Logo",
+                                    "name": "fuente_log"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010100",
@@ -1091,8 +1247,32 @@
                             "rgb": "rgb(41,128,185)",
                             "fields":[
                                 {
-                                    "alias": "objectid_1",
-                                    "name": "objectid_1"
+                                    "alias": "Departamento",
+                                    "name": "nom_dep"
+                                },
+                                {
+                                    "alias": "Provincia",
+                                    "name": "nom_prov"
+                                },
+                                {
+                                    "alias": "Centro Poblado",
+                                    "name": "nom_ccpp"
+                                },
+                                {
+                                    "alias": "Tipo de Peligro",
+                                    "name": "tipo_pel"
+                                },
+                                {
+                                    "alias": "Acción",
+                                    "name": "accion_re"
+                                },
+                                {
+                                    "alias": "Descripción",
+                                    "name": "descrip"
+                                },
+                                {
+                                    "alias": "Fuente Logo",
+                                    "name": "fuente_logo"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200",
@@ -1119,8 +1299,32 @@
                             "rgb": "rgb(142,68,173)",
                             "fields":[
                                 {
-                                    "alias": "objectid_1",
-                                    "name": "objectid_1"
+                                    "alias": "Departamento",
+                                    "name": "nom_dep"
+                                },
+                                {
+                                    "alias": "Carretera",
+                                    "name": "carretera"
+                                },
+                                {
+                                    "alias": "Tramo de Carretera",
+                                    "name": "tramo_c"
+                                },
+                                {
+                                    "alias": "Longitud Afectada",
+                                    "name": "longitud_c"
+                                },
+                                {
+                                    "alias": "Tipo de peligro",
+                                    "name": "tipo_pel"
+                                },
+                                {
+                                    "alias": "Descripción",
+                                    "name": "descrip"
+                                },
+                                {
+                                    "alias": "Fuente Logo",
+                                    "name": "fuente_logo"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300",
@@ -1147,8 +1351,36 @@
                             "rgb": "rgb(155,89,182)",
                             "fields":[
                                 {
-                                    "alias": "objectid_1",
-                                    "name": "objectid_1"
+                                    "alias": "Departamento",
+                                    "name": "nom_dep"
+                                },
+                                {
+                                    "alias": "Provincia",
+                                    "name": "nom_prov"
+                                },
+                                {
+                                    "alias": "Distrito",
+                                    "name": "nom_dist"
+                                },
+                                {
+                                    "alias": "Localidad",
+                                    "name": "localidad"
+                                },
+                                {
+                                    "alias": "Tipo de Peligro",
+                                    "name": "tipo_pel"
+                                },
+                                {
+                                    "alias": "Tipo de Infraestructura",
+                                    "name": "tipo_infra"
+                                },
+                                {
+                                    "alias": "Descripción",
+                                    "name": "descrip"
+                                },
+                                {
+                                    "alias": "Fuente Logo",
+                                    "name": "fuente_logo"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400",
