@@ -140,6 +140,7 @@ define([
         gpExtractData: null,
         groupLayer: null,
         groupLayer_count: 1,
+        groupActived: [],
      
         postCreate: function () {
             this.inherited(arguments);
@@ -833,6 +834,7 @@ define([
                     (response) => {
                         try {
                             if (this.diagnosisRandom == _random) {
+                                this.groupActived = [];
                                 let _attr = response.features[0].attributes;
                                 this.ID_Count.innerText = this.diagnosisResult = this.diagnosisResult + _attr.cantidad;
                                 this.ID_CountText.innerHTML = this.textAmbito;
@@ -843,15 +845,42 @@ define([
                                 /* Delete Tbody */
                                 this._elementById(`${_id}_Tbody`).innerHTML = "";
                                 /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
-                                this._sortJSON(_temp, 'cantidad','desc'); 
+                                this._sortJSON(_temp, 'cantidad','desc');                            
+                                
+                                /*  let cell_0 = document.createElement("td");let cell_0_input = document.createElement("input");cell_0_input.setAttribute("type", "checkbox");cell_0.appendChild(cell_0_input); */
+                                
                                 /* Inserta a la tabla */
-                                _temp.map(function(current, index) {
+                                _temp.map(function(current) {
                                     if(current.cantidad > 0) {
                                         let fragment = document.createDocumentFragment();
                                         let row = document.createElement("tr");
-                                        let cell_0 = document.createElement("td");
-                                        let cellText_0 = document.createTextNode(index + 1);
-                                        cell_0.appendChild(cellText_0);
+                                        let cell_0 = document.createElement("td");                                        
+                                        let cell_0_input = document.createElement("input");
+                                        cell_0_input.setAttribute("type", "checkbox");
+                                        cell_0_input.setAttribute("data-idName", current.id);
+                                        cell_0_input.setAttribute("data-idLayer", current.position);
+                                        cell_0.onclick = function(_this) {
+                                            try{
+                                                let _ds = _this.target.dataset;
+                                                if((_ds.idlayer ?? false) && (_ds.idname ?? false)) {
+                                                    if(_this.target.checked) {
+                                                        this._validatedGroupLayer(this.groupActived,_ds.idname,_ds.idlayer,true);
+                                                    } else {
+                                                        this._validatedGroupLayer(this.groupActived,_ds.idname,_ds.idlayer,false);
+                                                    }                                                    
+                                                    this.groupLayer.forEach(element => {
+                                                        if(element.group.name == _ds.idname) {
+                                                            element.group.lyr().setLayerDefinitions(element.group.lyrDefinitions);
+                                                            element.group.lyr().setVisibleLayers(this._idLayer(this.groupActived,_ds.idname));
+                                                            element.group.lyr().refresh();
+                                                        }
+                                                    });
+                                                }
+                                            } catch (error) {
+                                                console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
+                                            }                                            
+                                        }.bind(this);
+                                        cell_0.appendChild(cell_0_input);
                                         let cell_1 = document.createElement("td");
                                         cell_1.innerHTML = current.name;
                                         let cell_2 = document.createElement("td");
@@ -908,20 +937,69 @@ define([
                     (error) => {  
                         console.error(`Error: _queryTask ERROR - Oops! En el servidor o en el servicio => ${error.name} - ${error.message}`);
                     }
-                ).always(lang.hitch(this, () => {                                    
+                ).always(lang.hitch(this, () => {
                     if ((this.diagnosisRandom == _random) && (this.groupLayer_count == this.diagnosisTotal)) {
                         this.groupLayer.forEach(element => {
                             if(element.group.name == _lyr.id) {
                                 element.group.lyr().setLayerDefinitions(element.group.lyrDefinitions);
-                                element.group.lyr().setVisibleLayers(element.group.id);
-                                element.group.lyr().refresh();
+                                /*element.group.lyr().setVisibleLayers(element.group.id);
+                                element.group.lyr().refresh();*/
                             }
                         });
-                    }                              
+                    }
                 }));
-                
             } catch (error) { 
                 console.error(`Error: _intersectLaye => ${error.name} - ${error.message}`); 
+            }
+        },
+        _validatedGroupLayer: function(_json, _name, _id, _row) {
+            try {
+                let _len = _json.length;
+                let _pos = "";
+                if(_row) {
+                    for (let da = 0; da < _len; da++) {
+                        let element = _json[da];
+                        if(typeof element.group !== "undefined") {
+                            if(element.group.name == _name) {
+                                _json[da].group.id.push(parseInt(_id));
+                                return true;
+                            }
+                        } else {
+                            _json.push({group:{ name: _name, id:[parseInt(_id)]}});
+                        }
+                    }
+                    _json.push({group:{ name: _name, id:[parseInt(_id)]}});
+                    return false;
+                } else {
+                    for (let da = 0; da < _len; da++) {
+                        let element = _json[da];
+                        if(element.group.name == _name) {
+                            let _ind = _json[da].group.id.indexOf(parseInt(_id));
+                            if(_ind != -1) {
+                                _json[da].group.id.splice(_ind,1);
+                                return true;
+                            }
+                            _pos = da;
+                        }
+                    }
+                    _json.splice(_pos,1);
+                    return false;
+                }
+            } catch (error) { 
+                console.error(`Error: _validatedGroupLayer => ${error.name} - ${error.message}`); 
+            }
+        },
+        _idLayer: function(_json, _name) {
+            try {
+                let _len = _json.length;
+                for (let da = 0; da < _len; da++) {
+                    let element = _json[da];
+                    if(element.group.name == _name) {
+                        return _json[da].group.id;
+                    }   
+                }
+            } catch (error) { 
+                console.error(`Error: _validatedGroupLayer => ${error.name} - ${error.message}`); 
             }
         },
         _loadTime: function(_item, _total) {
@@ -1305,8 +1383,9 @@ define([
                 const tblHead = document.createElement("thead");
                 const rowHead = document.createElement("tr");
                 const rowHeadTH_Item = document.createElement("th");
-                const rowHeadTH_ItemNode = document.createTextNode("#");
-                rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
+                //const rowHeadTH_ItemNode = document.createTextNode("#");
+                //rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
+                rowHeadTH_Item.innerHTML = "<i class='fa fa-check-square' style='margin-right:-10px'></i>";
                 const rowHeadTH_Name = document.createElement("th");
                 const rowHeadTH_NameNode = document.createTextNode("Información");
                 rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
