@@ -158,11 +158,11 @@ require([
         }
     };
     /* Create graphic DOUGHNOUT */
-    let _graphicPie = function(_node, _backgroundColor) {
+    let _graphicPie = function(_node, _backgroundColor = null) {
         try {
             new Chart(_node, { 
                 type: 'doughnut',
-                data: { labels:[], datasets:[{ data:[], backgroundColor:_backgroundColor, borderWidth: 1 }]},
+                data: { labels:[], datasets:[{ data:[], backgroundColor:_backgroundColor ?? configBackgroundColor, borderWidth: 1 }]},
                 options: {
                     responsive: false,
                     plugins: {
@@ -1621,7 +1621,6 @@ require([
                             if(typeof lyr.content[0].version_06 !== "undefined") {
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_06[0];
-                                let _boolean = true;
                                 let unionGeometry = [];
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
@@ -1662,83 +1661,89 @@ require([
                                     let countTabItemTotal = 0;
                                     /* Union Geometry */
                                     let _geometry = geometryEngine.union(unionGeometry);
-                                    /* Statistic Poblacion */
-                                    let poblacionSUM = new StatisticDefinition();
-                                    poblacionSUM.statisticType = "sum";
-                                    poblacionSUM.onStatisticField = _version.fields[0].name;
-                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                    /* Statistic Vivienda */
-                                    let viviendaSUM = new StatisticDefinition();
-                                    viviendaSUM.statisticType = "sum";
-                                    viviendaSUM.onStatisticField = _version.fields[1].name;
-                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                    /* Statistic Response */
-                                    let queryTask_Engine = new QueryTask(_version.url);
-                                    let query_Engine = new Query();
-                                    query_Engine.outFields = _version.fields.map(x => x.name);
-                                    query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                    query_Engine.returnGeometry = false;
-                                    queryTask_Engine.execute(query_Engine).then(
-                                        (response) => {
-                                            try {
-                                                let _contentTab01 = []; let _contentTab02 = [];
-                                                let _attr = response.features[0].attributes;
-                                                /* Poblacion */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
-                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                /* Vivienda */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
-                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                            } catch (error) {
-                                                console.error(`Count: Statistic FM => ${error.name}`);
-                                            }                    
-                                        },
-                                        (error) => {
-                                            console.error(`Error: Statistic FM => ${error.name}`);
-                                        }
-                                    );                                    
-                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                    configAnalysis_Temp.forEach(function(cValue) {
-                                       /* Statistic Analysis */
-                                        let analysisCOUNT = new StatisticDefinition();
-                                        analysisCOUNT.statisticType = "count";
-                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
-                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                        /* Statistic Analysis */
-                                        let queryTask_Analysis = new QueryTask(cValue.url);
-                                        let query_Analysis = new Query();
-                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                        query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                        query_Analysis.outStatistics = [ analysisCOUNT ];
-                                        queryTask_Analysis.execute(query_Analysis).then(
+                                    if(_geometry ?? false) {
+                                        /* Statistic Poblacion */
+                                        let poblacionSUM = new StatisticDefinition();
+                                        poblacionSUM.statisticType = "sum";
+                                        poblacionSUM.onStatisticField = _version.fields[0].name;
+                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        console.log(_version.fields[0].name);
+                                        /* Statistic Vivienda */
+                                        let viviendaSUM = new StatisticDefinition();
+                                        viviendaSUM.statisticType = "sum";
+                                        viviendaSUM.onStatisticField = _version.fields[1].name;
+                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                        console.log(_version.fields[1].name);
+                                        /* Statistic Response */
+                                        console.log(_version.url);
+                                        let queryTask_Engine = new QueryTask(_version.url);
+                                        let query_Engine = new Query();
+                                        //query_Engine.outFields = _version.fields.map(x => x.name);
+                                        query_Engine.outFields = ['*'];
+                                        query_Engine.geometry = _geometry;
+                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Engine.returnGeometry = true;
+                                        queryTask_Engine.execute(query_Engine).then(
                                             (response) => {
                                                 try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
                                                     let _attr = response.features[0].attributes;
-                                                    if(_attr.cantidad > 0) {
-                                                        let _contentTab = [];
-                                                        let _id = `ID_TBcontent${lyr.tag}`;
-                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
-                                                        _htmlTable_ADD(`${_id}`,_contentTab);
-                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
-                                                    }
+                                                    /* Poblacion */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    /* Vivienda */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
                                                 } catch (error) {
-                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    console.error(`Count: Statistic FM => ${error.name}`);
                                                 }                    
                                             },
                                             (error) => {
-                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                console.error(`Error: Statistic FM => ${error.name}`);
                                             }
-                                        );
-                                    });
+                                        );                                    
+                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        configAnalysis_Temp.forEach(function(cValue) {
+                                        /* Statistic Analysis */
+                                            let analysisCOUNT = new StatisticDefinition();
+                                            analysisCOUNT.statisticType = "count";
+                                            analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                            analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                            /* Statistic Analysis */
+                                            let queryTask_Analysis = new QueryTask(cValue.url);
+                                            let query_Analysis = new Query();
+                                            query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                            query_Analysis.geometry = _geometry;
+                                            query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                            query_Analysis.outStatistics = [ analysisCOUNT ];
+                                            queryTask_Analysis.execute(query_Analysis).then(
+                                                (response) => {
+                                                    try {
+                                                        let _attr = response.features[0].attributes;
+                                                        if(_attr.cantidad > 0) {
+                                                            let _contentTab = [];
+                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                            _htmlTable_ADD(`${_id}`,_contentTab);
+                                                            _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
+                                                        }
+                                                    } catch (error) {
+                                                        console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    }                    
+                                                },
+                                                (error) => {
+                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                }
+                                            );
+                                        });
+                                    }
                                 }));
 
                                 const divOBS = document.createElement("p");
@@ -1785,7 +1790,7 @@ require([
                                     divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
                                     divTotal.style.fontSize = "65px";
                                     divTotal.style.margin = "5px 0px";
-                                    divTotal.innerText = 0;
+                                    divTotal.innerHTML = _cssLoad;
                                     divCenterTotal.appendChild(divTotal);
                                     div.appendChild(divCenterTotal);
                                     const divTable = document.createElement("div");
@@ -1850,9 +1855,13 @@ require([
                                 queryTask_MM.execute(query_MM).then(
                                     (response) => {
                                         try {
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _contentTab = []; let _contentTotal = 0; let _chartData = []; let _chartLabel = [];
                                             let _features = response.features; 
                                             if(_features.length > 0) {
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
+
                                                 _features.forEach(function(_item) {
                                                     _contentTab.push({"item": _item.attributes[_version.static],"val": _item.attributes["cantidad"]});
                                                     _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
@@ -1861,26 +1870,14 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
-                                                    type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
-                                                    options: {
-                                                        responsive: false,
-                                                        plugins: {
-                                                            legend: { display:false, position:'bottom' },
-                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
-                                                        }
-                                                    }
-                                                });
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
+                                                chartBackgroundColor.push(lyr.rgb);
+                                                chart.data.datasets[0].data = _chartData;
+                                                chart.data.labels = _chartLabel;
+                                                chart.update();
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             }
                                         } catch (error) {
                                             console.error(`Count: Statistic ZRNM => ${error.name}`);
@@ -1890,7 +1887,11 @@ require([
                                         console.error(`Error: Statistic ZRNM => ${error.name}`);
                                     }
                                 );
-                                
+                                const divOBSP = document.createElement("p");
+                                divOBSP.id = `IDNote_${lyr.tag}`;
+                                divOBSP.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBSP);
+
                                 const divCenter = document.createElement("center");
                                 const divOBS = document.createElement("p");
                                 divOBS.style.fontSize = "16px";
@@ -1903,6 +1904,7 @@ require([
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
                                 divCanvasGraphic.setAttribute("height","190");
                                 divCanvasGraphic.setAttribute("width","370");
+                                _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 

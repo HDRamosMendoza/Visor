@@ -450,11 +450,10 @@ define([
         },
         _loadSelect(formatOption, formatId) {
             try {
-                let htmlID = formatId.getAttribute("data-dojo-attach-point")
-
+                let htmlID = formatId.getAttribute("data-dojo-attach-point");
                 let container = domConstruct.create("div", {
-                    id: `DIV_${htmlID}`,
-                    style: {width:'96.5%',color:"#555555"}
+                        id: `DIV_${htmlID}`,
+                        style: {width:'96.5%',color:"#555555"}
                     }, formatId
                 );
                 
@@ -462,9 +461,7 @@ define([
                     id: `Button_${htmlID}`,
                     label: "Descargar",
                     iconClass: 'fa fa-download',
-                    style: {
-                        width:'120px',
-                    },
+                    style: { width:'120px' },
                     onClick: function() {
                         let featureSet = new FeatureSet();
                         let features = [];
@@ -483,6 +480,7 @@ define([
                         }
 
                         console.log("BUTTON");
+
                         this.gpExtractData.submitJob (
                             {
                                 "Layers_to_Clip": checkboxActived,
