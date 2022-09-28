@@ -1934,7 +1934,6 @@ require([
                             if(typeof lyr.content[0].version_08 !== "undefined") {
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_08[0];
-                                let _boolean = true;
                                 let unionGeometry = [];
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
@@ -1950,29 +1949,19 @@ require([
                                 queryTask_AE.execute(query_AE).then(
                                     (response) => {
                                         try {
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _length = response.features.length;
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
 
                                             if(_length == 0) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);  
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
-                                                divColumn_01.prepend(divOBS);
-                                            }
-                                            
-                                            if(_boolean) {                            
-                                                const divNota = document.createElement("p");
-                                                divNota.className = "sect-nota";
-                                                divNota.innerHTML = _version.nota;
-                                                divColumn_01.appendChild(divNota);
-                                            }                             
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
+                                            }                   
                                         } catch (error) {
                                             console.error(`Count: AEI => ${error.name} - ${error.message}`);
                                         }                    
@@ -2063,6 +2052,11 @@ require([
                                         );
                                     });
                                 }));
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
@@ -2103,7 +2097,7 @@ require([
                                     divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
                                     divTotal.style.fontSize = "65px";
                                     divTotal.style.margin = "5px 0px";
-                                    divTotal.innerText = 0;
+                                    divTotal.innerHTML = _cssLoad;
                                     divCenterTotal.appendChild(divTotal);
                                     div.appendChild(divCenterTotal);
                                     const divTable = document.createElement("div");
@@ -2126,6 +2120,12 @@ require([
                                     divMain.appendChild(tagStyle);
                                 } 
                                 divColumn_01.appendChild(divMain);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -2140,7 +2140,6 @@ require([
                             if(typeof lyr.content[0].version_09 !== "undefined") {
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_09[0];
-                                let _boolean = true;
                                 let unionGeometry = [];
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
@@ -2156,29 +2155,19 @@ require([
                                 queryTask_AET.execute(query_AET).then(
                                     (response) => {
                                         try {
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _length = response.features.length;
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
 
                                             if(_length == 0) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);  
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
-                                                divColumn_01.prepend(divOBS);
-                                            }
-                                            
-                                            if(_boolean) {                            
-                                                const divNota = document.createElement("p");
-                                                divNota.className = "sect-nota";
-                                                divNota.innerHTML = _version.nota;
-                                                divColumn_01.appendChild(divNota);
-                                            }                             
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
+                                            }                        
                                         } catch (error) {
                                             console.error(`Count: AEI => ${error.name} - ${error.message}`);
                                         }                    
@@ -2269,6 +2258,11 @@ require([
                                         );
                                     });
                                 }));
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS); 
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
@@ -2309,7 +2303,7 @@ require([
                                     divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
                                     divTotal.style.fontSize = "65px";
                                     divTotal.style.margin = "5px 0px";
-                                    divTotal.innerText = 0;
+                                    divTotal.innerHTML = _cssLoad;
                                     divCenterTotal.appendChild(divTotal);
                                     div.appendChild(divCenterTotal);
                                     const divTable = document.createElement("div");
@@ -2331,7 +2325,14 @@ require([
                                     tagStyle.textContent = _cssStyle.concat("{display: block;};");
                                     divMain.appendChild(tagStyle);
                                 } 
+
                                 divColumn_01.appendChild(divMain);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
