@@ -277,6 +277,7 @@ define([
                     featureLayerDep.clearSelection();
                     featureLayerPro.clearSelection();
                     featureLayerDis.clearSelection();
+                    this.ID_Percentage.innerHTML = "";
                     this.map.setZoom(6);
                     this.map.centerAt(new Point(-75.015152, -9.189967));
                     /* Limpiando pestaña RESULTADO */
@@ -781,6 +782,8 @@ define([
 
                 if(this.deferredDiagnosisMap && (this.deferredDiagnosisMap > 0)) { this.deferredDiagnosisMap.cancel(); }
                 
+                this.ID_Percentage.innerHTML = "";
+
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
                         features.map(function(cValue) {
@@ -848,7 +851,7 @@ define([
                                 this._sortJSON(_temp, 'cantidad','desc');                            
                                 
                                 /*  let cell_0 = document.createElement("td");let cell_0_input = document.createElement("input");cell_0_input.setAttribute("type", "checkbox");cell_0.appendChild(cell_0_input); */
-                                
+
                                 /* Inserta a la tabla */
                                 _temp.map(function(current) {
                                     if(current.cantidad > 0) {
