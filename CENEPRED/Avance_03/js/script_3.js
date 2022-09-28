@@ -1439,8 +1439,7 @@ require([
                                             } else {
                                                 _note.className = "sect-nota-info";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
-                                            }
-                                                                   
+                                            }                                                                   
                                         } catch (error) {
                                             console.error(`Count: AEI => ${error.name} - ${error.message}`);
                                         }                    
@@ -1477,7 +1476,6 @@ require([
                                                 try {
                                                     let _contentTab01 = []; let _contentTab02 = [];
                                                     let _attr = response.features[0].attributes;
-                                                    console.log(_attr);
                                                     /* Poblacion */
                                                     _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerHTML = _attr.sumpoblacion ?? 0;
                                                     _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
@@ -1537,7 +1535,7 @@ require([
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-resumen2";
+                                divTable.className = "form-scroll-tab";
                                 divColumn_02.appendChild(divTable);
 
                                 const divOBS = document.createElement("p");
@@ -1640,28 +1638,18 @@ require([
                                     (response) => {
                                         try {
                                             let _length = response.features.length;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
 
                                             if(_length == 0) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);  
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
-                                                divColumn_01.prepend(divOBS);
-                                            }
-                                            
-                                            if(_boolean) {                            
-                                                const divNota = document.createElement("p");
-                                                divNota.className = "sect-nota";
-                                                divNota.innerHTML = _version.nota;
-                                                divColumn_01.appendChild(divNota);
-                                            }                             
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
+                                            }                          
                                         } catch (error) {
                                             console.error(`Count: AEI => ${error.name} - ${error.message}`);
                                         }                    
@@ -1752,10 +1740,15 @@ require([
                                         );
                                     });
                                 }));
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-resumen2";
+                                divTable.className = "form-scroll-tab";
                                 divColumn_02.appendChild(divTable);
                                 
                                 /* HEADER */
@@ -1815,6 +1808,12 @@ require([
                                     divMain.appendChild(tagStyle);
                                 } 
                                 divColumn_01.appendChild(divMain);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -2065,7 +2064,7 @@ require([
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-resumen2";
+                                divTable.className = "form-scroll-tab";
                                 divColumn_02.appendChild(divTable);
                                 
                                 /* HEADER */
@@ -2271,7 +2270,7 @@ require([
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-resumen2";
+                                divTable.className = "form-scroll-tab";
                                 divColumn_02.appendChild(divTable);
                                 
                                 /* HEADER */
@@ -2688,7 +2687,7 @@ require([
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-resumen2";
+                                divTable.className = "form-scroll-tab";
                                 divColumn_02.appendChild(divTable);
                                 
                                 /* HEADER */
