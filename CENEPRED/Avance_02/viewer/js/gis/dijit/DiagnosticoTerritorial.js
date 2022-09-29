@@ -141,6 +141,7 @@ define([
         groupLayer: null,
         groupLayer_count: 1,
         groupActived: [],
+        selectItem: null,
      
         postCreate: function () {
             this.inherited(arguments);
@@ -464,35 +465,85 @@ define([
                     style: { width:'120px' },
                     onClick: function() {
                         let featureSet = new FeatureSet();
-                        let features = [];
-                        //features.push(this.map.graphics.graphics[0]);
-                        //featureSet.features = features;
-                        /* Validar el poligono */
-                        try {
-                            let geomtryPolygon  = featureSet.features[0].geometry.rings;
-                            if (typeof(geomtryPolygon) == "undefined") {
-                                console.log('CAMPO OBLIGATORIO', '=> 2. Seleccionar el área de interés');
+                        /*let features = [];*/
+                        let _alert = this.ID_Select_Alert;
+                        if(this.selectItem ?? false) {
+                            /*features.push(this.map.graphics.graphics[0]);
+                            featureSet.features = features;*/
+                            /* Validar el poligono */
+                            try {
+                                let geomtryPolygon  = featureSet.features[0].geometry.rings;
+                                if (typeof(geomtryPolygon) == "undefined") {
+                                    _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong>";
+                                    _alert.style.display = "block";
+                                    return;
+                                }
+                            } catch (error) {
+                                _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong>";
+                                _alert.style.display = "block";
                                 return;
                             }
-                        } catch (error) {
-                            console.log('CAMPO OBLIGATORIO', '=> 2. Seleccionar el área de interés');
+                            this.gpExtractData.submitJob (
+                                {
+                                    "Layers_to_Clip": ["CAPA1","CAPA1","CAPA1","CAPA1"],
+                                    "Area_of_Interest": this.reportGeometry,
+                                    "Feature_Format": this.selectItem
+                                },
+                                /*this._completeCallback.bind(this),
+                                this._statusCallback.bind(this),
+                                this._errorCallback.bind(this)*/
+                                _completeCallback = function(jobInfo) {
+                                    try {
+                                        console.log("ESTA TRAENDO LOS DATOS");
+                                        if ( jobInfo.jobStatus !== "esriJobFailed" ) {
+                                            this.gpExtractData.getResultData(jobInfo.jobId, "Output_Zip_File", function(outputFile) {
+                                                try {
+                                                    /*
+                                                  this.map.graphics.clear();*/
+                                                  let theurl = outputFile.value.url;
+                                                  window.location = theurl;
+                                                } catch (error) {
+                                                  console.log("Error: _downloadFile " + error.message);
+                                                }
+                                            }.bind(this));
+                                        }
+                                    } catch (error) {
+                                      console.log("Error: _completeCallback " + error.message);
+                                    }
+                                },      
+                                _statusCallback = function(jobInfo) {
+                                    try {
+                                        /*
+                                        var status = jobInfo.jobStatus;
+                                        if ( status === "esriJobFailed" ) {
+                                            alert(status);
+                                            domStyle.set(dom.byId("loading"), "display", "none");
+                                        } else if (status === "esriJobSucceeded"){
+                                            domStyle.set(dom.byId("loading"), "display", "none");
+                                        }*/
+                                    } catch (error) {
+                                        console.log("Error: _statusCallback " + error.message);
+                                    }
+                                },    
+                                _errorCallback = function(jobInfo) {
+                                    try {
+                                        //alert(error);
+                                        //domStyle.set(dom.byId("loading"), "display", "none");
+                                    } catch (error) {
+                                        console.log("Error: _errorCallback " + error.message);
+                                    }
+                                },
+
+                            );
+                        } else {
+                            _alert.innerHTML = "Seleccione un <strong>FORMATO</strong>";
+                            _alert.style.display = "block";
                             return;
+                            
                         }
+                        
 
-                        console.log("BUTTON");
-
-                        this.gpExtractData.submitJob (
-                            {
-                                "Layers_to_Clip": checkboxActived,
-                                "Area_of_Interest": featureSet,
-                                "Feature_Format": this.formatBox.options[this.formatBox.selectedIndex].getAttribute('val')
-                            },
-                            this._completeCallback.bind(this),
-                            this._statusCallback.bind(this),
-                            this._errorCallback.bind(this)
-                        );
-
-                    }
+                    }.bind(this)
                 });
 
                 let tableContainer = new TableContainer({
@@ -540,11 +591,7 @@ define([
                 tableContainer.addChild(filteringSelect);
                 if(!booleanButton) {
                     tableContainer.addChild(buttonDownload);
-                    filteringSelect.on("change", function(evt) {
-                        console.log("DESCARGAR");
-                        console.log(evt);
-                        console.log(this);
-                    });
+                    filteringSelect.on("change", (evt) => { this.selectItem = evt; });
                 } else {
                     filteringSelect.on("change", function(evt) {
                         let lyrJson = this.bufferTemp[evt];
@@ -561,48 +608,7 @@ define([
             } catch (error) {
                 console.error(`Error: _loadSelect => ${error.name} - ${error.message}`);
             }
-        },
-        _completeCallback: function(jobInfo) {
-            try {
-                console.log("ESTA TRAENDO LOS DATOS");
-                if ( jobInfo.jobStatus !== "esriJobFailed" ) {
-                    this.gpExtractData.getResultData(jobInfo.jobId, "Output_Zip_File", function(outputFile) {
-                        try {
-                            /*
-                          this.map.graphics.clear();
-                          let theurl = outputFile.value.url;  
-                          window.location = theurl;*/
-                        } catch (error) {
-                          console.log("Error: _downloadFile " + error.message);
-                        }
-                    }.bind(this));
-                }
-            } catch (error) {
-              console.log("Error: _completeCallback " + error.message);
-            }
-        },      
-        _statusCallback: function(jobInfo) {
-            try {
-                /*
-                var status = jobInfo.jobStatus;
-                if ( status === "esriJobFailed" ) {
-                    alert(status);
-                    domStyle.set(dom.byId("loading"), "display", "none");
-                } else if (status === "esriJobSucceeded"){
-                    domStyle.set(dom.byId("loading"), "display", "none");
-                }*/
-            } catch (error) {
-                console.log("Error: _statusCallback " + error.message);
-            }
-        },    
-        _errorCallback: function(jobInfo) {
-            try {
-                //alert(error);
-                //domStyle.set(dom.byId("loading"), "display", "none");
-            } catch (error) {
-                console.log("Error: _errorCallback " + error.message);
-            }
-        },
+        },        
         _ambito: function(htmlID, htmlPH, htmlPHAlter, htmlLBL, order, oID, item, svr, queryWhere) {
             try { /* Carga de los SELECTOR del ámbito */
                 let options = [];

@@ -21,14 +21,19 @@
             "boolean": false
         },
         {
+            "name": "GDB (.zip)",
+            "value": "GDB",
+            "boolean": true
+        },
+        {
             "name": "SHP (.zip)",
-            "value": "SHP (.zip)",
-            "boolean": false
+            "value": "SHP",
+            "boolean": true
         },
         {
             "name": "KMZ",
             "value": "KMZ",
-            "boolean": true
+            "boolean": false
         },
         {
             "name": "GeoJSON",
