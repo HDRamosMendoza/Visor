@@ -519,7 +519,7 @@ input.tabs-horiz:checked + label {
 
 
 .form-scroll-tab {
-  max-height: 390px;
+  max-height: 445px;
   overflow-y: scroll;  
   border: 1px solid #aaa;
   overflow: auto;

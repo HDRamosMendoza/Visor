@@ -2417,6 +2417,12 @@ require([
                                     tagStyle.textContent = _cssStyle.concat("{display: block;};");
                                     divMain.appendChild(tagStyle);
                                 } 
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
+
                                 divColumn_01.appendChild(divMain);
 
                                 const divNota = document.createElement("p");
@@ -2441,21 +2447,18 @@ require([
                                     (response) => {
                                         try {
                                             let _length = response.features.length;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             console.log(response.features);
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
 
                                             if(_length == 0) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);  
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
                                             }                
                                         } catch (error) {
                                             console.error(`Count: NP => ${error.name} - ${error.message}`);
@@ -2574,29 +2577,19 @@ require([
                                 queryTask_AEE.execute(query_AEE).then(
                                     (response) => {
                                         try {
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _length = response.features.length;
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
 
                                             if(_length == 0) {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);  
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
-                                                divColumn_01.prepend(divOBS);
-                                            }
-                                            
-                                            if(_boolean) {                            
-                                                const divNota = document.createElement("p");
-                                                divNota.className = "sect-nota";
-                                                divNota.innerHTML = _version.nota;
-                                                divColumn_01.appendChild(divNota);
-                                            }                             
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
+                                            }                        
                                         } catch (error) {
                                             console.error(`Count: AEI => ${error.name} - ${error.message}`);
                                         }                    
@@ -2727,7 +2720,7 @@ require([
                                     divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
                                     divTotal.style.fontSize = "65px";
                                     divTotal.style.margin = "5px 0px";
-                                    divTotal.innerText = 0;
+                                    divTotal.innerHTML = _cssLoad;
                                     divCenterTotal.appendChild(divTotal);
                                     div.appendChild(divCenterTotal);
                                     const divTable = document.createElement("div");
@@ -2749,7 +2742,19 @@ require([
                                     tagStyle.textContent = _cssStyle.concat("{display: block;};");
                                     divMain.appendChild(tagStyle);
                                 } 
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
+
                                 divColumn_01.appendChild(divMain);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota);
+                                
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -2787,8 +2792,13 @@ require([
                                     (response) => {
                                         try {
                                             let _contentTab = []; let _contentTotal = 0; let _chartData = []; let _chartLabel = [];
-                                            let _features = response.features; 
+                                            let _features = response.features;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             if(_features.length > 0) {
+                                                
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
+
                                                 _features.forEach(function(_item) {
                                                     _contentTab.push({"item": _item.attributes[_version.static],"val": _item.attributes["cantidad"]});
                                                     _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
@@ -2797,26 +2807,13 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
-                                                    type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
-                                                    options: {
-                                                        responsive: false,
-                                                        plugins: {
-                                                            legend: { display:false, position:'bottom' },
-                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
-                                                        }
-                                                    }
-                                                });
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
+                                                chart.data.datasets[0].data = _chartData;
+                                                chart.data.labels = _chartLabel;
+                                                chart.update();                                                
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             }
                                         } catch (error) {
                                             console.error(`Count: Statistic ZRNM => ${error.name}`);
@@ -2826,6 +2823,11 @@ require([
                                         console.error(`Error: Statistic ZRNM => ${error.name}`);
                                     }
                                 );
+
+                                const divOBSP = document.createElement("p");
+                                divOBSP.id = `IDNote_${lyr.tag}`;
+                                divOBSP.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBSP);
                                 
                                 const divCenter = document.createElement("center");
                                 const divOBS = document.createElement("p");
@@ -2839,6 +2841,7 @@ require([
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
                                 divCanvasGraphic.setAttribute("height","190");
                                 divCanvasGraphic.setAttribute("width","370");
+                                _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 
@@ -2900,9 +2903,13 @@ require([
                                 queryTask_PAH.execute(query_PAH).then(
                                     (response) => {
                                         try {
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _contentTab = []; let _contentTotal = 0; let _chartData = []; let _chartLabel = [];
                                             let _features = response.features;
                                             if(_features.length > 0) {
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
+
                                                 _features.forEach(function(_item) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static_01[0].field]}`,
@@ -2914,7 +2921,7 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
+                                                /*new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
                                                     data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
@@ -2924,16 +2931,14 @@ require([
                                                             title: { display:false, text:'GRÁFICO DE RESUMEN' }
                                                         }
                                                     }
-                                                });
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                });*/
+                                                let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
+                                                chart.data.datasets[0].data = _chartData;
+                                                chart.data.labels = _chartLabel;
+                                                chart.update();
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             }
                                         } catch (error) {
                                             console.error(`Count: Statistic ZRNM => ${error.name}`);
@@ -2943,6 +2948,11 @@ require([
                                         console.error(`Error: Statistic ZRNM => ${error.name}`);
                                     }
                                 );
+
+                                const divOBSP = document.createElement("p");
+                                divOBSP.id = `IDNote_${lyr.tag}`;
+                                divOBSP.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBSP);
                                 
                                 const divCenter = document.createElement("center");
                                 const divOBS = document.createElement("p");
@@ -2956,6 +2966,7 @@ require([
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
                                 divCanvasGraphic.setAttribute("height","190");
                                 divCanvasGraphic.setAttribute("width","370");
+                                _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 
@@ -3005,6 +3016,7 @@ require([
                                 queryTask_IIFO.execute(query_IIFO).then(
                                     (response) => {
                                         try {
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _features = response.features[0].attributes;
                                             if(_features.cantidad > 0) {
                                                 _elementById(`IDTOTALcontent_${lyr.tag}`).innerText = _features.cantidad;
@@ -3017,15 +3029,11 @@ require([
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 */
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             }
                                             
                                         } catch (error) {
@@ -3036,6 +3044,11 @@ require([
                                         console.error(`Error: Statistic IIFO => ${error.name}`);
                                     }
                                 );
+
+                                const divOBSP = document.createElement("p");
+                                divOBSP.id = `IDNote_${lyr.tag}`;
+                                divOBSP.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBSP);
 
                                 const divCenter = document.createElement("center");
                                 const divOBS = document.createElement("p");
@@ -3049,7 +3062,7 @@ require([
                                 divTotal.id = `IDTOTALcontent_${lyr.tag}`;
                                 divTotal.style.fontSize = "65px";
                                 divTotal.style.margin = "5px 0px";
-                                divTotal.innerText = 0;
+                                divTotal.innerHTML = _cssLoad;
                                 divCenterTotal.appendChild(divTotal);
                                 divColumn_01.appendChild(divCenterTotal);
                                 
@@ -3103,8 +3116,11 @@ require([
                                         try {
                                             let _contentTab = []; let _contentTotal = 0;
                                             let _chartData = []; let _chartLabel = [];
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _features = response.features;
-                                            if(_features.length > 0) {
+                                            if(_features.length > 0) {                                                
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
                                                 _features.forEach(function(_item) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]}`,
@@ -3116,26 +3132,13 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
-                                                    type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
-                                                    options: {
-                                                        responsive: false,
-                                                        plugins: {
-                                                            legend: { display:false, position:'bottom' },
-                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
-                                                        }
-                                                    }
-                                                });
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
+                                                chart.data.datasets[0].data = _chartData;
+                                                chart.data.labels = _chartLabel;
+                                                chart.update();                 
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             }
                                         } catch (error) {
                                             console.error(`Count: Statistic ZAPENC => ${error.name}`);
@@ -3145,12 +3148,18 @@ require([
                                         console.error(`Error: Statistic ZAPENC => ${error.name}`);
                                     }
                                 );
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
                                 
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
                                 divCanvasGraphic.setAttribute("height","190");
                                 divCanvasGraphic.setAttribute("width","370");
+                                _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 
@@ -3204,8 +3213,11 @@ require([
                                         try {
                                             let _contentTab = []; let _contentTotal = 0;
                                             let _chartData = []; let _chartLabel = [];
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _features = response.features;
                                             if(_features.length > 0) {
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
                                                 _features.forEach(function(_item) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]}`,
@@ -3217,7 +3229,7 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
+                                                /*new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
                                                     data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
@@ -3227,16 +3239,14 @@ require([
                                                             title: { display:false, text:'GRÁFICO DE RESUMEN' }
                                                         }
                                                     }
-                                                });
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                });*/
+                                                let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
+                                                chart.data.datasets[0].data = _chartData;
+                                                chart.data.labels = _chartLabel;
+                                                chart.update();
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             }
                                         } catch (error) {
                                             console.error(`Count: Statistic PAF => ${error.name}`);
@@ -3246,12 +3256,18 @@ require([
                                         console.error(`Error: Statistic PAF => ${error.name}`);
                                     }
                                 );
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
                                 
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
                                 divCanvasGraphic.setAttribute("height","190");
                                 divCanvasGraphic.setAttribute("width","370");
+                                _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 
@@ -3305,8 +3321,11 @@ require([
                                         try {
                                             let _contentTab = []; let _contentTotal = 0;
                                             let _chartData = []; let _chartLabel = [];
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _features = response.features;
                                             if(_features.length > 0) {
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
                                                 _features.forEach(function(_item) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]}`,
@@ -3318,26 +3337,13 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
-                                                    type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
-                                                    options: {
-                                                        responsive: false,
-                                                        plugins: {
-                                                            legend: { display:false, position:'bottom' },
-                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
-                                                        }
-                                                    }
-                                                });
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
+                                                chart.data.datasets[0].data = _chartData;
+                                                chart.data.labels = _chartLabel;
+                                                chart.update();
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             }
                                         } catch (error) {
                                             console.error(`Count: Statistic TCA => ${error.name}`);
@@ -3347,12 +3353,18 @@ require([
                                         console.error(`Error: Statistic TCA => ${error.name}`);
                                     }
                                 );
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
                                 
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
                                 divCanvasGraphic.setAttribute("height","190");
                                 divCanvasGraphic.setAttribute("width","370");
+                                _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 
@@ -3405,8 +3417,12 @@ require([
                                         try {
                                             let _contentTab = []; let _contentTotal = 0;
                                             let _chartData = []; let _chartLabel = [];
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _features = response.features;
                                             if(_features.length > 0) {
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
+
                                                 _features.forEach(function(_item) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]}`,
@@ -3418,7 +3434,7 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                new Chart(`TB_GraphicContent_${lyr.tag}`, { 
+                                                /*new Chart(`TB_GraphicContent_${lyr.tag}`, { 
                                                     type: 'pie',
                                                     data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
                                                     options: {
@@ -3428,16 +3444,15 @@ require([
                                                             title: { display:false, text:'GRÁFICO DE RESUMEN' }
                                                         }
                                                     }
-                                                });
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-info";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}.`;
-                                                divColumn_01.prepend(divOBS);
+                                                });*/
+                                                let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
+                                                chart.data.datasets[0].data = _chartData;
+                                                chart.data.labels = _chartLabel;
+                                                chart.update();
+                                                
                                             } else {
-                                                const divOBS = document.createElement("p");
-                                                divOBS.className = "sect-nota-warning";
-                                                divOBS.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                divColumn_01.prepend(divOBS);
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             }
                                         } catch (error) {
                                             console.error(`Count: Statistic OIA => ${error.name}`);
@@ -3447,12 +3462,18 @@ require([
                                         console.error(`Error: Statistic OIA => ${error.name}`);
                                     }
                                 );
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
                                 
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
                                 divCanvasGraphic.setAttribute("height","190");
                                 divCanvasGraphic.setAttribute("width","370");
+                                _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 
