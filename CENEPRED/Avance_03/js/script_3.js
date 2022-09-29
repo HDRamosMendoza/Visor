@@ -250,8 +250,9 @@ require([
             const tblHead = document.createElement("thead");
             const rowHead = document.createElement("tr");
             const rowHeadTH_Item = document.createElement("th");
-            const rowHeadTH_ItemNode = document.createTextNode("#");
-            rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
+            //const rowHeadTH_ItemNode = document.createTextNode("#");
+            //rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
+            rowHeadTH_Item.innerHTML = `<i class="fa fa-pie-chart" style="margin-right:-10px;"></i>`;
             const rowHeadTH_Name = document.createElement("th");
             const rowHeadTH_NameNode = document.createTextNode(_lyrTitle);
             rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
@@ -282,7 +283,7 @@ require([
             rowFootTD.colSpan = "2";
             rowFootTD.style.textAlign = "right";
             rowFootTD.style.fontWeight = "800";
-            const rowFootTD_Text = document.createTextNode("Total");
+            const rowFootTD_Text = document.createTextNode("TOTAL");
             rowFootTD.appendChild(rowFootTD_Text);
             const rowFootTDCant = document.createElement("td");
             rowFootTDCant.style.textAlign = "right";                
@@ -370,7 +371,7 @@ require([
             rowFootTD.colSpan = "1";
             rowFootTD.style.textAlign = "right";
             rowFootTD.style.fontWeight = "800";
-            const rowFootTD_Text = document.createTextNode("Total");
+            const rowFootTD_Text = document.createTextNode("TOTAL");
             rowFootTD.appendChild(rowFootTD_Text);
             const rowFootTDCant = document.createElement("td");
             rowFootTDCant.style.textAlign = "right";                
@@ -562,6 +563,7 @@ require([
                                         let row = document.createElement("tr");
                                         let cell_0 = document.createElement("td");
                                         /*let cellText_0 = document.createTextNode(_index);*/
+                                        cell_0.style.textAlign = "center";
                                         cell_0.innerHTML = `<span style="color: ${_lyr.rgb}">■</span>`;
                                         /*cell_0.appendChild(cellText_0);*/
                                         let cell_1 = document.createElement("td");
@@ -597,6 +599,7 @@ require([
                     try {
                         
                         if( this.diagnosisCount == _count) {
+                            _elementById("ID_GraphicLoad").remove();
                             this.ID_Load.style.display = "none";
                             this.ID_TABLE_Resumen.style.display = "block";
 	                        let tabPanes = document.getElementsByClassName("tablinks");	
