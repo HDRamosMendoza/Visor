@@ -474,13 +474,19 @@ define([
                             try {
                                 let geomtryPolygon  = featureSet.features[0].geometry.rings;
                                 if (typeof(geomtryPolygon) == "undefined") {
-                                    _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong>";
+                                    _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
                                     _alert.style.display = "block";
+                                    setTimeout(()=> {
+                                        _alert.style.display = "none";
+                                    }, 2000);
                                     return;
                                 }
                             } catch (error) {
-                                _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong>";
+                                _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
                                 _alert.style.display = "block";
+                                setTimeout(()=> {
+                                    _alert.style.display = "none";
+                                }, 2000);
                                 return;
                             }
                             this.gpExtractData.submitJob (
@@ -538,11 +544,11 @@ define([
                         } else {
                             _alert.innerHTML = "Seleccione un <strong>FORMATO</strong>";
                             _alert.style.display = "block";
+                            setTimeout(()=> {
+                                _alert.style.display = "none";
+                            }, 2000);
                             return;
-                            
                         }
-                        
-
                     }.bind(this)
                 });
 
