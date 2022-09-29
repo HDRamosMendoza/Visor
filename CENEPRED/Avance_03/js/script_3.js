@@ -1625,7 +1625,7 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Inundación", "Población Expuesta");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Inundación", "Viviendas Expuestas");
 
-                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
                             }
                             /* </AEI> */
 
@@ -1837,7 +1837,7 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Fajas marginales", "Población");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Fajas marginales", "Viviendas");
 
-                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
                             }
                             /* </FM> */
 
@@ -2141,10 +2141,10 @@ require([
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por mov. en Masa", "Población Expuesta");
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por mov. en Masa", "Viviendas Expuesta");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por Movimiento en Masa", "Población Expuesta");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Movimiento en Masa", "Viviendas Expuestas");
 
-                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "ELEMENTOS EXPUESTOS", "CANTIDAD");
                             }
                             /* </AE> */
 
@@ -2351,7 +2351,7 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de exposicion al tsunami", "Población");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Areas de exposicion al tsunami", "Vivienda");
 
-                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
                             }
                             /* </AET> */
 
@@ -2614,83 +2614,85 @@ require([
                                     let countTabItemTotal = 0;
                                     /* Union Geometry */
                                     let _geometry = geometryEngine.union(unionGeometry);
-                                    /* Statistic Poblacion */
-                                    let poblacionSUM = new StatisticDefinition();
-                                    poblacionSUM.statisticType = "sum";
-                                    poblacionSUM.onStatisticField = _version.fields[0].name;
-                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                    /* Statistic Vivienda */
-                                    let viviendaSUM = new StatisticDefinition();
-                                    viviendaSUM.statisticType = "sum";
-                                    viviendaSUM.onStatisticField = _version.fields[1].name;
-                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                    /* Statistic Response */
-                                    let queryTask_Engine = new QueryTask(_version.url);
-                                    let query_Engine = new Query();
-                                    query_Engine.outFields = _version.fields.map(x => x.name);
-                                    query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                    query_Engine.returnGeometry = false;
-                                    queryTask_Engine.execute(query_Engine).then(
-                                        (response) => {
-                                            try {
-                                                let _contentTab01 = []; let _contentTab02 = [];
-                                                let _attr = response.features[0].attributes;
-                                                /* Poblacion */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
-                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                /* Vivienda */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
-                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                            } catch (error) {
-                                                console.error(`Count: Statistic FM => ${error.name}`);
-                                            }                    
-                                        },
-                                        (error) => {
-                                            console.error(`Error: Statistic FM => ${error.name}`);
-                                        }
-                                    );                                    
-                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                    configAnalysis_Temp.forEach(function(cValue) {
-                                       /* Statistic Analysis */
-                                        let analysisCOUNT = new StatisticDefinition();
-                                        analysisCOUNT.statisticType = "count";
-                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
-                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                        /* Statistic Analysis */
-                                        let queryTask_Analysis = new QueryTask(cValue.url);
-                                        let query_Analysis = new Query();
-                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                        query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                        query_Analysis.outStatistics = [ analysisCOUNT ];
-                                        queryTask_Analysis.execute(query_Analysis).then(
+                                    if(_geometry ?? false) {
+                                        /* Statistic Poblacion */
+                                        let poblacionSUM = new StatisticDefinition();
+                                        poblacionSUM.statisticType = "sum";
+                                        poblacionSUM.onStatisticField = _version.fields[0].name;
+                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        /* Statistic Vivienda */
+                                        let viviendaSUM = new StatisticDefinition();
+                                        viviendaSUM.statisticType = "sum";
+                                        viviendaSUM.onStatisticField = _version.fields[1].name;
+                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                        /* Statistic Response */
+                                        let queryTask_Engine = new QueryTask(_version.url);
+                                        let query_Engine = new Query();
+                                        query_Engine.outFields = _version.fields.map(x => x.name);
+                                        query_Engine.geometry = _geometry;
+                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Engine.returnGeometry = false;
+                                        queryTask_Engine.execute(query_Engine).then(
                                             (response) => {
                                                 try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
                                                     let _attr = response.features[0].attributes;
-                                                    if(_attr.cantidad > 0) {
-                                                        let _contentTab = [];
-                                                        let _id = `ID_TBcontent${lyr.tag}`;
-                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
-                                                        _htmlTable_ADD(`${_id}`,_contentTab);
-                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
-                                                    }
+                                                    /* Poblacion */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    /* Vivienda */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
                                                 } catch (error) {
-                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    console.error(`Count: Statistic FM => ${error.name}`);
                                                 }                    
                                             },
                                             (error) => {
-                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                console.error(`Error: Statistic FM => ${error.name}`);
                                             }
-                                        );
-                                    });
+                                        );                                    
+                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        configAnalysis_Temp.forEach(function(cValue) {
+                                        /* Statistic Analysis */
+                                            let analysisCOUNT = new StatisticDefinition();
+                                            analysisCOUNT.statisticType = "count";
+                                            analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                            analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                            /* Statistic Analysis */
+                                            let queryTask_Analysis = new QueryTask(cValue.url);
+                                            let query_Analysis = new Query();
+                                            query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                            query_Analysis.geometry = _geometry;
+                                            query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                            query_Analysis.outStatistics = [ analysisCOUNT ];
+                                            queryTask_Analysis.execute(query_Analysis).then(
+                                                (response) => {
+                                                    try {
+                                                        let _attr = response.features[0].attributes;
+                                                        if(_attr.cantidad > 0) {
+                                                            let _contentTab = [];
+                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                            _htmlTable_ADD(`${_id}`,_contentTab);
+                                                            _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
+                                                        }
+                                                    } catch (error) {
+                                                        console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    }                    
+                                                },
+                                                (error) => {
+                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                }
+                                            );
+                                        });
+                                    }
                                 }));
                                 
                                 const divTable = document.createElement("div");
@@ -2773,7 +2775,7 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por Otros Peligros Geológicos", "Población Expuesta");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Otros Peligros Geológicos", "Viviendas Expuestas");
 
-                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "ELEMENTOS EXPUESTOS", "CANTIDAD");
                             }
                             /* </AEE> */
 

@@ -323,7 +323,7 @@
             "name": "CARTOGRAFÍA DE PELIGROS",
             "srv": [
                 {
-                    "name": "Inundacion",
+                    "name": "Inundación",
                     "srv": [
                         {
                             "name": "Puntos Críticos",
