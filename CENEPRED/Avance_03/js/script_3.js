@@ -595,14 +595,23 @@ require([
                     }
                 ).always(lang.hitch(this, function() {
                     try {
+                        
                         if( this.diagnosisCount == _count) {
                             this.ID_Load.style.display = "none";
                             this.ID_TABLE_Resumen.style.display = "block";
 	                        let tabPanes = document.getElementsByClassName("tablinks");	
-	                        for(let i=0; i<tabPanes.length; i++) {
+                            let _len = tabPanes.length;
+                            /* Actived first TAB */
+	                        for(let i=0; i<_len; i++) {
                                 if(typeof tabPanes[i].style["0"] === "undefined") {
                                     tabPanes[i].click(); break;
                                 }
+                            } 
+                            /* Remove load */
+                            let tabHeaderGroup = document.getElementsByClassName("header-group");	
+                            let _leng = tabHeaderGroup.length;
+	                        for(let i=0; i<_leng; i++) {
+                                tabHeaderGroup[i].childNodes[0].remove();
                             } 
                         }                         
                     } catch (error) {
@@ -733,7 +742,7 @@ require([
             _json.map(function(lyr, index) {
                 //console.log(lyr.tag);
                 const divHeader = document.createElement("div");
-                divHeader.innerHTML = lyr.name;
+                divHeader.innerHTML = `<span class="fa fa-refresh fa-spin" style="font-size:12px; color: #FFFFFF; margin: 0 10px 10px 0;"></span>` + lyr.name;
                 if(Object.keys(lyr).length === 1) {
                     divHeader.className = "header-group";
                     _nameTemp = lyr.name;
@@ -3229,17 +3238,6 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                /*new Chart(`TB_GraphicContent_${lyr.tag}`, { 
-                                                    type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
-                                                    options: {
-                                                        responsive: false,
-                                                        plugins: {
-                                                            legend: { display:false, position:'bottom' },
-                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
-                                                        }
-                                                    }
-                                                });*/
                                                 let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
                                                 chart.data.datasets[0].data = _chartData;
                                                 chart.data.labels = _chartLabel;
@@ -3434,17 +3432,6 @@ require([
                                                 });
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
-                                                /*new Chart(`TB_GraphicContent_${lyr.tag}`, { 
-                                                    type: 'pie',
-                                                    data: { labels:_chartLabel, datasets:[{ data:_chartData, backgroundColor:configBackgroundColor, borderWidth:1 }]},
-                                                    options: {
-                                                        responsive: false,
-                                                        plugins: {
-                                                            legend: { display:false, position:'bottom' },
-                                                            title: { display:false, text:'GRÁFICO DE RESUMEN' }
-                                                        }
-                                                    }
-                                                });*/
                                                 let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
                                                 chart.data.datasets[0].data = _chartData;
                                                 chart.data.labels = _chartLabel;
