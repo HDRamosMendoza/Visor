@@ -148,7 +148,7 @@ define([
             /* Servicio de Geometria */
             //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
             esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-            this.gpExtractData = new Geoprocessor("http://geo.ana.gob.pe/arcgis/rest/services/ExtraerDatos/ExtractDataTask/GPServer/Extract%20Data%20Task");
+            this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/GeoprocesoExtracData/ExtractData");
 
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
