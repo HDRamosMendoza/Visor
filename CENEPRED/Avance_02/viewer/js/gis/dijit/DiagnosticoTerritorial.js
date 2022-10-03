@@ -1,5 +1,3 @@
-let ramos;
-this.heber = "hola";
 define([
     'dojo/_base/declare',
     'dojo/on',
@@ -117,7 +115,6 @@ define([
         analysisRandom: null,
         analysisResult: 0,
         analysisTemp: [],
-        ramos: "",
         bufferCount: 1,
         bufferTotal: 0,
         bufferRandom: null,
@@ -142,6 +139,7 @@ define([
         groupLayer_count: 1,
         groupActived: [],
         selectItem: null,
+        _listLayer: [],
      
         postCreate: function () {
             this.inherited(arguments);
@@ -470,9 +468,18 @@ define([
                         if(this.selectItem ?? false) {
                             /*features.push(this.map.graphics.graphics[0]);
                             featureSet.features = features;*/
+                            if(this._listLayer.length > 0) {
+                                _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
+                                _alert.style.display = "block";
+                                setTimeout(()=> {
+                                    _alert.style.display = "none";
+                                }, 2000);
+                                return;
+                            }
+
                             /* Validar el poligono */
                             try {
-                                let geomtryPolygon  = featureSet.features[0].geometry.rings;
+                                let geomtryPolygon  = this.reportGeometry.rings;
                                 if (typeof(geomtryPolygon) == "undefined") {
                                     _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
                                     _alert.style.display = "block";
@@ -489,48 +496,47 @@ define([
                                 }, 2000);
                                 return;
                             }
+                            
                             this.gpExtractData.submitJob (
                                 {
-                                    "Layers_to_Clip": ["CAPA1","CAPA1","CAPA1","CAPA1"],
-                                    "Area_of_Interest": this.reportGeometry,
+                                    "Layers_to_Clip": this._listLayer.toString(),
+                                    "Area_of_Interest": new Polygon({"rings":[this.reportGeometry.rings],"spatialReference":{"wkid":4326 }}),
                                     "Feature_Format": this.selectItem
                                 },
-                                /*this._completeCallback.bind(this),
-                                this._statusCallback.bind(this),
-                                this._errorCallback.bind(this)*/
+                                //this._completeCallback.bind(this),
+                                //this._statusCallback.bind(this),
+                                //this._errorCallback.bind(this)
                                 _completeCallback = function(jobInfo) {
                                     try {
                                         console.log("ESTA TRAENDO LOS DATOS");
                                         if ( jobInfo.jobStatus !== "esriJobFailed" ) {
                                             this.gpExtractData.getResultData(jobInfo.jobId, "Output_Zip_File", function(outputFile) {
                                                 try {
-                                                    /*
-                                                  this.map.graphics.clear();*/
-                                                  let theurl = outputFile.value.url;
-                                                  window.location = theurl;
+                                                    console.log(outputFile);
+                                                    let theurl = outputFile.value.url;
+                                                    window.location = theurl;
                                                 } catch (error) {
-                                                  console.log("Error: _downloadFile " + error.message);
+                                                    console.log("Error: _downloadFile " + error.message);
                                                 }
                                             }.bind(this));
                                         }
                                     } catch (error) {
                                       console.log("Error: _completeCallback " + error.message);
                                     }
-                                },      
+                                }.bind(this),      
                                 _statusCallback = function(jobInfo) {
                                     try {
-                                        /*
-                                        var status = jobInfo.jobStatus;
-                                        if ( status === "esriJobFailed" ) {
-                                            alert(status);
-                                            domStyle.set(dom.byId("loading"), "display", "none");
-                                        } else if (status === "esriJobSucceeded"){
-                                            domStyle.set(dom.byId("loading"), "display", "none");
-                                        }*/
+                                        //var status = jobInfo.jobStatus;
+                                        //if ( status === "esriJobFailed" ) {
+                                        //    alert(status);
+                                        //    domStyle.set(dom.byId("loading"), "display", "none");
+                                        //} else if (status === "esriJobSucceeded"){
+                                        //    domStyle.set(dom.byId("loading"), "display", "none");
+                                        //}
                                     } catch (error) {
                                         console.log("Error: _statusCallback " + error.message);
                                     }
-                                },    
+                                }.bind(this),    
                                 _errorCallback = function(jobInfo) {
                                     try {
                                         //alert(error);
@@ -538,9 +544,9 @@ define([
                                     } catch (error) {
                                         console.log("Error: _errorCallback " + error.message);
                                     }
-                                },
-
+                                }.bind(this)
                             );
+                            
                         } else {
                             _alert.innerHTML = "Seleccione un <strong>FORMATO</strong>";
                             _alert.style.display = "block";
@@ -796,6 +802,7 @@ define([
 
                 lyr.selectFeatures(query, FeatureLayer.SELECTION_NEW, function(features) {
                     try {
+                        this._listLayer = [];
                         features.map(function(cValue) {
                             this.geometryIntersect = new Polygon(cValue.geometry.rings,new SpatialReference({wkid:102100}));
                             let graphic = new Graphic(
@@ -855,6 +862,9 @@ define([
                                 this.ID_Percentage.innerHTML = this._loadTime(this.diagnosisCount, _total);
                                 this.diagnosisCount++;
                                 _lyr.cantidad = _attr.cantidad;
+                                if(_attr.cantidad > 0) {
+                                    this._listLayer.push(_lyr.table);
+                                }
                                 /* Delete Tbody */
                                 this._elementById(`${_id}_Tbody`).innerHTML = "";
                                 /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
@@ -869,6 +879,7 @@ define([
                                         let row = document.createElement("tr");
                                         let cell_0 = document.createElement("td");                                        
                                         let cell_0_input = document.createElement("input");
+                                        cell_0_input.style.display = "none";
                                         cell_0_input.setAttribute("type", "checkbox");
                                         cell_0_input.setAttribute("data-idName", current.id);
                                         cell_0_input.setAttribute("data-idLayer", current.position);
@@ -918,7 +929,7 @@ define([
                     try {
                         if((this.diagnosisCount == _total) && (this.diagnosisRandom == _random)) {   
                             this.ID_Load.style.display = "none";
-                            this.ID_Table_Count.style.display = "block";
+                            this.ID_Table_Count.style.display = "block";                            
                         }
                     } catch (error) {
                         console.error(`Error: _intersectLaye/queryTask always => ${error.name} - ${error.message}`);
@@ -954,7 +965,7 @@ define([
                     if ((this.diagnosisRandom == _random) && (this.groupLayer_count == this.diagnosisTotal)) {
                         this.groupLayer.forEach(element => {
                             if(element.group.name == _lyr.id) {
-                                element.group.lyr().setLayerDefinitions(element.group.lyrDefinitions);
+                                //element.group.lyr().setLayerDefinitions(element.group.lyrDefinitions);
                                 /*element.group.lyr().setVisibleLayers(element.group.id);
                                 element.group.lyr().refresh();*/
                             }
@@ -1316,6 +1327,7 @@ define([
                             url:json[i].url,
                             fields:json[i].fields,
                             id:_id,
+                            table: json[i].table,
                             color:json[i].color,
                             long:json[i].long,
                             type: _type,

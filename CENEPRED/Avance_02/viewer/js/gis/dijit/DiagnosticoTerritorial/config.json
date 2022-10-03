@@ -33,7 +33,7 @@
         {
             "name": "KMZ",
             "value": "KMZ",
-            "boolean": false
+            "boolean": true
         },
         {
             "name": "GeoJSON",
@@ -149,7 +149,7 @@
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000",
-                    "table": ""
+                    "table": "uno"
                 }
             ]
         },
@@ -196,7 +196,7 @@
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4010000",
-                    "table": ""
+                    "table": "asas"
                 },
                 { 
                     "position": 4020000,
@@ -249,7 +249,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010200",
-                            "table": ""
+                            "table": "as"
                         },
                         {
                             "position": 5010300,
@@ -263,7 +263,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010300",
-                            "table": ""
+                            "table": "dsd"
                         },
                         {
                             "position": 5010400,
@@ -277,7 +277,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010400",
-                            "table": ""
+                            "table": "sdsd"
                         }
                     ]
                 },
@@ -296,7 +296,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500",
-                            "table": ""
+                            "table": "fdsf"
                         },
                         {
                             "position": 5020200,
@@ -310,7 +310,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020200",
-                            "table": ""
+                            "table": "rwerwer"
                         }
                     ]
                 },
@@ -329,7 +329,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030100",
-                            "table": ""
+                            "table": "gfgd"
                         }
                     ]
                 },
@@ -351,7 +351,7 @@
                                         }
                                     ],
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201",
-                                    "table": ""
+                                    "table": "ertert"
                                 }
                             ]
                         }
@@ -372,7 +372,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080200",
-                            "table": ""
+                            "table": "fgdg"
                         }
                     ]
                 },
@@ -391,7 +391,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090100",
-                            "table": ""
+                            "table": "dfgdfg"
                         },
                         {
                             "position": 5090200,
@@ -405,7 +405,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090200",
-                            "table": ""
+                            "table": "wqeqwe"
                         },
                         {
                             "position": 5090300,
@@ -419,7 +419,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090300",
-                            "table": ""
+                            "table": "asdasd"
                         }
                     ]
                 },
@@ -438,7 +438,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010100",
-                            "table": ""
+                            "table": "asdsd"
                         },
                         {
                             "position": 6010200,
@@ -452,7 +452,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200",
-                            "table": ""
+                            "table": "zzz"
                         },
                         {
                             "position": 6010300,
@@ -466,7 +466,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300",
-                            "table": ""
+                            "table": "xxxx"
                         },
                         {
                             "position": 6010400,
@@ -480,7 +480,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400",
-                            "table": ""
+                            "table": "rrrrr"
                         }
                     ]
                 }
