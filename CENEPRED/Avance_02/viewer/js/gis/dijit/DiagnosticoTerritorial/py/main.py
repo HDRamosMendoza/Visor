@@ -9,9 +9,11 @@ import json
 
 # Default Folder
 scratch_Folder = arcpy.env.scratchFolder
+print(scratch_Folder)
 
 # Default GDB
 scratch_GDB = arcpy.env.scratchGDB
+print(scratch_GDB)
 
 # Workspace
 arcpy.env.workspace = os.path.join(r"D:\RepositorioGitHub\Visor\CENEPRED\Avance_02\viewer\js\gis\dijit\DiagnosticoTerritorial\py\sigrid.gdb")
@@ -45,7 +47,7 @@ geoLayer = 'ZRMN,EVAR,planes_PPRRD'
 # Param polygon instersect
 #geojson_polygon = arcpy.GetParameterAsText(1)
 #geoFormat = arcpy.GetParameterAsText(2)
-geoFormat = "PRUEBA"
+geoFormat = "SHP"
 # Param example polygon
 geojson_polygon ='''
                 { 
@@ -61,6 +63,12 @@ arcpy.AddMessage("Parametro 3: " + geojson_polygon)
 
 if __name__ == '__main__':
     if len(geoLayer) > 0 and len(geojson_polygon) > 0:
+        # Convert STRING to JSON
+        string_to_json = json.loads(geojson_polygon)        
+        # Create FEATURE
+        polygon = arcpy.AsShape(string_to_json)
+        # Bucle layer
+        item = geoLayer.split(",")
 
         if(geoFormat == "PRUEBA"):            
             response = dict()
@@ -76,13 +84,7 @@ if __name__ == '__main__':
         if(geoFormat == "ZIP"):
             if not arcpy.Exists(nameFileKMZ):
                 os.mkdir(os.path.join(scratch_Folder,nameFileKMZ))
-
-            # Convert STRING to JSON
-            string_to_json = json.loads(geojson_polygon)        
-            # Create FEATURE
-            polygon = arcpy.AsShape(string_to_json)
-            # Bucle layer
-            item = geoLayer.split(",")
+           
             for layer in item:
                 if(arcpy.Exists(layer)):
                     # Add name
@@ -115,6 +117,39 @@ if __name__ == '__main__':
         
         if(geoFormat == "SHP"):
             print("SHP")
+            if not arcpy.Exists(nameFileSHP):
+                os.mkdir(os.path.join(scratch_Folder,nameFileSHP))
+
+            for layer in item:
+                if(arcpy.Exists(layer)):
+                    # Add name
+                    layer_temp = 'lyrSHP' + layer + time_file
+                    #Se crear un Layer para su uso
+                    arcpy.MakeFeatureLayer_management(layer, layer_temp)
+                    layer = layer.replace(".", "")
+                    # Nombre del KMZ
+                    name_SHP = "SIGRID_CENEPRED_SHP_" + layer + "_" + time_file
+                    # Selección por localización
+                    arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
+                    # Ruta de destino de la conversion de un KMZ
+                    #save_SHP_URL = os.path.join(scratch_Folder,nameFileSHP, name_SHP + ".shp")
+                    arcpy.CopyFeatures_management(layer_temp, os.path.join(scratch_Folder,nameFileSHP, name_SHP + ".shp"))
+                    # Conversión de LAYER a KML
+                    #arcpy.FeatureClassToShapefile_conversion(layer_temp,save_SHP_URL)
+                else:
+                    print("Not exist: {}".format(layer))                        
+            
+            _pathZip = os.path.join(scratch_Folder,nameFileSHP,nameFileSHP_Zip + ".zip")
+            zfile = zipfile.ZipFile(_pathZip, "w", zipfile.ZIP_STORED)
+            files = os.listdir(os.path.join(scratch_Folder,nameFileSHP))
+            for f in files:
+                if f.endswith("shp") or f.endswith("dbf") or f.endswith("shx"):
+                    zfile.write(os.path.join(scratch_Folder,nameFileSHP,f))
+
+            zfile.close()
+            # Response KMZ
+            arcpy.SetParameterAsText(4, _pathZip)
+            print(_pathZip)
 
         if(geoFormat == "GDB"):
             print("GDB")
