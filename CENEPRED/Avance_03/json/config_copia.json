@@ -219,6 +219,103 @@
 
                         }
                     ]
+                },
+                { 
+                    "name": "Zonas de Riesgo No Mitigables",
+                    "objectid": "objectid",
+                    "rgb": "rgb(199,0,57)",
+                    "fields":[
+                        {
+                            "alias": "Departamento",
+                            "name": "nom_dep"
+                        },
+                        {
+                            "alias": "Provincia",
+                            "name": "nom_prov"
+                        },
+                        {
+                            "alias": "Distrito",
+                            "name": "nom_dist"
+                        },
+                        {
+                            "alias": "Documento Sustentario",
+                            "name": "fuente"
+                        },                        
+                        {
+                            "alias": "Nombre de la ZRNM",
+                            "name": "nom_predio"
+                        },
+                        {		
+                            "alias": "Documento Imagen",
+                            "name": "url_img",
+                            "visible": false,
+                            "format": {
+                                "template": "<center><a href=\"${value}\" target=\"_blank\"><i class=\"fa fa-cloud-download\" style=\"font-size:18px\"></i> Descargar Imagen</a></center>"
+                            }
+                        },
+                        {		
+                            "alias": "Documento",
+                            "name": "url",
+                            "format": {
+                                "template": "<center><a href=\"${value}\" target=\"_blank\"><i class=\"fa fa-cloud-download\" style=\"font-size:18px\"></i> Descargar</a></center>"
+                            }
+                        }
+                    ],
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4020000",
+                    "content": [
+                        {
+                            "version_03": [
+                                {
+                                    "imagen": "url_img",
+                                    "nota": "La zona de riesgo intangible para fines de vivienda es aquella zona de riesgo no mitigable, cuyo uso, posesión, transferencia para fines de vivienda queda expresamente prohibida, y el CENEPRED declara la intangibilidad para fines de vivienda en zonas declaradas de riesgo no mitigables.",
+                                    "field": "ambito",
+                                    "cuenta": [
+                                        {
+                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> zonas de riesgo no mitigable",
+                                            "negacion": "seleccionado <strong>NO CUENTA</strong> con zonas de riesgos no mitigables"
+                                        }
+                                    ],
+                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
+                                    "fields": [
+                                        {
+                                            "alias": "Población",
+                                            "name": "pob_total",
+                                            "note": "Población expuesta en zonas de riesgos no mitigables",
+                                            "td": "Zona de Riesgos No Mitigables",
+                                            "default": true                    
+                                        },
+                                        {
+                                            "alias": "Vivienda",
+                                            "name": "num_viv_part",
+                                            "note": "Viviendas expuestas en zonas de riesgos no mitigables",
+                                            "td": "Zona de Riesgos No Mitigables"
+                                        }
+                                    ],
+                                    "ambit":[
+                                        {
+                                            "name": "nom_dep",
+                                            "alias": "DEPA"
+                                        },
+                                        {
+                                            
+                                            "name": "nom_prov",
+                                            "alias": "PROV"
+                                        },
+                                        {
+                                            
+                                            "name": "nom_dist",
+                                            "alias": "DIST"
+                                        }
+                                    ],
+                                    "analysis": [
+                                        {
+                                            "field": "shape"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },

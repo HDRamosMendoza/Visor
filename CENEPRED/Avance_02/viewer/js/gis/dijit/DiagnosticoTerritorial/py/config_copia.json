@@ -197,6 +197,36 @@
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4010000",
                     "table": "asas"
+                },
+                { 
+                    "position": 4020000,
+                    "name": "Zonas de Riesgo No Mitigables",
+                    "objectid": "objectid",
+                    "rgb": "rgb(199,0,57)",
+                    "fields":[
+                        {
+                            "alias": "Departamento",
+                            "name": "nom_dep"
+                        },
+                        {
+                            "alias": "Provincia",
+                            "name": "nom_prov"
+                        },
+                        {
+                            "alias": "Distrito",
+                            "name": "nom_dist"
+                        },
+                        {
+                            "alias": "Documento Sustentario",
+                            "name": "fuente"
+                        },                        
+                        {
+                            "alias": "Nombre de la ZRNM",
+                            "name": "nom_predio"
+                        }
+                    ],
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4020000",
+                    "table": ""
                 }
             ]
         },
