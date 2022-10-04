@@ -67,18 +67,6 @@
                             "name": "ambito"
                         },
                         {
-                            "alias": "Departamento",
-                            "name": "nom_dep"
-                        },
-                        {
-                            "alias": "Provincia",
-                            "name": "nom_prov"
-                        },
-                        {
-                            "alias": "Distrito",
-                            "name": "nom_dist"
-                        },
-                        {
                             "alias": "Nombre del PPRRD",
                             "name": "nombre"
                         },
@@ -129,28 +117,12 @@
                     "rgb": "rgb(144,12,63)",
                     "fields":[
                         {
-                            "alias": "Departamento",
-                            "name": "nom_dep"
-                        },
-                        {
-                            "alias": "Provincia",
-                            "name": "nom_prov"
-                        },
-                        {
-                            "alias": "Distrito",
-                            "name": "nom_dist"
-                        },
-                        {
                             "alias": "Ámbito",
                             "name": "ambito"
                         },
                         {
                             "alias": "Nombre de EVAR",
                             "name": "nombre"
-                        },
-                        {
-                            "alias": "Tipo de Peligro",
-                            "name": ""
                         },
                         {
                             "alias": "Autor Coorporativo",
@@ -235,7 +207,7 @@
                             "fields":[
                                 {
                                     "alias": "Departamento",
-                                    "name": "nom_dep"
+                                    "name": "nom_dpto"
                                 },
                                 {
                                     "alias": "Provincia",
@@ -260,54 +232,6 @@
                                 {
                                     "alias": "Nro. de Viviendas",
                                     "name": "vivendas_e"
-                                },
-                                {
-                                    "alias": "Nro. de Instituciones Educativas",
-                                    "name": "I_educat_e"
-                                },
-                                {
-                                    "alias": "Nro. de Postas Médicas",
-                                    "name": "E_Salud_e"
-                                },
-                                {
-                                    "alias": "Áreas de Cultivo",
-                                    "name": "A_cult_e"
-                                },
-                                {
-                                    "alias": "Ganadería Afectada",
-                                    "name": "Ganado_e"
-                                },
-                                {
-                                    "alias": "Carreteras",
-                                    "name": "Carret_e"
-                                },
-                                {
-                                    "alias": "Caminos",
-                                    "name": "Camino_e"
-                                },
-                                {
-                                    "alias": "Puentes",
-                                    "name": "Puente_e"
-                                },
-                                {
-                                    "alias": "Bocatomas",
-                                    "name": "Bocatoma_e"
-                                },
-                                {
-                                    "alias": "Canales",
-                                    "name": "Canales_e"
-                                },
-                                {
-                                    "alias": "Diques",
-                                    "name": "Diques_e"
-                                },
-                                {
-                                    "alias": "Drenes",
-                                    "name": "Drenes_e"
-                                },
-                                {
-                                    "alias": "Acequias",
-                                    "name": "Acequia_e"
                                 },
                                 {
                                     "alias": "Medidas de Prevención",
@@ -457,15 +381,15 @@
                             "fields":[
                                 {
                                     "alias": "Departamento",
-                                    "name": "nom_dep"
+                                    "name": "departamen"
                                 },
                                 {
                                     "alias": "Provincia",
-                                    "name": "nom_prov"
+                                    "name": "provincia"
                                 },
                                 {
                                     "alias": "Distrito",
-                                    "name": "nom_dist"
+                                    "name": "distrito"
                                 },
                                 {
                                     "alias": "Nombre de Fajas",
@@ -537,7 +461,7 @@
                     ]
                 },
                 {
-                    "name": "Movimientos en masa",
+                    "name": "Movimientos En Masa",
                     "srv": [
                         {
                             "name": "Zonas Críticas",
@@ -931,7 +855,7 @@
                     ]
                 },
                 {
-                    "name": "Inducidos por la acción humana",
+                    "name": "Inducidos Por La Acción Humana",
                     "srv": [
                         {
                             "name": "Pasivos Ambientales Mineros",
