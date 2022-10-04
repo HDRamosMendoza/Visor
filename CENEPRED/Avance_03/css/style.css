@@ -709,3 +709,28 @@ a:hover {
     transform: translate(24px, 0);
   }
 }
+/* Export DATA EXCEL */
+.report-main .row-excel {
+  margin-top: 10px;
+  height: 45px;
+}
+
+.report-main .row-excel .btn-excel {
+  border-radius: 0;
+  border: 0;
+  background-color: #2c6975;
+  color: white;
+  cursor: pointer;
+  float: right;
+  height: 35px;
+  width: 120px;  
+}
+.report-main .row-excel .btn-excel:hover {
+  background-color: #F6F6F6;
+  border-top: 4px solid #D68910;
+  font-weight: 700;
+  color: #181818;
+}
+.report-main .row-excel table{
+  display: none;
+}
