@@ -56,6 +56,7 @@ require([
     let chartID = "ID_TABLE_Graphic";
     let graphicID = "ID_CR_Graphic";
     let summaryID = "ID_CR_Summary";
+    let _tabName = null
     
     this.analysisTotal = 0;
     this.diagnosisTotal = 0;
@@ -437,6 +438,8 @@ require([
             configSummary_Temp.splice(index, 1);
         }
     });*/
+
+    
     /* Carga de datos al acordion 
     let _acordionLoad = function(_summaryID,_graphicID) {
         try {//summaryID,graphicID
@@ -627,6 +630,12 @@ require([
             console.error(`Error: _queryTask => ${error.name} - ${error.message}`); 
         }
     };
+
+    let _removeAccents = function(_text) {
+        _text = String(_text);
+        const acentos = {'á':'a','é':'e','í':'i','ó':'o','ú':'u','Á':'A','É':'E','Í':'I','Ó':'O','Ú':'U','ñ':'ni'};
+        return _text.split('').map( letra => acentos[letra] || letra).join('').toString();
+    };
     
     let _featureTable = function(srv,objectid,fields) {
         try {
@@ -645,14 +654,17 @@ require([
                 visible: false,
                 id: `ID_FL${_idTable}`
             });
-
+            let _fields = fields.map(x => x.name);
             let queryTask = new QueryTask(srv);
+            /*console.log(_fields);
+            console.log(srv);*/
             let _idQueryTask = null;
             let query = new Query();
+            query.outFields = _fields;
             query.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
             query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
             query.returnGeometry = false;
-            query.where = "1=1";
+            /*query.where = "1=1";*/
             queryTask.executeForIds(query).then(
                 (response) => {
                     try {
@@ -713,10 +725,71 @@ require([
                     console.error(`Error: _queryTask/queryTask always => ${error.name} - ${error.message}`);
                 } 
             }.bind(this)));
+
+            /* Export EXCEL */
+            const _documento = "https://sigrid.cenepred.gob.pe/sigridv3/documento/";
+            queryTask.execute(query).then(
+                (response) => {
+                    try {
+                        _elementById(`ID_BTN_EXCEL_TB`).innerHTML = "";
+                        let fragment = document.createDocumentFragment();
+
+                        let rowHeader = document.createElement("tr"); 
+                        _fields.map((item, index) => {
+                            let rowCol = document.createElement("td");
+                            rowCol.innerText = _removeAccents(fields[index].alias);
+                            rowHeader.appendChild(rowCol);
+                        });
+                        fragment.appendChild(rowHeader);
+                        
+                        response.features.forEach((element, index, arr) => {
+                                let row = document.createElement("tr"); 
+                                _fields.map((item) => {
+                                    let rowCol = document.createElement("td");
+                                    rowCol.innerText = item == "id_documento" ?  _documento+arr[index].attributes[item] :_removeAccents(arr[index].attributes[item]);
+                                    row.appendChild(rowCol);
+                                });
+                                fragment.appendChild(row);
+                                _elementById(`ID_BTN_EXCEL_TB`).appendChild(fragment);
+                            }
+                        );
+                    } catch (error) {
+                        console.error(`Execute: _queryTask => ${error.name} - ${error.message}`);
+                    }
+                },
+                (error) => {  
+                    console.error(`Error: Execute => ${error.name} - ${error.message}`);
+                }
+            );
         } catch(error) {
             console.error(`_featureTable: ${error.name} - ${error.message}`);
         }
     };
+
+    let _exportTableToExcel = function(tableID, filename = '') {
+        let d = new Date();
+        let downloadLink;
+        let dataType = 'application/vnd.ms-excel';
+        let tableSelect = document.getElementById(tableID);
+        let tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+        filename = filename?`${filename}_${d.getDate()}${d.getMonth()+1}${d.getFullYear()}_${d.getHours()}${d.getMinutes()}${d.getSeconds()}.xls`:'excel_data.xls';
+        downloadLink = document.createElement("a");        
+        document.body.appendChild(downloadLink);
+        if(navigator.msSaveOrOpenBlob) {
+            var blob = new Blob(['ufeff', tableHTML], {
+                type: dataType
+            });
+            navigator.msSaveOrOpenBlob( blob, filename);
+        } else {
+            downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+            downloadLink.download = filename;
+            downloadLink.click();
+        }        
+    }
+
+    _elementById("ID_BTN_EXCEL").onclick = function() {
+        _exportTableToExcel("ID_BTN_EXCEL_TB", _tabName);
+    }
   
     let _summaryGeneral = function(_ambito) {
         try { /* if(_ambito ?? true) { */
@@ -774,8 +847,13 @@ require([
                         document.getElementById(ContentID).style.display = "block"; /* CONTENT */
                         document.getElementById(ContentID).classList.add("active"); /* CONTENT */                        
                         
-                        if(featureTable !== null) { featureTable.destroy(); }
-
+                        if(featureTable !== null) { 
+                            featureTable.destroy();
+                        }
+                        
+                        _tabName = nodeHeader.innerText.split("/").join(''); 
+                        _tabName = _tabName.split(" ").join(''); 
+                        
                         _featureTable(
                             nodeHeader.getAttribute("data-url"),
                             nodeHeader.getAttribute("data-objectid"),
@@ -3517,7 +3595,7 @@ require([
                             /* </OIA> */
                         }
                         //_elementById(`IDTable_${lyr.tag}`).appendChild();
-                    };
+                    }.bind(this);
                     divHeader.innerHTML = lyr.name.replace(_nameTemp + " /", "");
                     divHeader.dataset.url = lyr.url;
                     divHeader.dataset.objectid = lyr.objectid;
