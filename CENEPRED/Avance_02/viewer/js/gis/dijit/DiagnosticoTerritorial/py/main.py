@@ -80,8 +80,8 @@ if __name__ == '__main__':
                     response[layer] = {"layer": layer, "exit": "SI"}
                 else:
                     response[layer] = {"layer": layer, "exit": "NO"}
-            response = json.dumps(response)
-            arcpy.SetParameterAsText(4, response)
+            resp = json.dumps(response)
+            arcpy.SetParameterAsText(4, resp)
 
         # Download KMZ
         if(geoFormat == "KMZ"):

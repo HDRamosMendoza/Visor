@@ -713,7 +713,7 @@
                                         },
                                         {
                                             "alias": "Nivel del Peligro",
-                                            "name": "NIVEL"
+                                            "name": "nivel"
                                         },
                                         {
                                             "alias": "Descripción de la situación",
@@ -1047,7 +1047,7 @@
                                 },
                                 {
                                     "alias": "Fuente Logo",
-                                    "name": "fuente_log"
+                                    "name": "fuente_logo"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010100",
@@ -1099,7 +1099,7 @@
                                 },
                                 {
                                     "alias": "Fuente Logo",
-                                    "name": "fuente_logo"
+                                    "name": "fuente_log"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200",
@@ -1151,7 +1151,7 @@
                                 },
                                 {
                                     "alias": "Fuente Logo",
-                                    "name": "fuente_logo"
+                                    "name": "fuente_log"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300",
@@ -1199,7 +1199,7 @@
                                 },
                                 {
                                     "alias": "Tipo de Infraestructura",
-                                    "name": "tipo_infra"
+                                    "name": "tipo_infraestructura"
                                 },
                                 {
                                     "alias": "Descripción",
@@ -1207,7 +1207,7 @@
                                 },
                                 {
                                     "alias": "Fuente Logo",
-                                    "name": "fuente_logo"
+                                    "name": "fuente_log"
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400",
