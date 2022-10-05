@@ -147,7 +147,8 @@ define([
             //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
             esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
             this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/GeoprocesoExtracData/ExtractData");
-
+            //https://sigrid.cenepred.gob.pe/arcgis/rest/services/GeoprocesoExtracData/ExtractData/GPServer/Script
+            
             const config = JSON.parse(configJSON);
             console.log("in postCreate");
             this._htmlTable(this.ID_Table_Count);

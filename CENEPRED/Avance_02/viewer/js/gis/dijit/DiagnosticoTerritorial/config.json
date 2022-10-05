@@ -149,7 +149,7 @@
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000",
-                    "table": "uno"
+                    "table": "bdcenepred.v3.v_documento_pprrd"
                 }
             ]
         },
@@ -196,7 +196,7 @@
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4010000",
-                    "table": "asas"
+                    "table": "bdcenepred.v3.v_documento_evar_con_indicadores"
                 }
             ]
         },
@@ -219,7 +219,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010200",
-                            "table": "as"
+                            "table": "bdcenepred.cartografia_peligros.Hidrom_Oceanograficos/bdcenepred.cartografia_peligros.Inventario_inundacion_2"
                         },
                         {
                             "position": 5010300,
@@ -233,7 +233,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010300",
-                            "table": "dsd"
+                            "table": "bdcenepred.cartografia_peligros.Hidrom_Oceanograficos/bdcenepred.cartografia_peligros.Areas_expuestas_inundaciones_1"
                         },
                         {
                             "position": 5010400,
@@ -247,7 +247,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010400",
-                            "table": "sdsd"
+                            "table": "bdcenepred.cartografia_peligros.Hidrom_Oceanograficos/bdcenepred.cartografia_peligros.Fajas_marginales_1"
                         }
                     ]
                 },
@@ -266,7 +266,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500",
-                            "table": "fdsf"
+                            "table": "bdcenepred.cartografia_peligros.zona_critica"
                         },
                         {
                             "position": 5020200,
@@ -280,7 +280,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020200",
-                            "table": "rwerwer"
+                            "table": "bdcenepred.cartografia_peligros.Geod_Externa/bdcenepred.cartografia_peligros.AreasAfectadasFlujos"
                         }
                     ]
                 },
@@ -299,7 +299,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030100",
-                            "table": "gfgd"
+                            "table": "bdcenepred.cartografia_peligros.Geod_Interna/bdcenepred.cartografia_peligros.AreaInundacionTsunami"
                         }
                     ]
                 },
@@ -321,7 +321,7 @@
                                         }
                                     ],
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201",
-                                    "table": "ertert"
+                                    "table": "bdcenepred.cartografia_peligros.Geod_Interna/bdcenepred.cartografia_peligros.AreasAfectadasPeligroVolcanico"
                                 }
                             ]
                         }
@@ -342,7 +342,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080200",
-                            "table": "fgdg"
+                            "table": "bdcenepred.cartografia_peligros.Geod_Externa/bdcenepred.cartografia_peligros.Areas_OtrosPelGeolog"
                         }
                     ]
                 },
@@ -361,7 +361,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090100",
-                            "table": "dfgdfg"
+                            "table": "bdcenepred.cartografia_peligros.Originados_Accion_Humana/bdcenepred.cartografia_peligros.Pasivos_ambientales_mineros_"
                         },
                         {
                             "position": 5090200,
@@ -375,7 +375,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090200",
-                            "table": "wqeqwe"
+                            "table": "bdcenepred.cartografia_peligros.Originados_Accion_Humana/bdcenepred.cartografia_peligros.Pasivos_ambientales_hidrocarburos_"
                         },
                         {
                             "position": 5090300,
@@ -389,7 +389,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090300",
-                            "table": "asdasd"
+                            "table": "bdcenepred.cartografia_peligros.Originados_Accion_Humana/bdcenepred.cartografia_peligros.MINAM_IncendiosForestales"
                         }
                     ]
                 },
@@ -408,7 +408,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010100",
-                            "table": "asdsd"
+                            "table": "bdcenepred.informacion_complementa.otros/bdcenepred.informacion_complementa.Puntos_control_geologico"
                         },
                         {
                             "position": 6010200,
@@ -422,7 +422,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200",
-                            "table": "zzz"
+                            "table": "bdcenepred.informacion_complementa.otros/bdcenepred.informacion_complementa.FENC_afect_VIV"
                         },
                         {
                             "position": 6010300,
@@ -436,7 +436,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300",
-                            "table": "xxxx"
+                            "table": "bdcenepred.informacion_complementa.otros/bdcenepred.informacion_complementa.FENC_afect_CARRETERA"
                         },
                         {
                             "position": 6010400,
@@ -450,7 +450,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400",
-                            "table": "rrrrr"
+                            "table": "bdcenepred.informacion_complementa.otros/bdcenepred.informacion_complementa.FENC_afect_OBRASINFRA"
                         }
                     ]
                 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import zipfile
 import os
@@ -48,19 +48,19 @@ geoFormat = arcpy.GetParameterAsText(2)
 
 #geoLayer = 'ZRMN,EVAR,planes_PPRRD'
 #geoFormat = "GDB" || "SHP" || "GDB" || "PRUEBA"
-'''
-geojson_polygon =
-                { 
+
+geojson_polygon ='''{ 
                     "type": "Polygon", 
                     "coordinates": [
                         [[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]
                     ],
                     "spatialReference" : { "wkid" : 4326 }
-                }
-'''
+                }'''
+
 arcpy.AddMessage("Parametro 1: " + geoLayer)
 arcpy.AddMessage("Parametro 2: " + geoFormat)
 arcpy.AddMessage("Parametro 3: " + geojson_polygon)
+arcpy.AddMessage("Parametro 4: " + scratch_GDB)
 
 if __name__ == '__main__':
     if len(geoLayer) > 0 and len(geojson_polygon) > 0:
@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 else:
                     response[layer] = {"layer": layer, "exit": "NO"}
             resp = json.dumps(response)
-            arcpy.SetParameterAsText(4, resp)
+            arcpy.SetParameterAsText(3, resp)
 
         # Download KMZ
         if(geoFormat == "KMZ"):
