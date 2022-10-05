@@ -143,14 +143,14 @@ define([
      
         postCreate: function () {
             this.inherited(arguments);
-            /* Servicio de Geometria */
-            //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
-            esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-            this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/GeoprocesoExtracData/ExtractData");
-            //https://sigrid.cenepred.gob.pe/arcgis/rest/services/GeoprocesoExtracData/ExtractData/GPServer/Script
-            
-            const config = JSON.parse(configJSON);
             console.log("in postCreate");
+            //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+            /* Servicio de Geometria */
+            esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+            /* Servicio de Geoproceso */
+            this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/GeoprocesoExtracData/ExtractData");
+            /*https://sigrid.cenepred.gob.pe/arcgis/rest/services/GeoprocesoExtracData/ExtractData/GPServer/Script */
+            const config = JSON.parse(configJSON);            
             this._htmlTable(this.ID_Table_Count);
             this._htmlTableAnalysis(this.ID_Table_Buffer);
             this._htmlTable(this.ID_Table_Analysis);
