@@ -746,7 +746,7 @@ require([
                                 let row = document.createElement("tr"); 
                                 _fields.map((item) => {
                                     let rowCol = document.createElement("td");
-                                    rowCol.innerText = item == "id_documento" ?  _documento+arr[index].attributes[item] :_removeAccents(arr[index].attributes[item]);
+                                    rowCol.innerText = item == "id_documento" ?  _documento+arr[index].attributes[item] :_removeAccents(arr[index].attributes[item]) ?? "";
                                     row.appendChild(rowCol);
                                 });
                                 fragment.appendChild(row);
