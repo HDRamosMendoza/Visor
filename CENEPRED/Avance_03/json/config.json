@@ -552,11 +552,11 @@
                                 },
                                 {
                                     "alias": "Tipo de Peligro",
-                                    "name": "tip_peligr"
+                                    "name": "tip_peligro"
                                 },
                                 {
                                     "alias": "Peligro Específico",
-                                    "name": "peligro_es"
+                                    "name": "peligro_esp"
                                 },
                                 {
                                     "alias": "Fuente (logo)",
@@ -803,11 +803,11 @@
                                 },
                                 {
                                     "alias": "Tipo de Peligro",
-                                    "name": "tip_peligr"
+                                    "name": "tip_peligro"
                                 },
                                 {
                                     "alias": "Peligro Específico",
-                                    "name": "peligro_es"
+                                    "name": "peligro_esp"
                                 },
                                 {
                                     "alias": "Fuente (logo)",
