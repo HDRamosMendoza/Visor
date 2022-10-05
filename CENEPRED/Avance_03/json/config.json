@@ -87,6 +87,7 @@
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_CENEPRED/MapServer/3010000",
+                    "table": "bdcenepred.v3.v_documento_pprrd",
                     "content": [
                         {
                             "version_01": [
@@ -137,6 +138,7 @@
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4010000",
+                    "table": "bdcenepred.v3.v_documento_evar_con_indicadores",
                     "content": [
                         {
                             "version_02": [
@@ -243,6 +245,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010200",
+                            "table": "bdcenepred.cartografia_peligros.Hidrom_Oceanograficos/bdcenepred.cartografia_peligros.Inventario_inundacion_2",
                             "content": [
                                 {
                                     "version_04": [
@@ -321,6 +324,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010300",
+                            "table": "bdcenepred.cartografia_peligros.Hidrom_Oceanograficos/bdcenepred.cartografia_peligros.Areas_expuestas_inundaciones_1",
                             "content": [
                                 {
                                     "version_05": [
@@ -405,6 +409,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5010400",
+                            "table": "bdcenepred.cartografia_peligros.Hidrom_Oceanograficos/bdcenepred.cartografia_peligros.Fajas_marginales_1",
                             "content": [
                                 {
                                     "version_06": [
@@ -498,6 +503,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020500",
+                            "table": "bdcenepred.cartografia_peligros.zona_critica",
                             "content": [
                                 {
                                     "version_07": [
@@ -564,6 +570,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5020200",
+                            "table": "bdcenepred.cartografia_peligros.Geod_Externa/bdcenepred.cartografia_peligros.AreasAfectadasFlujos",
                             "content": [
                                 {
                                     "version_08": [
@@ -653,6 +660,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5030100",
+                            "table": "bdcenepred.cartografia_peligros.Geod_Interna/bdcenepred.cartografia_peligros.AreaInundacionTsunami",
                             "content": [
                                 {
                                     "version_09": [
@@ -725,6 +733,7 @@
                                         }
                                     ],
                                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5050201",
+                                    "table": "bdcenepred.cartografia_peligros.Geod_Interna/bdcenepred.cartografia_peligros.AreasAfectadasPeligroVolcanico",
                                     "content": [
                                         {
                                             "version_10": [
@@ -815,6 +824,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5080200",
+                            "table": "bdcenepred.cartografia_peligros.Geod_Externa/bdcenepred.cartografia_peligros.Areas_OtrosPelGeolog",
                             "content": [
                                 {
                                     "version_11": [
@@ -892,6 +902,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090100",
+                            "table": "bdcenepred.cartografia_peligros.Originados_Accion_Humana/bdcenepred.cartografia_peligros.Pasivos_ambientales_mineros_",
                             "content": [
                                 {
                                     "version_12": [
@@ -949,6 +960,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090200",
+                            "table": "bdcenepred.cartografia_peligros.Originados_Accion_Humana/bdcenepred.cartografia_peligros.Pasivos_ambientales_hidrocarburos_",
                             "content": [
                                 {
                                     "version_13": [
@@ -1009,6 +1021,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Peligros/MapServer/5090300",
+                            "table": "bdcenepred.cartografia_peligros.Originados_Accion_Humana/bdcenepred.cartografia_peligros.MINAM_IncendiosForestales",
                             "content": [
                                 {
                                     "version_14": [
@@ -1051,6 +1064,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010100",
+                            "table": "bdcenepred.informacion_complementa.otros/bdcenepred.informacion_complementa.Puntos_control_geologico",
                             "content": [
                                 {
                                     "version_15": [
@@ -1103,6 +1117,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200",
+                            "table": "bdcenepred.informacion_complementa.otros/bdcenepred.informacion_complementa.FENC_afect_VIV",
                             "content": [
                                 {
                                     "version_16": [
@@ -1155,6 +1170,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300",
+                            "table": "bdcenepred.informacion_complementa.otros/bdcenepred.informacion_complementa.FENC_afect_CARRETERA",
                             "content": [
                                 {
                                     "version_17": [
@@ -1211,6 +1227,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400",
+                            "table": "bdcenepred.informacion_complementa.otros/bdcenepred.informacion_complementa.FENC_afect_OBRASINFRA",
                             "content": [
                                 {
                                     "version_18": [
@@ -1242,8 +1259,8 @@
                     "field": "objectid_1"
                 }
             ],
-            
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2110002"
+            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2110002",
+            "table": "bdcenepred.elementos_expuestos.Centros_poblados/bdcenepred.elementos_expuestos.INEI_CentrosPoblados"
         },
         { 
             "name": "Establecimientos de Salud",
@@ -1253,7 +1270,8 @@
                     "field": "objectid"
                 }
             ],
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2020000"
+            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2020000",
+            "table": "bdcenepred.elementos_expuestos.minsa_establecimientossalud_view02"
         },
         { 
             "name": "Instituciones Educativas",
@@ -1263,7 +1281,8 @@
                     "field": "objectid"
                 }
             ],
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2030000"
+            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2030000",
+            "table": "bdcenepred.e_minedu.iiee_webservice_view"
         },
         { 
             "name": "Recursos Para Respuesta",
@@ -1273,7 +1292,8 @@
                     "field": "objectid"
                 }
             ],
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2040000"
+            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2040000",
+            "table": "bdcenepred.elementos_expuestos.Recursos_paraRespuesta"
         },
         { 
             "name": "Penitenciarias",
@@ -1284,7 +1304,8 @@
                 }
             ],
             
-            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2050000"
+            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2050000",
+            "table": "bdcenepred.elementos_expuestos.otros/bdcenepred.elementos_expuestos.Penitenciarias_1"
         },
         { 
             "name": "Infraestructura Vial y Transporte",
@@ -1297,7 +1318,8 @@
                             "field": "objectid"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060100"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060100",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_transporte"
                 },
                 { 
                     "name": "Red Ferroviaria",
@@ -1308,7 +1330,8 @@
                         }
                     ],
                     
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060200"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060200",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_vial/bdcenepred.elementos_expuestos.MTC_RedFerroviaria_1"
                 },
                 { 
                     "name": "Red Vial",
@@ -1319,7 +1342,8 @@
                         }
                     ],
                     
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060300"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060300",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_vial/bdcenepred.elementos_expuestos.MTC_RedVial"
                 },
                 { 
                     "name": "Otra Infraestructura",
@@ -1329,7 +1353,8 @@
                             "field": "objectid"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060400"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2060400",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_vial/bdcenepred.elementos_expuestos.Infraestructura_VialOtra"
                 }
             ]
         },
@@ -1347,7 +1372,8 @@
                                     "field": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070101"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070101",
+                            "table": "bdcenepred.elementos_expuestos.Infraestructura_electrica"
                         },
                         { 
                             "name": "Central Hidraúlica",
@@ -1357,7 +1383,8 @@
                                     "field": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070102"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070102",
+                            "table": "bdcenepred.elementos_expuestos.Infraestructura_Electrica/bdcenepred.elementos_expuestos.CentralHidraulicas_OSINERGMIN"
                         },
                         { 
                             "name": "Central Térmica",
@@ -1367,7 +1394,8 @@
                                     "field": "objectid"
                                 }
                             ],
-                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070103"
+                            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070103",
+                            "table": "bdcenepred.elementos_expuestos.Infraestructura_Electrica/bdcenepred.elementos_expuestos.CentralTermicas_OSINERGMIN"
                         }
                     ]
                 },
@@ -1379,7 +1407,8 @@
                             "field": "objectid"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070200"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2070200",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_sanitaria"
                 }
             ]
         },
@@ -1394,7 +1423,8 @@
                             "field": "objectid"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080100"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080100",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_hidrica/bdcenepred.elementos_expuestos.Infraestructura_Hídrica_Pozos"
                 },
                 { 
                     "name": "Canales",
@@ -1404,7 +1434,8 @@
                             "field": "objectid"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080200"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080200",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_hidrica/bdcenepred.elementos_expuestos.Infraestructura_Hídrica_Canales"
                 },
                 { 
                     "name": "Reservorios",
@@ -1414,7 +1445,8 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080300"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080300",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_hidrica/bdcenepred.elementos_expuestos.Infraestructura_Hidrica_Reservorios"
                 },
                 { 
                     "name": "Infraestructura de Prevención y/o Reducción",
@@ -1424,7 +1456,8 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080400"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2080400",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_hidrica/bdcenepred.elementos_expuestos.Infraestructura_PrevencionReduccion_act"
                 }
             ]
         },
@@ -1439,7 +1472,8 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090100"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090100",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_hidrocarburos/bdcenepred.elementos_expuestos.OSINERGMIN_Refinerias"
                 },
                 { 
                     "name": "Establecimientos",
@@ -1449,7 +1483,8 @@
                             "field": "objectid"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090200"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090200",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_hidrocarburos/bdcenepred.elementos_expuestos.OSINERGMIN_Establecimientos_Hidrocarburos"
                 },
                 { 
                     "name": "Plantas de Abastecimiento de Combustibles Líquidos",
@@ -1459,7 +1494,8 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090300"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090300",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_hidrocarburos/bdcenepred.elementos_expuestos.OSINERGMIN_Plantas_Abastecimiento"
                 },
                 { 
                     "name": "Planta Envasadora de GLP",
@@ -1469,7 +1505,8 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090400"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090400",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_hidrocarburos/bdcenepred.elementos_expuestos.OSINERGMIN_Plantas_GLP"
                 },
                 { 
                     "name": "Gasoducto, Oleoducto y Poliducto",
@@ -1479,7 +1516,8 @@
                             "field": "objectid"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090500"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2090500",
+                    "table": "bdcenepred.elementos_expuestos.Infraestructura_hidrocarburos/bdcenepred.elementos_expuestos.Gasoducto_Oleoducto_Poliducto"
                 }
             ]
         },
@@ -1494,17 +1532,8 @@
                             "field": "objectid_1"
                         }
                     ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300"
-                },
-                { 
-                    "name": "Manzanas Referenciales 2007",
-                    "fields":[
-                        {
-                            "alias": "objectid",
-                            "field": "objectid"
-                        }
-                    ],
-                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100400"
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
+                    "table": "bdcenepred.elementos_expuestos.Predios_urbanos/bdcenepred.elementos_expuestos.INEI_ManzanasReferenciales"
                 }
             ]
         }
