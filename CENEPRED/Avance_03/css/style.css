@@ -364,8 +364,8 @@ input.tabs-horiz:checked + label {
 }
 .tabs .tab-header > div:hover,
 .tabs .tab-header > div.active {
-  color: #2A2929;
-  background-color: #FFFFFF;
+  color: #0a2605;
+  background-color: #CDE0C9;  
   border-top: 4px solid #D68910;
 }
 .tabs .tab-header div i {
@@ -726,10 +726,10 @@ a:hover {
   width: 120px;  
 }
 .report-main .row-excel .btn-excel:hover {
-  background-color: #F6F6F6;
+  color: #0a2605;
+  background-color: #CDE0C9;  
   border-top: 4px solid #D68910;
   font-weight: 700;
-  color: #181818;
 }
 .report-main .row-excel table{
   display: none;
