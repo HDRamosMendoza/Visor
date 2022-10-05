@@ -890,7 +890,7 @@ require([
                                                 _ambito = _ambito.replace("PROVINCIA ","");
                                                 _ambito = _ambito.replace("DEPARTAMENTO ","");
                                                 if(_ambito == _ambitoLS) {                                                    
-                                                    //_note.className = "sect-nota-info";
+                                                    _note.className = "sect-nota-info";
                                                     _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion}`;                                                                                              
                                                     _img.className = "sect-nota-info";
                                                     _img.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
