@@ -48,19 +48,19 @@ geoFormat = arcpy.GetParameterAsText(2)
 
 #geoLayer = 'ZRMN,EVAR,planes_PPRRD'
 #geoFormat = "GDB" || "SHP" || "GDB" || "PRUEBA"
-
-geojson_polygon ='''{ 
+'''
+geojson_polygon ={ 
                     "type": "Polygon", 
                     "coordinates": [
                         [[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]
                     ],
                     "spatialReference" : { "wkid" : 4326 }
-                }'''
-
+                }
+'''
 arcpy.AddMessage("Parametro 1: " + geoLayer)
 arcpy.AddMessage("Parametro 2: " + geoFormat)
 arcpy.AddMessage("Parametro 3: " + geojson_polygon)
-arcpy.AddMessage("Parametro 4: " + scratch_GDB)
+arcpy.AddMessage("Ruta scratch : " + scratch_GDB)
 
 if __name__ == '__main__':
     if len(geoLayer) > 0 and len(geojson_polygon) > 0:
@@ -114,7 +114,7 @@ if __name__ == '__main__':
                     zfile.write(os.path.join(scratch_Folder,nameFileKMZ,f))
             zfile.close()
             # Response KMZ
-            arcpy.SetParameterAsText(4, _pathZip)
+            arcpy.SetParameterAsText(3, _pathZip)
         
         # Download SHP
         if(geoFormat == "SHP"):
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                     zfile.write(os.path.join(scratch_Folder,nameFileSHP,f))
             zfile.close()
             # Response KMZ
-            arcpy.SetParameterAsText(4, _pathZip)
+            arcpy.SetParameterAsText(3, _pathZip)
         
         # Download GDB
         if(geoFormat == "GDB"):
@@ -179,7 +179,7 @@ if __name__ == '__main__':
                         zfile.write(os.path.join(root, f))
             zfile.close()
             # Response GDB
-            arcpy.SetParameterAsText(4, _pathZip)
+            arcpy.SetParameterAsText(3, _pathZip)
 '''
 Nota: 
     Te lista los FEATURE sin embargo no te valida si existe en la base de datos o no.
