@@ -150,8 +150,7 @@ define([
             esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
             /* Servicio de Geoproceso */
             this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
-            //https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos
-            // gpExtractData: new Geoprocessor("http://geo.ana.gob.pe/arcgis/rest/services/ExtraerDatos/ExtractDataTask/GPServer/Extract%20Data%20Task"),
+            
             const config = JSON.parse(configJSON);            
             this._htmlTable(this.ID_Table_Count);
             this._htmlTableAnalysis(this.ID_Table_Buffer);
@@ -465,13 +464,9 @@ define([
                     iconClass: 'fa fa-download',
                     style: { width:'120px' },
                     onClick: function() {
-                        let featureSet = new FeatureSet();
-                        /*let features = [];*/
                         let _alert = this.ID_Select_Alert;
                         if(this.selectItem ?? false) {
                             this.ID_Load_Download.style.display = "block";
-                            /* features.push(this.map.graphics.graphics[0]);
-                            featureSet.features = features; */
                             if(this._listLayer.length < 0) {
                                 _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
                                 _alert.style.display = "block";
@@ -480,7 +475,6 @@ define([
                                 }, 2000);
                                 return;
                             }
-
                             /* Validar el poligono */
                             try {
                                 let geomtryPolygon  = this.reportGeometry.rings;
@@ -500,16 +494,12 @@ define([
                                 }, 2000);
                                 return;
                             }
-                            console.log(this.reportGeometry);
-                            console.log(this.reportGeometry.rings);
-                            console.log(new Polygon({"rings":[this.reportGeometry.rings],"spatialReference":{"wkid":4326 }}));
-
+                            /* Extraer data */
                             this.gpExtractData.submitJob (
                                 {
                                     "Layers_to_Clip": this._listLayer.toString(),
-                                    //"Area_of_Interest": this.reportGeometry.rings,
-                                    //"Area_of_Interest": new Polygon({"rings":[reportGeometry.rings],"spatialReference":{"wkid":4326 }}),
-                                    "Area_of_Interest": '{"type": "Polygon", "coordinates": [[[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]],"spatialReference" : { "wkid" : 4326 }}',
+                                    "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(this.reportGeometry.rings)},"spatialReference":{"wkid":4326}}`,
+                                    /*"Area_of_Interest": `{"type": "Polygon", "coordinates": [[[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]],"spatialReference" : { "wkid" : 4326 }}`,*/
                                     "Feature_Format": this.selectItem
                                 },
                                 _completeCallback = function(jobInfo) {
@@ -520,8 +510,7 @@ define([
                                                     this.ID_Load_Download.style.display = "none";
                                                     let _URL = outputFile.value;
                                                     let _URL_Temp = _URL.substring(_URL.indexOf("arcgisjobs"), _URL.length);
-                                                    window.location = this._pathDownload + _URL_Temp;
-                                                    
+                                                    window.location = this._pathDownload + _URL_Temp;                                                    
                                                 } catch (error) {
                                                     console.log("Error: _downloadFile " + error.message);
                                                 }
