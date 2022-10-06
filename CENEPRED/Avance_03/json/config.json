@@ -50,7 +50,49 @@
         "rgb(192, 57, 43, 0.2)",
         "rgb(155, 89, 182, 0.2)",
         "rgb(41, 128, 185, 0.2)"
-    ],    
+    ],
+    "download": [
+        {
+            "name": "XLS",
+            "value": "XLS",
+            "boolean": false 
+        },
+        {
+            "name": "CSV",
+            "value": "CSV",
+            "boolean": false
+        },
+        {
+            "name": "JSON",
+            "value": "JSON",
+            "boolean": false
+        },
+        {
+            "name": "GDB (.zip)",
+            "value": "GDB",
+            "boolean": true
+        },
+        {
+            "name": "SHP (.zip)",
+            "value": "SHP",
+            "boolean": true
+        },
+        {
+            "name": "KMZ",
+            "value": "KMZ",
+            "boolean": true
+        },
+        {
+            "name": "GeoJSON",
+            "value": "GeoJSON",
+            "boolean": false
+        },
+        {
+            "name": "WKT",
+            "value": "WKT",
+            "boolean": false
+        }
+    ],
     "lyrDiagnosis" : [
         { 
             "name": "INFORMACIÓN CENEPRED",

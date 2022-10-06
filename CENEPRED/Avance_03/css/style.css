@@ -723,14 +723,45 @@ a:hover {
   cursor: pointer;
   float: right;
   height: 35px;
-  width: 120px;  
+  width: 190px;  
 }
 .report-main .row-excel .btn-excel:hover {
   color: #0a2605;
   background-color: #CDE0C9;  
   border-top: 4px solid #D68910;
   font-weight: 700;
+  width: 200px;  
 }
-.report-main .row-excel table{
+.report-main .row-excel table#ID_BTN_EXCEL_TB{
   display: none;
+}
+
+.report-main .row-excel label[for=Button_ID_Diagnosis_Format] { 
+  display: none;
+}
+.report-main .row-excel input { 
+  border-radius: 0;
+  border: 1px solid rgba(0,0,0,0.3);
+  height: 23px;
+  width: 50px;
+}
+.claro .dijitComboBox .dijitArrowButtonInner {
+  border: 0px solid #ffffff;
+}
+.dijitSelect input.dijitInputField, 
+.dijitTextBox input.dijitInputField {
+  padding-bottom: 13px !important;
+  padding-right: 0 !important;
+}
+.claro .dijitButton .dijitButtonNode, 
+.claro .dijitDropDownButton .dijitButtonNode,
+.claro .dijitComboButton .dijitButtonNode,
+.claro .dijitToggleButton .dijitButtonNode {
+  border: 1px solid #759dc0;
+  padding: 7px 8px 7px 8px;
+  color: white;
+  background-color: #2c6975;
+  font-size: 12px;
+  border-radius: 0;
+  background-image: none;
 }

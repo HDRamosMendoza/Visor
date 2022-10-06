@@ -1,24 +1,31 @@
 let map; let featureTable = null;
 require([
-  'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js',
-  'esri/SpatialReference',
-  'esri/layers/FeatureLayer',
-  'esri/dijit/FeatureTable',
-  'esri/geometry/Polygon',
-  'esri/geometry/geometryEngine',
-  'esri/tasks/GeometryService',
-  'esri/tasks/query',
-  'esri/tasks/QueryTask',
-  'esri/tasks/StatisticDefinition',
-  'esri/config',
-  'esri/map',
-  'dojo/text!./json/config.json',
-  'dojo/_base/lang',
-  'dojo/ready',
-  'dojo/on',
-  'dojo/domReady!'
+    'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js',
+    'dijit/form/FilteringSelect',
+    'dijit/form/Button',
+    'esri/SpatialReference',
+    'esri/layers/FeatureLayer',
+    'esri/dijit/FeatureTable',
+    'esri/geometry/Polygon',
+    'esri/geometry/geometryEngine',  
+    'esri/tasks/GeometryService',
+    'esri/tasks/query',
+    'esri/tasks/QueryTask',
+    'esri/tasks/StatisticDefinition',
+    'esri/tasks/Geoprocessor',
+    'dojo/dom-construct',
+    'esri/config',
+    'esri/map',
+    'dojo/text!./json/config.json',
+    'dojo/_base/lang',
+    'dojox/layout/TableContainer',
+    'dojo/store/Memory',
+    'dojo/on',
+    'dojo/domReady!'
 ], function(
     Chart,
+    FilteringSelect,
+    Button,
     SpatialReference,
     FeatureLayer,
     FeatureTable,
@@ -28,17 +35,22 @@ require([
     Query,
     QueryTask,
     StatisticDefinition,
+    Geoprocessor,
+    domConstruct,
     esriConfig,
     Map,
     configJSON,
     lang,
-    dom,
-    ready,
+    TableContainer,
+    Memory,
     on
 ) {
     esriConfig.defaults.io.proxyUrl = 'https://sigrid.cenepred.gob.pe/sigridv3/php/proxy.php';
     esriConfig.defaults.io.alwaysUseProxy = false;
     esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+    
+    this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
+    this._pathDownload = "https://sigrid.cenepred.gob.pe/arcgis/rest/directories/";
 
     const config = JSON.parse(configJSON);
     let configBackgroundColor = config.backgroundColor;
@@ -47,8 +59,7 @@ require([
     let configDiagnosis_Temp = [];
     let configAnalysis = config.lyrAnalysis;
     let configAnalysis_Temp = [];
-    let configSummary_Temp = [];    
-    //let reportItemTotal = 0;
+    let configSummary_Temp = [];
     let reportItemResult = 0;
     let chartLabel = [];
     let chartData = [];
@@ -128,6 +139,169 @@ require([
         }
     };
     _title(_ambitoName);
+
+    let _loadSelect = (formatOption, formatId) => {
+        try {
+            let htmlID = "ID_Diagnosis_Format";
+            let container = domConstruct.create("div", {
+                    id: `DIV_${htmlID}`,
+                    style: {width:'96.5%',color:"#555555"}
+                }, "ID_Diagnosis_Format"
+            );
+            
+            let buttonDownload = new Button({
+                id: `Button_${htmlID}`,
+                label: "Descargar",
+                iconClass: 'fa fa-download',
+                style: { width:'120px'},
+                onClick: function() {
+                    console.log("Le dio click");
+                    
+                    let _alert = this.ID_Select_Alert;
+                    if(this.selectItem ?? false) {
+                        
+                        if(this._listLayer.length > 0) {
+                            _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
+                            _alert.style.display = "block";
+                            setTimeout(()=> {
+                                _alert.style.display = "none";
+                            }, 2000);
+                            return;
+                        }
+
+                        /* Validar el poligono */
+                        try {
+                            let geomtryPolygon  = this.reportGeometry.rings;
+                            if (typeof(geomtryPolygon) == "undefined") {
+                                _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
+                                _alert.style.display = "block";
+                                setTimeout(()=> {
+                                    _alert.style.display = "none";
+                                }, 2000);
+                                return;
+                            }
+                        } catch (error) {
+                            _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
+                            _alert.style.display = "block";
+                            setTimeout(()=> {
+                                _alert.style.display = "none";
+                            }, 2000);
+                            return;
+                        }
+                        
+                        this.gpExtractData.submitJob (
+                            {
+                                "Layers_to_Clip": this._listLayer.toString(),
+                                "Area_of_Interest": new Polygon({"rings":[this.reportGeometry.rings],"spatialReference":{"wkid":4326 }}),
+                                "Feature_Format": this.selectItem
+                            },
+                            _completeCallback = function(jobInfo) {
+                                try {
+                                    console.log("ESTA TRAENDO LOS DATOS");
+                                    if ( jobInfo.jobStatus !== "esriJobFailed" ) {
+                                        this.gpExtractData.getResultData(jobInfo.jobId, "Output_Zip_File", function(outputFile) {
+                                            try {
+                                                console.log(outputFile);
+                                                let theurl = outputFile.value.url;
+                                                window.location = theurl;
+                                            } catch (error) {
+                                                console.log("Error: _downloadFile " + error.message);
+                                            }
+                                        }.bind(this));
+                                    }
+                                } catch (error) {
+                                  console.log("Error: _completeCallback " + error.message);
+                                }
+                            }.bind(this),      
+                            _statusCallback = function(jobInfo) {
+                                try {
+                                    //var status = jobInfo.jobStatus;
+                                    //if ( status === "esriJobFailed" ) {
+                                    //    alert(status);
+                                    //    domStyle.set(dom.byId("loading"), "display", "none");
+                                    //} else if (status === "esriJobSucceeded"){
+                                    //    domStyle.set(dom.byId("loading"), "display", "none");
+                                    //}
+                                } catch (error) {
+                                    console.log("Error: _statusCallback " + error.message);
+                                }
+                            }.bind(this),    
+                            _errorCallback = function(jobInfo) {
+                                try {
+                                    //alert(error);
+                                    //domStyle.set(dom.byId("loading"), "display", "none");
+                                } catch (error) {
+                                    console.log("Error: _errorCallback " + error.message);
+                                }
+                            }.bind(this)
+                        );
+                        
+                    } else {
+                        _alert.innerHTML = "Seleccione un <strong>FORMATO</strong>";
+                        _alert.style.display = "block";
+                        setTimeout(()=> {
+                            _alert.style.display = "none";
+                        }, 2000);
+                        return;
+                    }
+                }.bind(this)
+            });
+
+            let tableContainer = new TableContainer({
+                cols: 2, labelWidth: "0%",
+                customClass: "labelsAndValues", /*class: "form-labels"*/
+            }, container);
+            let options = [];
+            let booleanButton = false;
+            formatOption.map(function(item, index) {
+                booleanButton = typeof item.long == "undefined" && !booleanButton == true ? false: true;
+                /* Filtra su visualización */
+                if(item.boolean) {
+                    options.push({ 
+                        name: item.name.replace(/<[^>]+>/g, ''),
+                        id:   typeof item.value == "undefined"? index: item.value
+                    });
+                }                    
+            }); 
+
+            const stateStore = new Memory({data: options });
+            const filteringSelect = new FilteringSelect({
+                id: `Node_${htmlID}`,
+                /*label: "Descargar",*/
+                name: 'state',
+                value: "00",
+                required: false,
+                placeholder: "Seleccione Formato",
+                store: stateStore,
+                autoComplete: false,
+                searchAttr: "name",
+                style: { width:'100%', fontSize:'13px' }
+            });
+        
+            tableContainer.addChild(filteringSelect);
+            if(!booleanButton) {
+                tableContainer.addChild(buttonDownload);
+                filteringSelect.on("change", (evt) => { this.selectItem = evt; });
+            } else {
+                filteringSelect.on("change", function(evt) {
+                    let lyrJson = this.bufferTemp[evt];
+                    this.bufferSelect_id     = lyrJson.id;
+                    this.bufferSelect_name   = lyrJson.name;
+                    this.bufferSelect_long   = lyrJson.long;
+                    this.bufferSelect_fields = lyrJson.fields;
+                    this.bufferSelect_color  = lyrJson.color;
+                    this.bufferSelect_url    = lyrJson.url;
+                }.bind(this));
+                filteringSelect.set('value', 1);
+            }             
+            tableContainer.startup();
+        } catch (error) {
+            console.error(`Error: _loadSelect => ${error.name} - ${error.message}`);
+        }
+    };
+
+    /*_loadSelect(config.download, this.ID_Diagnosis_Format);*/
+
     /* Create graphic BAR */
     let _graphicChartBar = function(_node, _label, _data/*, _backgroundColor = null, _borderColor = null*/ ) {
         try {
