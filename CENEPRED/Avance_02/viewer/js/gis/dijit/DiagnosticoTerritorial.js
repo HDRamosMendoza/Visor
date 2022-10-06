@@ -144,12 +144,14 @@ define([
         postCreate: function () {
             this.inherited(arguments);
             console.log("in postCreate");
+            this._pathDownload = "https://sigrid.cenepred.gob.pe/arcgis/rest/directories/";
             //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
             /* Servicio de Geometria */
             esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
             /* Servicio de Geoproceso */
-            this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/GeoprocesoExtracData/ExtractData");
-            /*https://sigrid.cenepred.gob.pe/arcgis/rest/services/GeoprocesoExtracData/ExtractData/GPServer/Script */
+            this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
+            //https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos
+            // gpExtractData: new Geoprocessor("http://geo.ana.gob.pe/arcgis/rest/services/ExtraerDatos/ExtractDataTask/GPServer/Extract%20Data%20Task"),
             const config = JSON.parse(configJSON);            
             this._htmlTable(this.ID_Table_Count);
             this._htmlTableAnalysis(this.ID_Table_Buffer);
@@ -467,9 +469,10 @@ define([
                         /*let features = [];*/
                         let _alert = this.ID_Select_Alert;
                         if(this.selectItem ?? false) {
-                            /*features.push(this.map.graphics.graphics[0]);
-                            featureSet.features = features;*/
-                            if(this._listLayer.length > 0) {
+                            this.ID_Load_Download.style.display = "block";
+                            /* features.push(this.map.graphics.graphics[0]);
+                            featureSet.features = features; */
+                            if(this._listLayer.length < 0) {
                                 _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
                                 _alert.style.display = "block";
                                 setTimeout(()=> {
@@ -497,25 +500,28 @@ define([
                                 }, 2000);
                                 return;
                             }
-                            
+                            console.log(this.reportGeometry);
+                            console.log(this.reportGeometry.rings);
+                            console.log(new Polygon({"rings":[this.reportGeometry.rings],"spatialReference":{"wkid":4326 }}));
+
                             this.gpExtractData.submitJob (
                                 {
                                     "Layers_to_Clip": this._listLayer.toString(),
-                                    "Area_of_Interest": new Polygon({"rings":[this.reportGeometry.rings],"spatialReference":{"wkid":4326 }}),
+                                    //"Area_of_Interest": this.reportGeometry.rings,
+                                    //"Area_of_Interest": new Polygon({"rings":[reportGeometry.rings],"spatialReference":{"wkid":4326 }}),
+                                    "Area_of_Interest": '{"type": "Polygon", "coordinates": [[[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]],"spatialReference" : { "wkid" : 4326 }}',
                                     "Feature_Format": this.selectItem
                                 },
-                                //this._completeCallback.bind(this),
-                                //this._statusCallback.bind(this),
-                                //this._errorCallback.bind(this)
                                 _completeCallback = function(jobInfo) {
                                     try {
-                                        console.log("ESTA TRAENDO LOS DATOS");
                                         if ( jobInfo.jobStatus !== "esriJobFailed" ) {
-                                            this.gpExtractData.getResultData(jobInfo.jobId, "Output_Zip_File", function(outputFile) {
+                                            this.gpExtractData.getResultData(jobInfo.jobId, "Result", function(outputFile) {
                                                 try {
-                                                    console.log(outputFile);
-                                                    let theurl = outputFile.value.url;
-                                                    window.location = theurl;
+                                                    this.ID_Load_Download.style.display = "none";
+                                                    let _URL = outputFile.value;
+                                                    let _URL_Temp = _URL.substring(_URL.indexOf("arcgisjobs"), _URL.length);
+                                                    window.location = this._pathDownload + _URL_Temp;
+                                                    
                                                 } catch (error) {
                                                     console.log("Error: _downloadFile " + error.message);
                                                 }
@@ -527,21 +533,19 @@ define([
                                 }.bind(this),      
                                 _statusCallback = function(jobInfo) {
                                     try {
-                                        //var status = jobInfo.jobStatus;
-                                        //if ( status === "esriJobFailed" ) {
-                                        //    alert(status);
-                                        //    domStyle.set(dom.byId("loading"), "display", "none");
-                                        //} else if (status === "esriJobSucceeded"){
-                                        //    domStyle.set(dom.byId("loading"), "display", "none");
-                                        //}
+                                        var status = jobInfo.jobStatus;
+                                        if ( status === "esriJobFailed" ) {
+                                            this.ID_Load_Download.style.display = "none";
+                                        } else if (status === "esriJobSucceeded"){
+                                            this.ID_Load_Download.style.display = "none";
+                                        }
                                     } catch (error) {
                                         console.log("Error: _statusCallback " + error.message);
                                     }
                                 }.bind(this),    
                                 _errorCallback = function(jobInfo) {
                                     try {
-                                        //alert(error);
-                                        //domStyle.set(dom.byId("loading"), "display", "none");
+                                        this.ID_Load_Download.style.display = "none";
                                     } catch (error) {
                                         console.log("Error: _errorCallback " + error.message);
                                     }
