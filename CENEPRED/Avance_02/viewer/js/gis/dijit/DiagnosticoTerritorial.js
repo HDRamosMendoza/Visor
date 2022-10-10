@@ -148,6 +148,7 @@ define([
             //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
             /* Servicio de Geometria */
             esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+            esriConfig.defaults.io.timeout = 120000;
             /* Servicio de Geoproceso */
             this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
             
