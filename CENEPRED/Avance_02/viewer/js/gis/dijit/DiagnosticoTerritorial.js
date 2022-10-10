@@ -510,7 +510,7 @@ define([
                                                     this.ID_Load_Download.style.display = "none";
                                                     let _URL = outputFile.value;
                                                     let _URL_Temp = _URL.substring(_URL.indexOf("arcgisjobs"), _URL.length);
-                                                    window.location = this._pathDownload + _URL_Temp;                                                    
+                                                    window.location = this._pathDownload + _URL_Temp;
                                                 } catch (error) {
                                                     console.log("Error: _downloadFile " + error.message);
                                                 }
@@ -598,6 +598,7 @@ define([
                 if(!booleanButton) {
                     tableContainer.addChild(buttonDownload);
                     filteringSelect.on("change", (evt) => { this.selectItem = evt; });
+                    filteringSelect.set('value', "SHP");
                 } else {
                     filteringSelect.on("change", function(evt) {
                         let lyrJson = this.bufferTemp[evt];
