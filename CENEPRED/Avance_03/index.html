@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <!-- ICON -->
-    <link rel="icon" type="images/png" href="./img/heber-daniel-ramos-mendoza-tab.ico"/>
+    <link rel="icon" type="images/png" href="./images/logo.png"/>
     <!-- TITLE -->
     <title>Reporte | SIGRID - CENEPRED </title>    
     <!-- META -->
@@ -10,8 +10,9 @@
     <meta name="viewport"           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="application-name"   content="SIGRID - Sistema de Información para la Gestión del Riesgo de Desastres">
     <meta name="author"             content="Ing. Heber Daniel Ramos Mendoza - GIS DEVELOPERS SAC">
-    <meta name="description"        content="Prototipo: Visor de SIGRID. Diseñado e desarrollado por el Ing. Daniel Ramos Mendoza. Página web: https://HDRamosMendoza.github.io/Perfil-Profesional">
-    <meta name="keywords"           content="Catastro Acuícola, ArcGis Server, ArcGis Desktop">
+    <meta name="copyright"          content="CENEPRED - PNUD">
+    <meta name="description"        content="Reporte de Información para la Gestión del Riesgo de Desastres">
+    <meta name="keywords"           content="CENEPRED, Gestion de Riesgo de Desastre, Centro Nacional de Estimación, Prevención y Reducción del Riesgo de Desastres">
     <!-- CSS -->
     <link rel="stylesheet" href="https://js.arcgis.com/3.41/dijit/themes/claro/claro.css" />
     <link rel="stylesheet" href="https://js.arcgis.com/3.41/esri/css/esri.css" />
@@ -27,12 +28,10 @@
         <div class="popup-text">
           <h1>Advertencia</h1>
           <p>No se tiene seleccionado el <b>Ámbito Político</b>.</p>
-          <p>Ir a <b>SIGRID - CENEPRED</b>:<br>- Seleccionar <b>Ámbito Político</b> en <b>Diagnóstico y Reporte Territorial</b></b></p>
+          <p>Ir a <b>SIGRID - CENEPRED</b>:<br>- Elegir <b>Filtro</b> (seleccionar ámbito) en <b>Diagnóstico y Reporte Territorial</b></b></p>
         </div>
       </div>
-    </div>
-    
-    
+    </div>    
     <!-- /Alert -->
     <section class="report-main">
       <!-- Sub Title -->
@@ -60,7 +59,7 @@
           -->
           <center>
             <canvas id="ID_TABLE_Graphic"  height="220" width="490" style="margin: 5px 0px"></canvas>
-            </center>
+          </center>
         </section>
         <!-- Cuadro de resumen-->
         <section class="column">
@@ -103,14 +102,18 @@
       <aside class="report-table" id="ID_TableDetail"></aside>   
       
       <div class="row-excel">
-
+        <!-- Export Data | GDB/SHP/KMZ -->
         <div id="ID_Diagnosis_Format"></div>
-
+        <!-- Export Data | XLS -->
         <button type="button" class="btn-excel" id="ID_BTN_EXCEL">
           <i class="fa fa-cloud-download" style="font-size:18px"></i>&nbsp; Descargar Alfanumérico
         </button>
+        <!-- Export Data | TABLE -->
         <table id="ID_BTN_EXCEL_TB"></table>
+        <!-- Load Download -->
+        <div class="lds-facebook" id="ID_Load_Download"><div></div><div></div><div></div></div>
       </div>
+      
       <!--
       <main>  
         <input id="tab1" type="radio" name="tabs-2" class="tabs-horiz" checked>

@@ -123,9 +123,9 @@ body { background-color: #f6f6f6; position: relative;}
 .tbl tbody tr > td:nth-child(1) {
   text-align: right;
   padding-right: 0px;
-  padding-left: px;
+  /*padding-left: px;*/
   width: 5%;
-  font-weight: 780;
+  /*font-weight: 780;*/
 }
 .tbl tbody tr > td:nth-child(2) {
   width: 65%;
@@ -207,10 +207,6 @@ body { background-color: #f6f6f6; position: relative;}
   }
 }
 
-
-
-
-
 .report-main main {
   width: 100%;
   margin: 0 auto;
@@ -277,14 +273,6 @@ input.tabs-horiz:checked + label {
     padding: 15px;
   }
 }
-
-
-
-
-
-
-
-
 /**** Pagination */
 .pagination {  
   display: inline-block;  
@@ -517,11 +505,12 @@ input.tabs-horiz:checked + label {
   border-radius: 10px;  
 }
 
-
 .form-scroll-tab {
-  max-height: 445px;
+  max-height: 370px;
   overflow-y: scroll;  
-  border: 1px solid #aaa;
+  border-bottom: 1px solid #AAAAAA;
+  border-right: 1px solid #AAAAAA;
+  border-top: 1px solid #AAAAAA;
   overflow: auto;
   box-sizing: border-box;
 }
@@ -546,7 +535,6 @@ input.tabs-horiz:checked + label {
 .form-scroll-tab::-webkit-scrollbar-track {
   border-radius: 10px;  
 }
-
 
 .column_01,
 .column_02 {
@@ -714,7 +702,6 @@ a:hover {
   margin-top: 10px;
   height: 45px;
 }
-
 .report-main .row-excel .btn-excel {
   border-radius: 0;
   border: 0;
@@ -735,8 +722,7 @@ a:hover {
 .report-main .row-excel table#ID_BTN_EXCEL_TB{
   display: none;
 }
-
-.report-main .row-excel label[for=Button_ID_Diagnosis_Format] { 
+.report-main .row-excel label[for=Button_ID_Diagnosis_Format] {
   display: none;
 }
 .report-main .row-excel input { 
@@ -757,11 +743,20 @@ a:hover {
 .claro .dijitDropDownButton .dijitButtonNode,
 .claro .dijitComboButton .dijitButtonNode,
 .claro .dijitToggleButton .dijitButtonNode {
-  border: 1px solid #759dc0;
-  padding: 7px 8px 7px 8px;
+  border: 0px solid #759dc0;
+  padding: 12px 8px 8px 8px;
   color: white;
   background-color: #2c6975;
   font-size: 12px;
   border-radius: 0;
   background-image: none;
+}
+
+.report-main .column_02 label {
+  display: none;
+}
+
+.report-main .column_02 .row-excel,
+.report-main .row-excel #ID_Diagnosis_Format {
+  display: none;
 }

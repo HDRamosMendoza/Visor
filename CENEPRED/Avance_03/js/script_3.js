@@ -47,6 +47,7 @@ require([
 ) {
     esriConfig.defaults.io.proxyUrl = 'https://sigrid.cenepred.gob.pe/sigridv3/php/proxy.php';
     esriConfig.defaults.io.alwaysUseProxy = false;
+    esriConfig.defaults.io.timeout = 120000;
     esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
     
     this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
@@ -76,9 +77,40 @@ require([
     this.summaryTotal = 0;
     this.summaryCount = 0;
 
+    this._listLayer = [];
+
     let _cssLoad = "<div class='lds-ellipsis'><div></div><div></div><div></div><div></div></div>";
     
     map = new Map("map", { center: [-76, -10], zoom: 6, basemap: "topo" });
+    /* Validated ID */
+    let _elementById = function (paramId) {
+        try { /* Valida el ID */
+            let id = document.getElementById(paramId);
+            if(id !== null && id !== undefined){
+                return id;
+            } else {
+                console.log(`Error: ID(${paramId}) => null || undefined`);
+            }
+        } catch(error) {
+            console.error(`_elementById: ${error.name} - ${error.message}`);
+        }
+    };
+    _elementById("ID_Alert").style.display = "none";
+
+    let _validatedStorage = function(_ambito) {
+        try { /* if(_ambito ?? true) { */
+            if(Object.keys(_ambito).length === 0) {
+                _elementById("ID_Alert").style.display = "block";
+            } else {
+                _elementById("ID_Alert").style.display = "none";
+            }
+        } catch(error) {
+            _elementById("ID_Alert").style.display = "block";
+        }
+    };    
+    _validatedStorage(JSON.parse(localStorage.getItem("reportTitle_request")));
+    _validatedStorage(JSON.parse(localStorage.getItem("reportTitle")));
+
     /* Load GEOMETRY */
     let _geometryAmbito = JSON.parse(localStorage.getItem("reportGeometry"));
     let _ambitoLS = JSON.parse(localStorage.getItem("reportTitle_request")).replace(" (distrito)", "");
@@ -102,20 +134,6 @@ require([
             console.error(`_generateArray: ${error.name} - ${error.message}`);
         }
     };
-    /* Validated ID */
-    let _elementById = function (paramId) {
-        try { /* Valida el ID */
-            let id = document.getElementById(paramId);
-            if(id !== null && id !== undefined){
-                return id;
-            } else {
-                console.log(`Error: ID(${paramId}) => null || undefined`);
-            }
-        } catch(error) {
-            console.error(`_elementById: ${error.name} - ${error.message}`);
-        }
-    };
-    _elementById("ID_Alert").style.display = "none";
     /* Sort JSON - QUANTITY */
     let _sortJSON = function(data, key, orden) {
         try { /* Ordenando el json de capas */
@@ -140,116 +158,83 @@ require([
     };
     _title(_ambitoName);
 
-    let _loadSelect = (formatOption, formatId) => {
+    let _loadSelect = (formatOption, formatId, _Layers, _area) => {
         try {
-            let htmlID = "ID_Diagnosis_Format";
+            let selectItem = "";
+            let htmlID = formatId.getAttribute("id");
             let container = domConstruct.create("div", {
                     id: `DIV_${htmlID}`,
                     style: {width:'96.5%',color:"#555555"}
-                }, "ID_Diagnosis_Format"
+                }, htmlID
             );
             
             let buttonDownload = new Button({
                 id: `Button_${htmlID}`,
                 label: "Descargar",
                 iconClass: 'fa fa-download',
-                style: { width:'120px'},
+                style: { width:'120px' },
                 onClick: function() {
                     console.log("Le dio click");
-                    
-                    let _alert = this.ID_Select_Alert;
-                    if(this.selectItem ?? false) {
-                        
-                        if(this._listLayer.length > 0) {
-                            _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
-                            _alert.style.display = "block";
-                            setTimeout(()=> {
-                                _alert.style.display = "none";
-                            }, 2000);
-                            return;
-                        }
-
-                        /* Validar el poligono */
-                        try {
-                            let geomtryPolygon  = this.reportGeometry.rings;
-                            if (typeof(geomtryPolygon) == "undefined") {
-                                _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
-                                _alert.style.display = "block";
-                                setTimeout(()=> {
-                                    _alert.style.display = "none";
-                                }, 2000);
-                                return;
+                    let ID_Load_Download = _elementById("ID_Load_Download");
+                    this.ID_Load_Download.style.display = "block";
+                    this.gpExtractData.submitJob(
+                        /* {
+                            "Layers_to_Clip": this._listLayer.toString(),
+                            "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(_geometryAmbito.rings)},"spatialReference":{"wkid":4326}}`,
+                            "Feature_Format": this.selectItem
+                        }, */
+                        {
+                            "Layers_to_Clip": _Layers.toString(),
+                            "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(_area.rings)},"spatialReference":{"wkid":4326}}`,
+                            "Feature_Format": selectItem
+                        },
+                        _completeCallback = function(jobInfo) {
+                            try {
+                                console.log("ESTA TRAENDO LOS DATOS");
+                                if ( jobInfo.jobStatus !== "esriJobFailed" ) {
+                                    this.gpExtractData.getResultData(jobInfo.jobId, "Result", function(outputFile) {
+                                        try {
+                                            ID_Load_Download.style.display = "none";
+                                            let _URL = outputFile.value;
+                                            let _URL_Temp = _URL.substring(_URL.indexOf("arcgisjobs"), _URL.length);
+                                            window.location = this._pathDownload + _URL_Temp;
+                                        } catch (error) {
+                                            console.log("Error: _downloadFile " + error.message);
+                                        }
+                                    }.bind(this));
+                                }
+                            } catch (error) {
+                                console.log("Error: _completeCallback " + error.message);
                             }
-                        } catch (error) {
-                            _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
-                            _alert.style.display = "block";
-                            setTimeout(()=> {
-                                _alert.style.display = "none";
-                            }, 2000);
-                            return;
-                        }
-                        
-                        this.gpExtractData.submitJob (
-                            {
-                                "Layers_to_Clip": this._listLayer.toString(),
-                                "Area_of_Interest": new Polygon({"rings":[this.reportGeometry.rings],"spatialReference":{"wkid":4326 }}),
-                                "Feature_Format": this.selectItem
-                            },
-                            _completeCallback = function(jobInfo) {
-                                try {
-                                    console.log("ESTA TRAENDO LOS DATOS");
-                                    if ( jobInfo.jobStatus !== "esriJobFailed" ) {
-                                        this.gpExtractData.getResultData(jobInfo.jobId, "Output_Zip_File", function(outputFile) {
-                                            try {
-                                                console.log(outputFile);
-                                                let theurl = outputFile.value.url;
-                                                window.location = theurl;
-                                            } catch (error) {
-                                                console.log("Error: _downloadFile " + error.message);
-                                            }
-                                        }.bind(this));
-                                    }
-                                } catch (error) {
-                                  console.log("Error: _completeCallback " + error.message);
+                        }.bind(this),      
+                        _statusCallback = function(jobInfo) {
+                            try {
+                                console.log(jobInfo);
+                                var status = jobInfo.jobStatus;
+                                if ( status === "esriJobFailed" ) {
+                                    ID_Load_Download.style.display = "none";
+                                } else if (status === "esriJobSucceeded"){
+                                    ID_Load_Download.style.display = "none";
                                 }
-                            }.bind(this),      
-                            _statusCallback = function(jobInfo) {
-                                try {
-                                    //var status = jobInfo.jobStatus;
-                                    //if ( status === "esriJobFailed" ) {
-                                    //    alert(status);
-                                    //    domStyle.set(dom.byId("loading"), "display", "none");
-                                    //} else if (status === "esriJobSucceeded"){
-                                    //    domStyle.set(dom.byId("loading"), "display", "none");
-                                    //}
-                                } catch (error) {
-                                    console.log("Error: _statusCallback " + error.message);
-                                }
-                            }.bind(this),    
-                            _errorCallback = function(jobInfo) {
-                                try {
-                                    //alert(error);
-                                    //domStyle.set(dom.byId("loading"), "display", "none");
-                                } catch (error) {
-                                    console.log("Error: _errorCallback " + error.message);
-                                }
-                            }.bind(this)
-                        );
-                        
-                    } else {
-                        _alert.innerHTML = "Seleccione un <strong>FORMATO</strong>";
-                        _alert.style.display = "block";
-                        setTimeout(()=> {
-                            _alert.style.display = "none";
-                        }, 2000);
-                        return;
-                    }
+                            } catch (error) {
+                                console.log("Error: _statusCallback " + error.message);
+                            }
+                        }.bind(this),    
+                        _errorCallback = function(jobInfo) {
+                            try {
+                                ID_Load_Download.style.display = "none";
+                            } catch (error) {
+                                console.log("Error: _errorCallback " + error.message);
+                            }
+                        }.bind(this)
+                    );
                 }.bind(this)
             });
 
             let tableContainer = new TableContainer({
                 cols: 2, labelWidth: "0%",
-                customClass: "labelsAndValues", /*class: "form-labels"*/
+                customClass: "labelsAndValues",
+                style: { width:'290px', fontSize:'13px', position: "absolute", marginTop: "-5px" } /*class: "form-labels"*/
             }, container);
             let options = [];
             let booleanButton = false;
@@ -275,13 +260,14 @@ require([
                 store: stateStore,
                 autoComplete: false,
                 searchAttr: "name",
-                style: { width:'100%', fontSize:'13px' }
+                style: { width:'100%', fontSize:'13px', padding: "2px 0 2px 0", fontWeight: "700" }
             });
         
             tableContainer.addChild(filteringSelect);
             if(!booleanButton) {
                 tableContainer.addChild(buttonDownload);
-                filteringSelect.on("change", (evt) => { this.selectItem = evt; });
+                filteringSelect.on("change", (evt) => { selectItem = evt; });
+                filteringSelect.set('value', "SHP");
             } else {
                 filteringSelect.on("change", function(evt) {
                     let lyrJson = this.bufferTemp[evt];
@@ -300,7 +286,7 @@ require([
         }
     };
 
-    /*_loadSelect(config.download, this.ID_Diagnosis_Format);*/
+    _loadSelect(config.download, this.ID_Diagnosis_Format, this._listLayer, _geometryAmbito);
 
     /* Create graphic BAR */
     let _graphicChartBar = function(_node, _label, _data/*, _backgroundColor = null, _borderColor = null*/ ) {
@@ -363,11 +349,13 @@ require([
                     this[_count] = this[_count] + 1;
                     tag= this[_count],
                     resul = true;
+                    
                     //layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name} / <strong>${json[i].name}</strong>`;
                     layer = _name == "" ? `<strong>${json[i].name}</strong>` : `${_name}<strong>${json[i].name}</strong>`;
                     _conf.push({
                         name:layer ,
                         tag: this[_count],
+                        table: json[i].table,
                         url:json[i].url,
                         fields:json[i].fields,
                         objectid:json[i].objectid,
@@ -730,6 +718,7 @@ require([
                                 _elementById(`Header_${lyr.tag}`).style.display="none";
                                 _elementById(`Content_${lyr.tag}`).style.display="none";
                             } else {
+                                this._listLayer.push(lyr.table);
                                 /* Se limpiar TABLE */
                                 _elementById(`ID_TABLE_Resumen_Tbody`).innerHTML = "";
                                 /* Sort JSON */
@@ -745,7 +734,7 @@ require([
                                         cell_0.innerHTML = `<span style="color: ${_lyr.rgb}">■</span>`;
                                         /*cell_0.appendChild(cellText_0);*/
                                         let cell_1 = document.createElement("td");
-                                        cell_1.innerHTML = _lyr.name;
+                                        cell_1.innerHTML = _lyr.name;                                        
                                         let cell_2 = document.createElement("td");
                                         let cellText_2 = document.createTextNode(_lyr.cantidad || 0);
                                         cell_2.appendChild(cellText_2);
@@ -972,6 +961,7 @@ require([
             } else {
                 _elementById("ID_Alert").style.display = "none";
                 this.diagnosisCount = 1;
+                this._listLayer =[];
                 configSummary_Temp.map(function(lyr, index) {
                     //!lyr.default || _featureTable(lyr.url,lyr.objectid,lyr.fields);
                     _queryTask(lyr, this.diagnosisTotal, _ambito, index);
@@ -1322,130 +1312,14 @@ require([
                                 let _version = lyr.content[0].version_03[0];
                                 let _boolean = true;
                                 let unionGeometry = [];
+                                let countLayer = 0;
+                                this._listLayerAnalysis = [];
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
                                 const divColumn_02 = document.createElement("section");
                                 divColumn_02.className = "column_02";                                
                                 const divMain = document.createElement("main");
-                                
-                                let queryTask_ZRNM = new QueryTask(lyr.url);
-                                let query_ZRNM = new Query();  
-                                query_ZRNM.outFields = ['*'];/*_version.fields.map(x => x.name);*/
-                                query_ZRNM.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")));
-                                query_ZRNM.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                query_ZRNM.returnGeometry = true;
-                                queryTask_ZRNM.execute(query_ZRNM).then(
-                                    (response) => {
-                                        try {
-                                            let _length = response.features.length;
-                                            let _note = _elementById(`IDNote_${lyr.tag}`);
-
-                                            for (let i = 0; i < _length; i++) {
-                                                unionGeometry.push(response.features[i].geometry);
-                                            }
-
-                                            if(_length == 0) {
-                                                _note.className = "sect-nota-warning";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                            } else {
-                                                _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
-                                            }
-                                        } catch (error) {
-                                            console.error(`Count: ZRNM => ${error.name} - ${error.message}`);
-                                        }                    
-                                    },
-                                    (error) => {  
-                                        console.error(`Error: ZRNM => ${error.name} - ${error.message}`);
-                                    }
-                                ).always(lang.hitch(this, () => { 
-                                    let countTabItem = 1;
-                                    let countTabItemTotal = 0;
-                                    /* Union Geometry */
-                                    let _geometry = geometryEngine.union(unionGeometry);
-                                    if(_geometry ?? false) {
-                                        /* Statistic Poblacion */
-                                        let poblacionSUM = new StatisticDefinition();
-                                        poblacionSUM.statisticType = "sum";
-                                        poblacionSUM.onStatisticField = _version.fields[0].name;
-                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                        /* Statistic Vivienda */
-                                        let viviendaSUM = new StatisticDefinition();
-                                        viviendaSUM.statisticType = "sum";
-                                        viviendaSUM.onStatisticField = _version.fields[1].name;
-                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                        /* Statistic Response */
-                                        let queryTask_Engine = new QueryTask(_version.url);
-                                        let query_Engine = new Query();
-                                        query_Engine.outFields = _version.fields.map(x => x.name);
-                                        query_Engine.geometry = _geometry;
-                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                        query_Engine.returnGeometry = false;
-                                        queryTask_Engine.execute(query_Engine).then(
-                                            (response) => {
-                                                try {
-                                                    let _contentTab01 = []; let _contentTab02 = [];
-                                                    let _attr = response.features[0].attributes;
-                                                    /* Poblacion */
-                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
-                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
-                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                    /* Vivienda */
-                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
-                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
-                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                                } catch (error) {
-                                                    console.error(`Count: Statistic ZRNM => ${error.name}`);
-                                                }                    
-                                            },
-                                            (error) => {
-                                                console.error(`Error: Statistic ZRNM => ${error.name}`);
-                                            }
-                                        ); 
-
-                                        configAnalysis_Temp.forEach(function(cValue) {
-                                            /* Statistic Analysis */
-                                             let analysisCOUNT = new StatisticDefinition();
-                                             analysisCOUNT.statisticType = "count";
-                                             analysisCOUNT.onStatisticField = _version.analysis[0].field;
-                                             analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                             /* Statistic Analysis */
-                                             let queryTask_Analysis = new QueryTask(cValue.url);
-                                             let query_Analysis = new Query();
-                                             query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                             query_Analysis.geometry = _geometry;
-                                             query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                             query_Analysis.outStatistics = [ analysisCOUNT ];
-                                             queryTask_Analysis.execute(query_Analysis).then(
-                                                 (response) => {
-                                                     try {
-                                                         let _attr = response.features[0].attributes;
-                                                         if(_attr.cantidad > 0) {
-                                                             let _contentTab = [];
-                                                             let _id = `ID_TBcontent${lyr.tag}`;
-                                                             _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
-                                                             _htmlTableTAB_ADD(`${_id}`,_contentTab);
-                                                             _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
-                                                         }
-                                                     } catch (error) {
-                                                         console.error(`Count: Statistic Analysis => ${error.name}`);
-                                                     }                    
-                                                 },
-                                                 (error) => {
-                                                     console.error(`Error: Statistic Analysis => ${error.name}`);
-                                                 }
-                                             );
-                                         });
-                                    }                                  
-                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                    
-                                }));
-                                                                
+                                                  
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
@@ -1520,13 +1394,163 @@ require([
                                 divNota.innerHTML = _version.nota;
                                 divColumn_01.appendChild(divNota);
 
+                                const divRow = document.createElement("div");
+                                divRow.className = "row-excel";
+                                const divDownload = document.createElement("div");
+                                divDownload.id = `DOW_${lyr.tag}`;
+                                divRow.appendChild(divDownload);
+                                divColumn_02.appendChild(divRow);
+
+                                const divLOAD = document.createElement("div");
+                                divLOAD.id = `IDLOAD_${lyr.tag}`;
+                                divLOAD.innerHTML = _cssLoad;
+                                divColumn_02.appendChild(divLOAD);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Zona de Riesgo", "Población");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Zona de Riesgo", "Vivienda");
+                                
+                                /*_htmlTable(_elementById(`ID_TBcontent${lyr.tag}`)); */
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
 
-                                _htmlTable(_elementById(`ID_TBcontent${lyr.tag}`));
+                                let queryTask_ZRNM = new QueryTask(lyr.url);
+                                let query_ZRNM = new Query();  
+                                query_ZRNM.outFields = ['*'];/*_version.fields.map(x => x.name);*/
+                                query_ZRNM.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")));
+                                query_ZRNM.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                query_ZRNM.returnGeometry = true;
+                                queryTask_ZRNM.execute(query_ZRNM).then(
+                                    (response) => {
+                                        try {
+                                            let _length = response.features.length;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
+
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
+
+                                            if(_length == 0) {
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                            } else {
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}.`;
+                                            }
+                                        } catch (error) {
+                                            console.error(`Count: ZRNM => ${error.name} - ${error.message}`);
+                                        }                    
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: ZRNM => ${error.name} - ${error.message}`);
+                                    }
+                                ).always(lang.hitch(this, () => { 
+                                    let countTabItem = 1;
+                                    let countTabItemTotal = 0;
+                                    /* Union Geometry */
+                                    let _geometry = geometryEngine.union(unionGeometry);
+                                    if(_geometry ?? false) {
+                                        _loadSelect(
+                                            config.download,
+                                            this[`DOW_${lyr.tag}`],
+                                            this._listLayerAnalysis,
+                                            _geometry
+                                        );
+                                        /* Statistic Poblacion */
+                                        let poblacionSUM = new StatisticDefinition();
+                                        poblacionSUM.statisticType = "sum";
+                                        poblacionSUM.onStatisticField = _version.fields[0].name;
+                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        /* Statistic Vivienda */
+                                        let viviendaSUM = new StatisticDefinition();
+                                        viviendaSUM.statisticType = "sum";
+                                        viviendaSUM.onStatisticField = _version.fields[1].name;
+                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                        /* Statistic Response */
+                                        let queryTask_Engine = new QueryTask(_version.url);
+                                        let query_Engine = new Query();
+                                        query_Engine.outFields = _version.fields.map(x => x.name);
+                                        query_Engine.geometry = _geometry;
+                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Engine.returnGeometry = false;
+                                        queryTask_Engine.execute(query_Engine).then(
+                                            (response) => {
+                                                try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
+                                                    let _attr = response.features[0].attributes;
+                                                    /* Poblacion */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    /* Vivienda */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic ZRNM => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic ZRNM => ${error.name}`);
+                                            }
+                                        ); 
+
+                                        configAnalysis_Temp.forEach(function(cValue) {
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                            /* Statistic Analysis */
+                                             let analysisCOUNT = new StatisticDefinition();
+                                             analysisCOUNT.statisticType = "count";
+                                             analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                             analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                             /* Statistic Analysis */
+                                             let queryTask_Analysis = new QueryTask(cValue.url);
+                                             let query_Analysis = new Query();
+                                             query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                             query_Analysis.geometry = _geometry;
+                                             query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                             query_Analysis.outStatistics = [ analysisCOUNT ];
+                                             queryTask_Analysis.execute(query_Analysis).then(
+                                                 (response) => {
+                                                     try {
+                                                         let _attr = response.features[0].attributes;
+                                                         countLayer++;
+                                                         if(_attr.cantidad > 0) {
+                                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                                            this._listLayerAnalysis.push(cValue.table);
+                                                             let _contentTab = [];
+                                                             let _id = `ID_TBcontent${lyr.tag}`;
+                                                             _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
+                                                             _htmlTableTAB_ADD(`${_id}`,_contentTab);
+                                                             _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
+                                                         }
+                                                     } catch (error) {
+                                                         console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                     }                    
+                                                 },
+                                                 (error) => {
+                                                    this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                 }
+                                             ).always(lang.hitch(this, function() {
+                                                try {
+                                                    if(this.analysisTotal == countLayer) {
+                                                        this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Error: configAnalysis_Temp always => ${error.name} - ${error.message}`);
+                                                } 
+                                            }.bind(this)));
+                                         });
+                                    }                                  
+                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                    
+                                }));
                             }
                             /* </ZRNM> */
 
@@ -1678,125 +1702,13 @@ require([
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_05[0];
                                 let unionGeometry = [];
+                                let countLayer = 0;
+                                this._listLayerAnalysis = [];
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
                                 const divColumn_02 = document.createElement("section");
                                 divColumn_02.className = "column_02";                                
                                 const divMain = document.createElement("main");
-                                
-                                let queryTask_AEI = new QueryTask(lyr.url);
-                                let query_AEI = new Query();
-                                query_AEI.returnGeometry = true;
-                                query_AEI.geometry = new Polygon(_geometryAmbito);
-                                query_AEI.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                queryTask_AEI.execute(query_AEI).then(
-                                    (response) => {
-                                        try {
-                                            let _length = response.features.length;
-                                            let _note = _elementById(`IDNote_${lyr.tag}`);
-                                            for (let i = 0; i < _length; i++) {
-                                                unionGeometry.push(response.features[i].geometry);
-                                            }
-
-                                            if(_length == 0) {
-                                                _note.className = "sect-nota-warning";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                            } else {
-                                                _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
-                                            }                                                                   
-                                        } catch (error) {
-                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
-                                        }                    
-                                    },
-                                    (error) => {  
-                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
-                                    }
-                                ).always(lang.hitch(this, () => { 
-                                    let countTabItem = 1;
-                                    let countTabItemTotal = 0;
-                                    /* Union Geometry */
-                                    let _geometry = geometryEngine.union(unionGeometry);
-                                    if(_geometry ?? false) {
-                                        /* Statistic Poblacion */
-                                        let poblacionSUM = new StatisticDefinition();
-                                        poblacionSUM.statisticType = "sum";
-                                        poblacionSUM.onStatisticField = _version.fields[0].name;
-                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                        /* Statistic Vivienda */
-                                        let viviendaSUM = new StatisticDefinition();
-                                        viviendaSUM.statisticType = "sum";
-                                        viviendaSUM.onStatisticField = _version.fields[1].name;
-                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                        /* Statistic Response */
-                                        let queryTask_Engine = new QueryTask(_version.url);
-                                        let query_Engine = new Query();
-                                        query_Engine.outFields = _version.fields.map(x => x.name);
-                                        query_Engine.geometry = _geometry;
-                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                        query_Engine.returnGeometry = false;
-                                        queryTask_Engine.execute(query_Engine).then(
-                                            (response) => {
-                                                try {
-                                                    let _contentTab01 = []; let _contentTab02 = [];
-                                                    let _attr = response.features[0].attributes;
-                                                    /* Poblacion */
-                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerHTML = _attr.sumpoblacion ?? 0;
-                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
-                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                    /* Vivienda */
-                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerHTML = _attr.sumvivienda ?? 0;
-                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
-                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                                } catch (error) {
-                                                    console.error(`Count: Statistic AEI => ${error.name}`);
-                                                }                    
-                                            },
-                                            (error) => {
-                                                console.error(`Error: Statistic AEI => ${error.name}`);
-                                            }
-                                        );                                    
-                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                        configAnalysis_Temp.forEach(function(cValue) {
-                                        /* Statistic Analysis */
-                                            let analysisCOUNT = new StatisticDefinition();
-                                            analysisCOUNT.statisticType = "count";
-                                            analysisCOUNT.onStatisticField = _version.analysis[0].field;
-                                            analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                            /* Statistic Analysis */
-                                            let queryTask_Analysis = new QueryTask(cValue.url);
-                                            let query_Analysis = new Query();
-                                            query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                            query_Analysis.geometry = _geometry;
-                                            query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                            query_Analysis.outStatistics = [ analysisCOUNT ];
-                                            queryTask_Analysis.execute(query_Analysis).then(
-                                                (response) => {
-                                                    try {
-                                                        let _attr = response.features[0].attributes;
-                                                        if(_attr.cantidad > 0) {
-                                                            let _contentTab = [];
-                                                            let _id = `ID_TBcontent${lyr.tag}`;
-                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
-                                                            _htmlTableTAB_ADD(`${_id}`,_contentTab);
-                                                            _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
-                                                        }
-                                                    } catch (error) {
-                                                        console.error(`Count: Statistic Analysis => ${error.name}`);
-                                                    }                    
-                                                },
-                                                (error) => {
-                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
-                                                }
-                                            );
-                                        });
-                                    }
-                                }));
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
@@ -1872,6 +1784,18 @@ require([
                                 divNota.innerHTML = _version.nota;
                                 divColumn_01.appendChild(divNota);
 
+                                const divRow = document.createElement("div");
+                                divRow.className = "row-excel";
+                                const divDownload = document.createElement("div");
+                                divDownload.id = `DOW_${lyr.tag}`;
+                                divRow.appendChild(divDownload);
+                                divColumn_02.appendChild(divRow);
+
+                                const divLOAD = document.createElement("div");
+                                divLOAD.id = `IDLOAD_${lyr.tag}`;
+                                divLOAD.innerHTML = _cssLoad;
+                                divColumn_02.appendChild(divLOAD);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -1879,6 +1803,139 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Inundación", "Viviendas Expuestas");
 
                                 _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
+                                
+                                let queryTask_AEI = new QueryTask(lyr.url);
+                                let query_AEI = new Query();
+                                query_AEI.returnGeometry = true;
+                                query_AEI.geometry = new Polygon(_geometryAmbito);
+                                query_AEI.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                queryTask_AEI.execute(query_AEI).then(
+                                    (response) => {
+                                        try {
+                                            let _length = response.features.length;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
+
+                                            if(_length == 0) {
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                            } else {
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
+                                            }                                                                   
+                                        } catch (error) {
+                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
+                                        }                    
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
+                                    }
+                                ).always(lang.hitch(this, () => { 
+                                    let countTabItem = 1;
+                                    let countTabItemTotal = 0;
+                                    /* Union Geometry */
+                                    let _geometry = geometryEngine.union(unionGeometry);
+                                    if(_geometry ?? false) {
+                                        _loadSelect(
+                                            config.download,
+                                            this[`DOW_${lyr.tag}`],
+                                            this._listLayerAnalysis,
+                                            _geometry
+                                        );
+                                        /* Statistic Poblacion */
+                                        let poblacionSUM = new StatisticDefinition();
+                                        poblacionSUM.statisticType = "sum";
+                                        poblacionSUM.onStatisticField = _version.fields[0].name;
+                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        /* Statistic Vivienda */
+                                        let viviendaSUM = new StatisticDefinition();
+                                        viviendaSUM.statisticType = "sum";
+                                        viviendaSUM.onStatisticField = _version.fields[1].name;
+                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                        /* Statistic Response */
+                                        let queryTask_Engine = new QueryTask(_version.url);
+                                        let query_Engine = new Query();
+                                        query_Engine.outFields = _version.fields.map(x => x.name);
+                                        query_Engine.geometry = _geometry;
+                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Engine.returnGeometry = false;
+                                        queryTask_Engine.execute(query_Engine).then(
+                                            (response) => {
+                                                try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
+                                                    let _attr = response.features[0].attributes;
+                                                    /* Poblacion */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerHTML = _attr.sumpoblacion ?? 0;
+                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    /* Vivienda */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerHTML = _attr.sumvivienda ?? 0;
+                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic AEI => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic AEI => ${error.name}`);
+                                            }
+                                        );                                    
+                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        configAnalysis_Temp.forEach(function(cValue) {
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                            /* Statistic Analysis */
+                                            let analysisCOUNT = new StatisticDefinition();
+                                            analysisCOUNT.statisticType = "count";
+                                            analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                            analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                            /* Statistic Analysis */
+                                            let queryTask_Analysis = new QueryTask(cValue.url);
+                                            let query_Analysis = new Query();
+                                            query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                            query_Analysis.geometry = _geometry;
+                                            query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                            query_Analysis.outStatistics = [ analysisCOUNT ];
+                                            queryTask_Analysis.execute(query_Analysis).then(
+                                                (response) => {
+                                                    try {
+                                                        let _attr = response.features[0].attributes;
+                                                        countLayer++;
+                                                        if(_attr.cantidad > 0) {
+                                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                                            this._listLayerAnalysis.push(cValue.table);
+                                                            let _contentTab = [];
+                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
+                                                            _htmlTableTAB_ADD(`${_id}`,_contentTab);
+                                                            _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
+                                                        }
+                                                    } catch (error) {
+                                                        console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    }                    
+                                                },
+                                                (error) => {
+                                                    this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                }
+                                            ).always(lang.hitch(this, function() {
+                                                try {
+                                                    if(this.analysisTotal == countLayer) {
+                                                        this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Error: configAnalysis_Temp always => ${error.name} - ${error.message}`);
+                                                } 
+                                            }.bind(this)));
+                                        });
+                                    }
+                                }));
                             }
                             /* </AEI> */
 
@@ -1887,12 +1944,107 @@ require([
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_06[0];
                                 let unionGeometry = [];
+                                let countLayer = 0;
+                                this._listLayerAnalysis = [];                                
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
                                 const divColumn_02 = document.createElement("section");
                                 divColumn_02.className = "column_02";                                
                                 const divMain = document.createElement("main");
                                 
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
+                                
+                                const divTable = document.createElement("div");
+                                divTable.id = `ID_TBcontent${lyr.tag}`;
+                                divTable.className = "form-scroll-tab";
+                                divColumn_02.appendChild(divTable);
+                                
+                                /* HEADER */
+                                lyr.content[0].version_06[0].fields.map(function(current) {
+                                    const inputText = document.createElement("input");
+                                    inputText.type = "radio";
+                                    inputText.className = "tabs-horiz";
+                                    inputText.id = `tab${lyr.tag}${current.name}`;
+                                    inputText.name = `tabs-2${lyr.tag}`;
+                                    if(typeof current.default !== "undefined") {
+                                        inputText.setAttribute("checked","");
+                                    }
+                                    const label = document.createElement("label");
+                                    label.innerText = current.alias;
+                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                    
+                                    divMain.appendChild(inputText);
+                                    divMain.appendChild(label);                            
+                                }.bind(this));
+                                /* CONTENT */
+                                lyr.content[0].version_06[0].fields.map(function(current) {
+                                    const sect = document.createElement("section");
+                                    sect.id = `content${lyr.tag}${current.name}`;
+                                    const div = document.createElement("div");
+                                    
+                                    const divCenter = document.createElement("center");
+                                    const divOBS = document.createElement("p");
+                                    divOBS.style.fontSize = "14px";
+                                    divOBS.innerText = current.note;
+                                    divCenter.appendChild(divOBS);
+                                    div.appendChild(divCenter);
+
+                                    const divCenterTotal = document.createElement("center");
+                                    const divTotal = document.createElement("p");
+                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                    divTotal.style.fontSize = "65px";
+                                    divTotal.style.margin = "5px 0px";
+                                    divTotal.innerHTML = _cssLoad;
+                                    divCenterTotal.appendChild(divTotal);
+                                    div.appendChild(divCenterTotal);
+                                    const divTable = document.createElement("div");
+                                    divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    div.appendChild(divTable);
+
+                                    sect.appendChild(div);                            
+                                    divMain.appendChild(sect);                            
+                                }.bind(this));
+                                
+                                const tagStyle = document.createElement("style"); let _css = "";
+                            
+                                lyr.content[0].version_06[0].fields.map(function(current) {
+                                    _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;  
+                                }.bind(this));
+                            
+                                if(_css !== "") {
+                                    let _cssStyle = _css.substring(0, _css.length - 1);
+                                    tagStyle.textContent = _cssStyle.concat("{display: block;};");
+                                    divMain.appendChild(tagStyle);
+                                } 
+                                divColumn_01.appendChild(divMain);
+
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_01.appendChild(divNota);
+
+                                const divRow = document.createElement("div");
+                                divRow.className = "row-excel";
+                                const divDownload = document.createElement("div");
+                                divDownload.id = `DOW_${lyr.tag}`;
+                                divRow.appendChild(divDownload);
+                                divColumn_02.appendChild(divRow);
+
+                                const divLOAD = document.createElement("div");
+                                divLOAD.id = `IDLOAD_${lyr.tag}`;
+                                divLOAD.innerHTML = _cssLoad;
+                                divColumn_02.appendChild(divLOAD);
+
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
+                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
+
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Fajas marginales", "Población");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Fajas marginales", "Viviendas");
+
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
+
                                 let queryTask_FM = new QueryTask(lyr.url);
                                 let query_FM = new Query();
                                 query_FM.returnGeometry = true;
@@ -1927,6 +2079,12 @@ require([
                                     /* Union Geometry */
                                     let _geometry = geometryEngine.union(unionGeometry);
                                     if(_geometry ?? false) {
+                                        _loadSelect(
+                                            config.download,
+                                            this[`DOW_${lyr.tag}`],
+                                            this._listLayerAnalysis,
+                                            _geometry
+                                        );
                                         /* Statistic Poblacion */
                                         let poblacionSUM = new StatisticDefinition();
                                         poblacionSUM.statisticType = "sum";
@@ -1976,7 +2134,8 @@ require([
                                         );                                    
                                         _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
                                         configAnalysis_Temp.forEach(function(cValue) {
-                                        /* Statistic Analysis */
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                            /* Statistic Analysis */
                                             let analysisCOUNT = new StatisticDefinition();
                                             analysisCOUNT.statisticType = "count";
                                             analysisCOUNT.onStatisticField = _version.analysis[0].field;
@@ -1992,7 +2151,10 @@ require([
                                                 (response) => {
                                                     try {
                                                         let _attr = response.features[0].attributes;
+                                                        countLayer++;
                                                         if(_attr.cantidad > 0) {
+                                                            this._listLayerAnalysis.push(cValue.table);
+                                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                             let _contentTab = [];
                                                             let _id = `ID_TBcontent${lyr.tag}`;
                                                             _contentTab.push({"item":cValue.name, "val":_attr.cantidad ?? 0 });
@@ -2004,93 +2166,21 @@ require([
                                                     }                    
                                                 },
                                                 (error) => {
+                                                    this[`IDLOAD_${lyr.tag}`].style.display = "none";
                                                     console.error(`Error: Statistic Analysis => ${error.name}`);
                                                 }
-                                            );
+                                            ).always(lang.hitch(this, function() {
+                                                try {
+                                                    if(this.analysisTotal == countLayer) {
+                                                        this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Error: configAnalysis_Temp always => ${error.name} - ${error.message}`);
+                                                } 
+                                            }.bind(this)));;
                                         });
                                     }
                                 }));
-
-                                const divOBS = document.createElement("p");
-                                divOBS.id = `IDNote_${lyr.tag}`;
-                                divOBS.innerHTML = _cssLoad;
-                                divColumn_01.prepend(divOBS);
-                                
-                                const divTable = document.createElement("div");
-                                divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable);
-                                
-                                /* HEADER */
-                                lyr.content[0].version_06[0].fields.map(function(current) {
-                                    const inputText = document.createElement("input");
-                                    inputText.type = "radio";
-                                    inputText.className = "tabs-horiz";
-                                    inputText.id = `tab${lyr.tag}${current.name}`;
-                                    inputText.name = `tabs-2${lyr.tag}`;
-                                    if(typeof current.default !== "undefined") {
-                                        inputText.setAttribute("checked","");
-                                    }
-                                    const label = document.createElement("label");
-                                    label.innerText = current.alias;
-                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                    
-                                    divMain.appendChild(inputText);
-                                    divMain.appendChild(label);                            
-                                }.bind(this));
-                                /* CONTENT */
-                                lyr.content[0].version_06[0].fields.map(function(current) {
-                                    const sect = document.createElement("section");
-                                    sect.id = `content${lyr.tag}${current.name}`;
-                                    const div = document.createElement("div");
-                                    
-                                    const divCenter = document.createElement("center");
-                                    const divOBS = document.createElement("p");
-                                    divOBS.style.fontSize = "14px";
-                                    divOBS.innerText = current.note;
-                                    divCenter.appendChild(divOBS);
-                                    div.appendChild(divCenter);
-
-                                    const divCenterTotal = document.createElement("center");
-                                    const divTotal = document.createElement("p");
-                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
-                                    divTotal.style.fontSize = "65px";
-                                    divTotal.style.margin = "5px 0px";
-                                    divTotal.innerHTML = _cssLoad;
-                                    divCenterTotal.appendChild(divTotal);
-                                    div.appendChild(divCenterTotal);
-                                    const divTable = document.createElement("div");
-                                    divTable.id = `TBcontent${lyr.tag}${current.name}`;
-                                    div.appendChild(divTable);
-
-                                    sect.appendChild(div);                            
-                                    divMain.appendChild(sect);                            
-                                }.bind(this));
-                                
-                                const tagStyle = document.createElement("style"); let _css = "";
-                            
-                                lyr.content[0].version_06[0].fields.map(function(current) {
-                                    _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;  
-                                }.bind(this));
-                            
-                                if(_css !== "") {
-                                    let _cssStyle = _css.substring(0, _css.length - 1);
-                                    tagStyle.textContent = _cssStyle.concat("{display: block;};");
-                                    divMain.appendChild(tagStyle);
-                                } 
-                                divColumn_01.appendChild(divMain);
-
-                                const divNota = document.createElement("p");
-                                divNota.className = "sect-nota";
-                                divNota.innerHTML = _version.nota;
-                                divColumn_01.appendChild(divNota);
-
-                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
-                                _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
-
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Fajas marginales", "Población");
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Fajas marginales", "Viviendas");
-
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
                             }
                             /* </FM> */
 
@@ -2176,8 +2266,8 @@ require([
                                 const divTable = document.createElement("div");
                                 divTable.id = `TB_content${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable); 
-
+                                divColumn_02.appendChild(divTable);
+                                
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
@@ -2200,124 +2290,14 @@ require([
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_08[0];
                                 let unionGeometry = [];
+                                let countLayer = 0;
+                                this._listLayerAnalysis = [];                                
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
                                 const divColumn_02 = document.createElement("section");
                                 divColumn_02.className = "column_02";                                
                                 const divMain = document.createElement("main");
                                 
-                                let queryTask_AE = new QueryTask(lyr.url);
-                                let query_AE = new Query();
-                                query_AE.returnGeometry = true;
-                                query_AE.geometry = new Polygon(_geometryAmbito);
-                                query_AE.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                queryTask_AE.execute(query_AE).then(
-                                    (response) => {
-                                        try {
-                                            let _note = _elementById(`IDNote_${lyr.tag}`);
-                                            let _length = response.features.length;
-                                            for (let i = 0; i < _length; i++) {
-                                                unionGeometry.push(response.features[i].geometry);
-                                            }
-
-                                            if(_length == 0) {
-                                                _note.className = "sect-nota-warning";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                            } else {
-                                                _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
-                                            }                   
-                                        } catch (error) {
-                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
-                                        }                    
-                                    },
-                                    (error) => {  
-                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
-                                    }
-                                ).always(lang.hitch(this, () => { 
-                                    let countTabItem = 1;
-                                    let countTabItemTotal = 0;
-                                    /* Union Geometry */
-                                    let _geometry = geometryEngine.union(unionGeometry);
-                                    /* Statistic Poblacion */
-                                    let poblacionSUM = new StatisticDefinition();
-                                    poblacionSUM.statisticType = "sum";
-                                    poblacionSUM.onStatisticField = _version.fields[0].name;
-                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                    /* Statistic Vivienda */
-                                    let viviendaSUM = new StatisticDefinition();
-                                    viviendaSUM.statisticType = "sum";
-                                    viviendaSUM.onStatisticField = _version.fields[1].name;
-                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                    /* Statistic Response */
-                                    let queryTask_Engine = new QueryTask(_version.url);
-                                    let query_Engine = new Query();
-                                    query_Engine.outFields = _version.fields.map(x => x.name);
-                                    query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                    query_Engine.returnGeometry = false;
-                                    queryTask_Engine.execute(query_Engine).then(
-                                        (response) => {
-                                            try {
-                                                let _contentTab01 = []; let _contentTab02 = [];
-                                                let _attr = response.features[0].attributes;
-                                                /* Poblacion */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
-                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                /* Vivienda */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
-                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                            } catch (error) {
-                                                console.error(`Count: Statistic FM => ${error.name}`);
-                                            }                    
-                                        },
-                                        (error) => {
-                                            console.error(`Error: Statistic FM => ${error.name}`);
-                                        }
-                                    );                                    
-                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                    configAnalysis_Temp.forEach(function(cValue) {
-                                       /* Statistic Analysis */
-                                        let analysisCOUNT = new StatisticDefinition();
-                                        analysisCOUNT.statisticType = "count";
-                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
-                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                        /* Statistic Analysis */
-                                        let queryTask_Analysis = new QueryTask(cValue.url);
-                                        let query_Analysis = new Query();
-                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                        query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                        query_Analysis.outStatistics = [ analysisCOUNT ];
-                                        queryTask_Analysis.execute(query_Analysis).then(
-                                            (response) => {
-                                                try {
-                                                    let _attr = response.features[0].attributes;
-                                                    if(_attr.cantidad > 0) {
-                                                        let _contentTab = [];
-                                                        let _id = `ID_TBcontent${lyr.tag}`;
-                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
-                                                        _htmlTableTAB_ADD(`${_id}`,_contentTab);
-                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
-                                                    }
-                                                } catch (error) {
-                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
-                                                }                    
-                                            },
-                                            (error) => {
-                                                console.error(`Error: Statistic Analysis => ${error.name}`);
-                                            }
-                                        );
-                                    });
-                                }));
-
                                 const divOBS = document.createElement("p");
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
@@ -2386,6 +2366,18 @@ require([
                                 } 
                                 divColumn_01.appendChild(divMain);
 
+                                const divRow = document.createElement("div");
+                                divRow.className = "row-excel";
+                                const divDownload = document.createElement("div");
+                                divDownload.id = `DOW_${lyr.tag}`;
+                                divRow.appendChild(divDownload);
+                                divColumn_02.appendChild(divRow);
+
+                                const divLOAD = document.createElement("div");
+                                divLOAD.id = `IDLOAD_${lyr.tag}`;
+                                divLOAD.innerHTML = _cssLoad;
+                                divColumn_02.appendChild(divLOAD);
+
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
@@ -2398,26 +2390,13 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Movimiento en Masa", "Viviendas Expuestas");
 
                                 _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "ELEMENTOS EXPUESTOS", "CANTIDAD");
-                            }
-                            /* </AE> */
-
-                            /* <AET> */
-                            if(typeof lyr.content[0].version_09 !== "undefined") {
-                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
-                                let _version = lyr.content[0].version_09[0];
-                                let unionGeometry = [];
-                                const divColumn_01 = document.createElement("section");
-                                divColumn_01.className = "column_01";
-                                const divColumn_02 = document.createElement("section");
-                                divColumn_02.className = "column_02";                                
-                                const divMain = document.createElement("main");
-                                
-                                let queryTask_AET = new QueryTask(lyr.url);
-                                let query_AET = new Query();
-                                query_AET.returnGeometry = true;
-                                query_AET.geometry = new Polygon(_geometryAmbito);
-                                query_AET.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                queryTask_AET.execute(query_AET).then(
+                            
+                                let queryTask_AE = new QueryTask(lyr.url);
+                                let query_AE = new Query();
+                                query_AE.returnGeometry = true;
+                                query_AE.geometry = new Polygon(_geometryAmbito);
+                                query_AE.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                queryTask_AE.execute(query_AE).then(
                                     (response) => {
                                         try {
                                             let _note = _elementById(`IDNote_${lyr.tag}`);
@@ -2432,7 +2411,7 @@ require([
                                             } else {
                                                 _note.className = "sect-nota-info";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
-                                            }                        
+                                            }                   
                                         } catch (error) {
                                             console.error(`Count: AEI => ${error.name} - ${error.message}`);
                                         }                    
@@ -2445,85 +2424,121 @@ require([
                                     let countTabItemTotal = 0;
                                     /* Union Geometry */
                                     let _geometry = geometryEngine.union(unionGeometry);
-                                    /* Statistic Poblacion */
-                                    let poblacionSUM = new StatisticDefinition();
-                                    poblacionSUM.statisticType = "sum";
-                                    poblacionSUM.onStatisticField = _version.fields[0].name;
-                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                    /* Statistic Vivienda */
-                                    let viviendaSUM = new StatisticDefinition();
-                                    viviendaSUM.statisticType = "sum";
-                                    viviendaSUM.onStatisticField = _version.fields[1].name;
-                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                    /* Statistic Response */
-                                    let queryTask_Engine = new QueryTask(_version.url);
-                                    let query_Engine = new Query();
-                                    query_Engine.outFields = _version.fields.map(x => x.name);
-                                    query_Engine.geometry = _geometry;
-                                    query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                    query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                    query_Engine.returnGeometry = false;
-                                    queryTask_Engine.execute(query_Engine).then(
-                                        (response) => {
-                                            try {
-                                                let _contentTab01 = []; let _contentTab02 = [];
-                                                let _attr = response.features[0].attributes;
-                                                /* Poblacion */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
-                                                _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                /* Vivienda */
-                                                _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
-                                                _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
-                                                _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                            } catch (error) {
-                                                console.error(`Count: Statistic FM => ${error.name}`);
-                                            }                    
-                                        },
-                                        (error) => {
-                                            console.error(`Error: Statistic FM => ${error.name}`);
-                                        }
-                                    );                                    
-                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                    configAnalysis_Temp.forEach(function(cValue) {
-                                       /* Statistic Analysis */
-                                        let analysisCOUNT = new StatisticDefinition();
-                                        analysisCOUNT.statisticType = "count";
-                                        analysisCOUNT.onStatisticField = _version.analysis[0].field;
-                                        analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                        /* Statistic Analysis */
-                                        let queryTask_Analysis = new QueryTask(cValue.url);
-                                        let query_Analysis = new Query();
-                                        query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                        query_Analysis.geometry = _geometry;
-                                        query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                        query_Analysis.outStatistics = [ analysisCOUNT ];
-                                        queryTask_Analysis.execute(query_Analysis).then(
+                                    if(_geometry ?? false) {
+                                        _loadSelect(
+                                            config.download,
+                                            this[`DOW_${lyr.tag}`],
+                                            this._listLayerAnalysis,
+                                            _geometry
+                                        );
+                                        /* Statistic Poblacion */
+                                        let poblacionSUM = new StatisticDefinition();
+                                        poblacionSUM.statisticType = "sum";
+                                        poblacionSUM.onStatisticField = _version.fields[0].name;
+                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        /* Statistic Vivienda */
+                                        let viviendaSUM = new StatisticDefinition();
+                                        viviendaSUM.statisticType = "sum";
+                                        viviendaSUM.onStatisticField = _version.fields[1].name;
+                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                        /* Statistic Response */
+                                        let queryTask_Engine = new QueryTask(_version.url);
+                                        let query_Engine = new Query();
+                                        query_Engine.outFields = _version.fields.map(x => x.name);
+                                        query_Engine.geometry = _geometry;
+                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Engine.returnGeometry = false;
+                                        queryTask_Engine.execute(query_Engine).then(
                                             (response) => {
                                                 try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
                                                     let _attr = response.features[0].attributes;
-                                                    if(_attr.cantidad > 0) {
-                                                        let _contentTab = [];
-                                                        let _id = `ID_TBcontent${lyr.tag}`;
-                                                        _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
-                                                        _htmlTableTAB_ADD(`${_id}`,_contentTab);
-                                                        _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
-                                                    }
+                                                    /* Poblacion */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    /* Vivienda */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
                                                 } catch (error) {
-                                                    console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    console.error(`Count: Statistic FM => ${error.name}`);
                                                 }                    
                                             },
                                             (error) => {
-                                                console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                console.error(`Error: Statistic FM => ${error.name}`);
                                             }
-                                        );
-                                    });
+                                        );                                    
+                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        configAnalysis_Temp.forEach(function(cValue) {
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                            /* Statistic Analysis */
+                                            let analysisCOUNT = new StatisticDefinition();
+                                            analysisCOUNT.statisticType = "count";
+                                            analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                            analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                            /* Statistic Analysis */
+                                            let queryTask_Analysis = new QueryTask(cValue.url);
+                                            let query_Analysis = new Query();
+                                            query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                            query_Analysis.geometry = _geometry;
+                                            query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                            query_Analysis.outStatistics = [ analysisCOUNT ];
+                                            queryTask_Analysis.execute(query_Analysis).then(
+                                                (response) => {
+                                                    try {
+                                                        let _attr = response.features[0].attributes;
+                                                        countLayer++;
+                                                        if(_attr.cantidad > 0) {
+                                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                                            this._listLayerAnalysis.push(cValue.table);
+                                                            let _contentTab = [];
+                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                            _htmlTableTAB_ADD(`${_id}`,_contentTab);
+                                                            _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
+                                                        }
+                                                    } catch (error) {
+                                                        console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    }                    
+                                                },
+                                                (error) => {
+                                                    this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                }
+                                            ).always(lang.hitch(this, function() {
+                                                try {
+                                                    if(this.analysisTotal == countLayer) {
+                                                        this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Error: configAnalysis_Temp always => ${error.name} - ${error.message}`);
+                                                } 
+                                            }.bind(this)));
+                                        });
+                                    }
                                 }));
+                            }
+                            /* </AE> */
 
+                            /* <AET> */
+                            if(typeof lyr.content[0].version_09 !== "undefined") {
+                                _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
+                                let _version = lyr.content[0].version_09[0];
+                                let unionGeometry = [];
+                                this._listLayerAnalysis = [];
+                                let countLayer = 0;
+                                const divColumn_01 = document.createElement("section");
+                                divColumn_01.className = "column_01";
+                                const divColumn_02 = document.createElement("section");
+                                divColumn_02.className = "column_02";                                
+                                const divMain = document.createElement("main");
+                                
                                 const divOBS = document.createElement("p");
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
@@ -2598,6 +2613,18 @@ require([
                                 divNota.innerHTML = _version.nota;
                                 divColumn_01.appendChild(divNota);
 
+                                const divRow = document.createElement("div");
+                                divRow.className = "row-excel";
+                                const divDownload = document.createElement("div");
+                                divDownload.id = `DOW_${lyr.tag}`;
+                                divRow.appendChild(divDownload);
+                                divColumn_02.appendChild(divRow);
+
+                                const divLOAD = document.createElement("div");
+                                divLOAD.id = `IDLOAD_${lyr.tag}`;
+                                divLOAD.innerHTML = _cssLoad;
+                                divColumn_02.appendChild(divLOAD);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -2605,6 +2632,139 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Areas de exposicion al tsunami", "Vivienda");
 
                                 _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
+
+                                let queryTask_AET = new QueryTask(lyr.url);
+                                let query_AET = new Query();
+                                query_AET.returnGeometry = true;
+                                query_AET.geometry = new Polygon(_geometryAmbito);
+                                query_AET.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                queryTask_AET.execute(query_AET).then(
+                                    (response) => {
+                                        try {
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
+                                            let _length = response.features.length;
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
+
+                                            if(_length == 0) {
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                            } else {
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
+                                            }                        
+                                        } catch (error) {
+                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
+                                        }                    
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
+                                    }
+                                ).always(lang.hitch(this, () => { 
+                                    let countTabItem = 1;
+                                    let countTabItemTotal = 0;
+                                    /* Union Geometry */
+                                    let _geometry = geometryEngine.union(unionGeometry);
+                                    if(_geometry ?? false) {
+                                        _loadSelect(
+                                            config.download,
+                                            this[`DOW_${lyr.tag}`],
+                                            this._listLayerAnalysis,
+                                            _geometry
+                                        );
+                                        /* Statistic Poblacion */
+                                        let poblacionSUM = new StatisticDefinition();
+                                        poblacionSUM.statisticType = "sum";
+                                        poblacionSUM.onStatisticField = _version.fields[0].name;
+                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        /* Statistic Vivienda */
+                                        let viviendaSUM = new StatisticDefinition();
+                                        viviendaSUM.statisticType = "sum";
+                                        viviendaSUM.onStatisticField = _version.fields[1].name;
+                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                        /* Statistic Response */
+                                        let queryTask_Engine = new QueryTask(_version.url);
+                                        let query_Engine = new Query();
+                                        query_Engine.outFields = _version.fields.map(x => x.name);
+                                        query_Engine.geometry = _geometry;
+                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Engine.returnGeometry = false;
+                                        queryTask_Engine.execute(query_Engine).then(
+                                            (response) => {
+                                                try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
+                                                    let _attr = response.features[0].attributes;
+                                                    /* Poblacion */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    /* Vivienda */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic FM => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic FM => ${error.name}`);
+                                            }
+                                        );                                    
+                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        configAnalysis_Temp.forEach(function(cValue) {
+                                            /* Statistic Analysis */
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                            let analysisCOUNT = new StatisticDefinition();
+                                            analysisCOUNT.statisticType = "count";
+                                            analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                            analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                            /* Statistic Analysis */
+                                            let queryTask_Analysis = new QueryTask(cValue.url);
+                                            let query_Analysis = new Query();
+                                            query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                            query_Analysis.geometry = _geometry;
+                                            query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                            query_Analysis.outStatistics = [ analysisCOUNT ];
+                                            queryTask_Analysis.execute(query_Analysis).then(
+                                                (response) => {
+                                                    try {
+                                                        countLayer++;
+                                                        let _attr = response.features[0].attributes;
+                                                        if(_attr.cantidad > 0) {
+                                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                                            this._listLayerAnalysis.push(cValue.table);
+                                                            let _contentTab = [];
+                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                            _htmlTableTAB_ADD(`${_id}`,_contentTab);
+                                                            _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
+                                                        }
+                                                    } catch (error) {
+                                                        console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    }                    
+                                                },
+                                                (error) => {
+                                                    this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                }
+                                            ).always(lang.hitch(this, function() {
+                                                try {
+                                                    if(this.analysisTotal == countLayer) {
+                                                        this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Error: configAnalysis_Temp always => ${error.name} - ${error.message}`);
+                                                } 
+                                            }.bind(this)));
+                                        });
+                                    }
+                                }));
                             }
                             /* </AET> */
 
@@ -2612,7 +2772,8 @@ require([
                             if(typeof lyr.content[0].version_10 !== "undefined") {
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_10[0];
-                                let _boolean = true;
+                                this._listLayerAnalysis = [];
+                                let countLayer = 0;
                                 let unionGeometryAlto = [];
                                 let unionGeometryBajo = [];
                                 let unionGeometryMedio = [];
@@ -2699,6 +2860,18 @@ require([
                                 divNota.innerHTML = _version.nota;
                                 divColumn_01.appendChild(divNota);
 
+                                const divRow = document.createElement("div");
+                                divRow.className = "row-excel";
+                                const divDownload = document.createElement("div");
+                                divDownload.id = `DOW_${lyr.tag}`;
+                                divRow.appendChild(divDownload);
+                                divColumn_02.appendChild(divRow);
+
+                                const divLOAD = document.createElement("div");
+                                divLOAD.id = `IDLOAD_${lyr.tag}`;
+                                divLOAD.innerHTML = _cssLoad;
+                                divColumn_02.appendChild(divLOAD);
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -2755,6 +2928,12 @@ require([
                                     let _geometry = geometryEngine.union(unionGeometryMedio);
                                     if(_geometry ?? false) {
                                         console.log(_geometry);
+                                        _loadSelect(
+                                            config.download,
+                                            this[`DOW_${lyr.tag}`],
+                                            this._listLayerAnalysis,
+                                            _geometry
+                                        );
                                         /* Statistic Poblacion */
                                         let poblacionSUM = new StatisticDefinition();
                                         poblacionSUM.statisticType = "sum";
@@ -2808,7 +2987,7 @@ require([
                                         //_elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
                                         
                                         configAnalysis_Temp.forEach(function(cValue) {
-                                        
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                             let analysisCOUNT = new StatisticDefinition();
                                             analysisCOUNT.statisticType = "count";
                                             analysisCOUNT.onStatisticField = _version.analysis[0].field;
@@ -2824,7 +3003,10 @@ require([
                                                 (response) => {
                                                     try {
                                                         let _attr = response.features[0].attributes;
+                                                        this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                                        countLayer++;
                                                         if(_attr.cantidad > 0) {
+                                                            this._listLayerAnalysis.push(cValue.table);
                                                             let _contentTab = [];
                                                             let _id = `ID_TBcontent${lyr.tag}`;
                                                             _elementById(_id + "Tbody").innerHTML ="";
@@ -2837,9 +3019,18 @@ require([
                                                     }                    
                                                 },
                                                 (error) => {
+                                                    this[`IDLOAD_${lyr.tag}`].style.display = "none";
                                                     console.error(`Error: Statistic Analysis => ${error.name}`);
                                                 }
-                                            );
+                                            ).always(lang.hitch(this, function() {
+                                                try {
+                                                    if(this.analysisTotal == countLayer) {
+                                                        this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Error: configAnalysis_Temp always => ${error.name} - ${error.message}`);
+                                                } 
+                                            }.bind(this)));
                                         });
                                         
                                     }
@@ -2849,129 +3040,16 @@ require([
 
                             /* <AEE> */
                             if(typeof lyr.content[0].version_11 !== "undefined") {
+                                this._listLayerAnalysis = [];
+                                let countLayer = 0;
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_11[0];
-                                let _boolean = true;
                                 let unionGeometry = [];
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
                                 const divColumn_02 = document.createElement("section");
                                 divColumn_02.className = "column_02";                                
                                 const divMain = document.createElement("main");
-                                
-                                let queryTask_AEE = new QueryTask(lyr.url);
-                                let query_AEE = new Query();
-                                query_AEE.returnGeometry = true;
-                                query_AEE.geometry = new Polygon(_geometryAmbito);
-                                query_AEE.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                queryTask_AEE.execute(query_AEE).then(
-                                    (response) => {
-                                        try {
-                                            let _note = _elementById(`IDNote_${lyr.tag}`);
-                                            let _length = response.features.length;
-                                            for (let i = 0; i < _length; i++) {
-                                                unionGeometry.push(response.features[i].geometry);
-                                            }
-
-                                            if(_length == 0) {
-                                                _note.className = "sect-nota-warning";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                            } else {
-                                                _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
-                                            }                        
-                                        } catch (error) {
-                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
-                                        }                    
-                                    },
-                                    (error) => {  
-                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
-                                    }
-                                ).always(lang.hitch(this, () => { 
-                                    let countTabItem = 1;
-                                    let countTabItemTotal = 0;
-                                    /* Union Geometry */
-                                    let _geometry = geometryEngine.union(unionGeometry);
-                                    if(_geometry ?? false) {
-                                        /* Statistic Poblacion */
-                                        let poblacionSUM = new StatisticDefinition();
-                                        poblacionSUM.statisticType = "sum";
-                                        poblacionSUM.onStatisticField = _version.fields[0].name;
-                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                        /* Statistic Vivienda */
-                                        let viviendaSUM = new StatisticDefinition();
-                                        viviendaSUM.statisticType = "sum";
-                                        viviendaSUM.onStatisticField = _version.fields[1].name;
-                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                        /* Statistic Response */
-                                        let queryTask_Engine = new QueryTask(_version.url);
-                                        let query_Engine = new Query();
-                                        query_Engine.outFields = _version.fields.map(x => x.name);
-                                        query_Engine.geometry = _geometry;
-                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                        query_Engine.returnGeometry = false;
-                                        queryTask_Engine.execute(query_Engine).then(
-                                            (response) => {
-                                                try {
-                                                    let _contentTab01 = []; let _contentTab02 = [];
-                                                    let _attr = response.features[0].attributes;
-                                                    /* Poblacion */
-                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
-                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
-                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                    /* Vivienda */
-                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
-                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
-                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                                } catch (error) {
-                                                    console.error(`Count: Statistic FM => ${error.name}`);
-                                                }                    
-                                            },
-                                            (error) => {
-                                                console.error(`Error: Statistic FM => ${error.name}`);
-                                            }
-                                        );                                    
-                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                        configAnalysis_Temp.forEach(function(cValue) {
-                                        /* Statistic Analysis */
-                                            let analysisCOUNT = new StatisticDefinition();
-                                            analysisCOUNT.statisticType = "count";
-                                            analysisCOUNT.onStatisticField = _version.analysis[0].field;
-                                            analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                            /* Statistic Analysis */
-                                            let queryTask_Analysis = new QueryTask(cValue.url);
-                                            let query_Analysis = new Query();
-                                            query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                            query_Analysis.geometry = _geometry;
-                                            query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                            query_Analysis.outStatistics = [ analysisCOUNT ];
-                                            queryTask_Analysis.execute(query_Analysis).then(
-                                                (response) => {
-                                                    try {
-                                                        let _attr = response.features[0].attributes;
-                                                        if(_attr.cantidad > 0) {
-                                                            let _contentTab = [];
-                                                            let _id = `ID_TBcontent${lyr.tag}`;
-                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
-                                                            _htmlTableTAB_ADD(`${_id}`,_contentTab);
-                                                            _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
-                                                        }
-                                                    } catch (error) {
-                                                        console.error(`Count: Statistic Analysis => ${error.name}`);
-                                                    }                    
-                                                },
-                                                (error) => {
-                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
-                                                }
-                                            );
-                                        });
-                                    }
-                                }));
                                 
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
@@ -3046,6 +3124,18 @@ require([
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
                                 divColumn_01.appendChild(divNota);
+
+                                const divRow = document.createElement("div");
+                                divRow.className = "row-excel";
+                                const divDownload = document.createElement("div");
+                                divDownload.id = `DOW_${lyr.tag}`;
+                                divRow.appendChild(divDownload);
+                                divColumn_02.appendChild(divRow);
+
+                                const divLOAD = document.createElement("div");
+                                divLOAD.id = `IDLOAD_${lyr.tag}`;
+                                divLOAD.innerHTML = _cssLoad;
+                                divColumn_02.appendChild(divLOAD);
                                 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
@@ -3054,6 +3144,140 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Otros Peligros Geológicos", "Viviendas Expuestas");
 
                                 _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "ELEMENTOS EXPUESTOS", "CANTIDAD");
+
+                                let queryTask_AEE = new QueryTask(lyr.url);
+                                let query_AEE = new Query();
+                                query_AEE.returnGeometry = true;
+                                query_AEE.geometry = new Polygon(_geometryAmbito);
+                                query_AEE.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                queryTask_AEE.execute(query_AEE).then(
+                                    (response) => {
+                                        try {
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
+                                            let _length = response.features.length;
+
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
+
+                                            if(_length == 0) {
+                                                _note.className = "sect-nota-warning";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                            } else {
+                                                _note.className = "sect-nota-info";
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
+                                            }                        
+                                        } catch (error) {
+                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
+                                        }                    
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
+                                    }
+                                ).always(lang.hitch(this, () => { 
+                                    let countTabItem = 1;
+                                    let countTabItemTotal = 0;
+                                    /* Union Geometry */
+                                    let _geometry = geometryEngine.union(unionGeometry);
+                                    if(_geometry ?? false) {
+                                        _loadSelect(
+                                            config.download,
+                                            this[`DOW_${lyr.tag}`],
+                                            this._listLayerAnalysis,
+                                            _geometry
+                                        );
+                                        /* Statistic Poblacion */
+                                        let poblacionSUM = new StatisticDefinition();
+                                        poblacionSUM.statisticType = "sum";
+                                        poblacionSUM.onStatisticField = _version.fields[0].name;
+                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        /* Statistic Vivienda */
+                                        let viviendaSUM = new StatisticDefinition();
+                                        viviendaSUM.statisticType = "sum";
+                                        viviendaSUM.onStatisticField = _version.fields[1].name;
+                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
+                                        /* Statistic Response */
+                                        let queryTask_Engine = new QueryTask(_version.url);
+                                        let query_Engine = new Query();
+                                        query_Engine.outFields = _version.fields.map(x => x.name);
+                                        query_Engine.geometry = _geometry;
+                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Engine.returnGeometry = false;
+                                        queryTask_Engine.execute(query_Engine).then(
+                                            (response) => {
+                                                try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
+                                                    let _attr = response.features[0].attributes;
+                                                    /* Poblacion */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    /* Vivienda */
+                                                    _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
+                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic FM => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic FM => ${error.name}`);
+                                            }
+                                        );                                    
+                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        configAnalysis_Temp.forEach(function(cValue) {                                            
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                            /* Statistic Analysis */
+                                            let analysisCOUNT = new StatisticDefinition();
+                                            analysisCOUNT.statisticType = "count";
+                                            analysisCOUNT.onStatisticField = _version.analysis[0].field;
+                                            analysisCOUNT.outStatisticFieldName = "cantidad";                                    
+                                            /* Statistic Analysis */
+                                            let queryTask_Analysis = new QueryTask(cValue.url);
+                                            let query_Analysis = new Query();
+                                            query_Analysis.outFields = cValue.fields.map(x => x.name)
+                                            query_Analysis.geometry = _geometry;
+                                            query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                            query_Analysis.outStatistics = [ analysisCOUNT ];
+                                            queryTask_Analysis.execute(query_Analysis).then(
+                                                (response) => {
+                                                    try {
+                                                        let _attr = response.features[0].attributes;
+                                                        countLayer++;
+                                                        if(_attr.cantidad > 0) {                                                            
+                                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                                            this._listLayerAnalysis.push(cValue.table);
+                                                            let _contentTab = [];
+                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                            _htmlTableTAB_ADD(`${_id}`,_contentTab);
+                                                            _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
+                                                        }
+                                                    } catch (error) {
+                                                        console.error(`Count: Statistic Analysis => ${error.name}`);
+                                                    }                    
+                                                },
+                                                (error) => {
+                                                    this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    console.error(`Error: Statistic Analysis => ${error.name}`);
+                                                }
+                                            ).always(lang.hitch(this, function() {
+                                                try {
+                                                    if(this.analysisTotal == countLayer) {
+                                                        this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                                    }
+                                                } catch (error) {
+                                                    console.error(`Error: configAnalysis_Temp always => ${error.name} - ${error.message}`);
+                                                } 
+                                            }.bind(this)));
+                                        });
+                                    }
+                                }));
                             }
                             /* </AEE> */
 
