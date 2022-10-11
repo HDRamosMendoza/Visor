@@ -27,6 +27,7 @@
   font-weight: normal;
   margin-right: 10px;
 }
+/*
 .hdrm_dt main label[for*='Filter']:before {
   content: '\f0b0';
 }
@@ -36,6 +37,7 @@
 .hdrm_dt main label[for*='Analysis']:before {
   content: '\f0c9';
 }
+*/
 .hdrm_dt main label:hover {
   /*color: #888;*/
   cursor: pointer;
