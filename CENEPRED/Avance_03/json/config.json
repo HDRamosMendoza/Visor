@@ -235,6 +235,104 @@
 
                         }
                     ]
+                },
+                { 
+                    "name": "Zonas de Riesgo No Mitigables",
+                    "objectid": "objectid",
+                    "rgb": "rgb(199,0,57)",
+                    "fields":[
+                        {
+                            "alias": "Departamento",
+                            "name": "nom_dep"
+                        },
+                        {
+                            "alias": "Provincia",
+                            "name": "nom_prov"
+                        },
+                        {
+                            "alias": "Distrito",
+                            "name": "nom_dist"
+                        },
+                        {
+                            "alias": "Documento Sustentario",
+                            "name": "fuente"
+                        },                        
+                        {
+                            "alias": "Nombre de la ZRNM",
+                            "name": "nom_predio"
+                        },
+                        {		
+                            "alias": "Documento Imagen",
+                            "name": "url_img",
+                            "visible": false,
+                            "format": {
+                                "template": "<center><a href=\"${value}\" target=\"_blank\"><i class=\"fa fa-cloud-download\" style=\"font-size:18px\"></i> Descargar Imagen</a></center>"
+                            }
+                        },
+                        {		
+                            "alias": "Documento",
+                            "name": "url",
+                            "format": {
+                                "template": "<center><a href=\"${value}\" target=\"_blank\"><i class=\"fa fa-cloud-download\" style=\"font-size:18px\"></i> Descargar</a></center>"
+                            }
+                        }
+                    ],
+                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Cartografia_Riesgos/MapServer/4020000",
+                    "table": "bdcenepred.informacion_complementa.Zonas_Riesgo/bdcenepred.informacion_complementa.zonas_riesgo_no_mitigables",
+                    "content": [
+                        {
+                            "version_03": [
+                                {
+                                    "imagen": "url_img",
+                                    "nota": "La zona de riesgo intangible para fines de vivienda es aquella zona de riesgo no mitigable, cuyo uso, posesión, transferencia para fines de vivienda queda expresamente prohibida, y el CENEPRED declara la intangibilidad para fines de vivienda en zonas declaradas de riesgo no mitigables.",
+                                    "field": "ambito",
+                                    "cuenta": [
+                                        {
+                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> zonas de riesgo no mitigable",
+                                            "negacion": "seleccionado <strong>NO CUENTA</strong> con zonas de riesgos no mitigables"
+                                        }
+                                    ],
+                                    "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
+                                    "fields": [
+                                        {
+                                            "alias": "Población",
+                                            "name": "pob_total",
+                                            "note": "Población expuesta en zonas de riesgos no mitigables",
+                                            "td": "Zona de Riesgos No Mitigables",
+                                            "default": true                    
+                                        },
+                                        {
+                                            "alias": "Vivienda",
+                                            "name": "num_viv_part",
+                                            "note": "Viviendas expuestas en zonas de riesgos no mitigables",
+                                            "td": "Zona de Riesgos No Mitigables"
+                                        }
+                                    ],
+                                    "ambit":[
+                                        {
+                                            "name": "nom_dep",
+                                            "alias": "DEPA"
+                                        },
+                                        {
+                                            
+                                            "name": "nom_prov",
+                                            "alias": "PROV"
+                                        },
+                                        {
+                                            
+                                            "name": "nom_dist",
+                                            "alias": "DIST"
+                                        }
+                                    ],
+                                    "analysis": [
+                                        {
+                                            "field": "shape"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
@@ -371,7 +469,7 @@
                                 {
                                     "version_05": [
                                         {
-                                            "nota": "Las áreas de exposición por inundación: Son ámbitos  identificados como propensos a inundaciones debido a que fueron reportadas históricamente o que han sido identificadas mediante informes y/o estudios por las diferentes entidades técnicas científicas.",
+                                            "nota": "Las <strong>áreas de exposición</strong> por inundación: Son ámbitos  identificados como propensos a inundaciones debido a que fueron reportadas históricamente o que han sido identificadas mediante informes y/o estudios por las diferentes entidades técnicas científicas.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> áreas de exposición por inundación",
@@ -456,7 +554,7 @@
                                 {
                                     "version_06": [
                                         {
-                                            "nota": "Las fajas marginales son espacios en las riberas de las fuentes de agua delimitados por la ANA para la protección del recurso hídrico, en donde se prohíben actividades agrícolas, industriales y/o de urbanización (uso poblacional). Durante el fenómeno de El Niño Costero las mayores afectaciones se produjeron en fajas marginales ocupadas con fines de vivienda. (Según la Ley de Recursos Hídricos).",
+                                            "nota": "Las <strong>fajas marginales</strong> son espacios en las riberas de las fuentes de agua delimitados por la ANA para la protección del recurso hídrico, en donde se prohíben actividades agrícolas, industriales y/o de urbanización (uso poblacional). Durante el fenómeno de El Niño Costero las mayores afectaciones se produjeron en fajas marginales ocupadas con fines de vivienda. (Según la Ley de Recursos Hídricos).",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> fajas marginales",
@@ -617,7 +715,7 @@
                                 {
                                     "version_08": [
                                         {
-                                            "nota": "Las áreas de exposición por movimientos en masa son aquellos ámbitos identificados como peligros geológicos: Deslizamientos, flujos, caída de rocas, reptación, propagación lateral y movimientos complejos, por diferentes entidades mediante informes y/o estudios.",
+                                            "nota": "Las <strong>áreas de exposición</strong> por movimientos en masa son aquellos ámbitos identificados como peligros geológicos: Deslizamientos, flujos, caída de rocas, reptación, propagación lateral y movimientos complejos, por diferentes entidades mediante informes y/o estudios.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> áreas de exposición por movimientos en masa",
@@ -707,7 +805,7 @@
                                 {
                                     "version_09": [
                                         {
-                                            "nota": "Las áreas de exposición a tsunami están determinadas por límite de máxima Inundación, se obtiene considerando aspectos oceanográficos tales como: altura y dirección de olas, además de información de las características geomorfológicas, pendiente, batimetría y topografía de las zonas de evaluación; las cartas de inundación se complementaron con información del INEI de población y viviendas de las zonas inundables ante un tsunami producido por un evento sísmico de 8.5 y 9.0 MW.(Según Sigrid).",
+                                            "nota": "Las <strong>áreas de exposición a tsunami</strong> están determinadas por límite de máxima Inundación, se obtiene considerando aspectos oceanográficos tales como: altura y dirección de olas, además de información de las características geomorfológicas, pendiente, batimetría y topografía de las zonas de evaluación; las cartas de inundación se complementaron con información del INEI de población y viviendas de las zonas inundables ante un tsunami producido por un evento sísmico de 8.5 y 9.0 MW.(Según Sigrid).",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> áreas de exposición al peligro de tsunami",
@@ -871,7 +969,7 @@
                                 {
                                     "version_11": [
                                         {
-                                            "nota": "Son aquellos ámbitos no tipificados dentro de las clasificaciones de movimientos en masa como, por ejemplo: Arenamiento, Hundimiento, erosión fluvial, erosión marina y erosión de laderas. Estos son identificados por diferentes entidades mediante informes y/o estudios.",
+                                            "nota": "<strong>Áreas de Exposición</strong> son aquellos ámbitos no tipificados dentro de las clasificaciones de movimientos en masa como, por ejemplo: Arenamiento, Hundimiento, erosión fluvial, erosión marina y erosión de laderas. Estos son identificados por diferentes entidades mediante informes y/o estudios.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> áreas de exposición por otros peligros geológicos",
@@ -1007,7 +1105,7 @@
                                 {
                                     "version_13": [
                                         {
-                                            "nota": "Se consideran pasivos ambientales en las actividades del subsector hidrocarburos a los pozos e instalaciones mal abandonados, los suelos contaminados, los efluentes, emisiones, restos o depósitos de residuos ubicados en cualquier lugar del territorio nacional, incluyendo el zócalo marino, producidos como consecuencia de operaciones en el subsector hidrocarburos, realizadas por parte de empresas que han cesado sus actividades en el área donde se produjeron dichos impactos.",
+                                            "nota": "Se consideran <strong>pasivos ambientales</strong> en las actividades del subsector <strong>hidrocarburos</strong> a los pozos e instalaciones mal abandonados, los suelos contaminados, los efluentes, emisiones, restos o depósitos de residuos ubicados en cualquier lugar del territorio nacional, incluyendo el zócalo marino, producidos como consecuencia de operaciones en el subsector hidrocarburos, realizadas por parte de empresas que han cesado sus actividades en el área donde se produjeron dichos impactos.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong>XX</strong> pasivos ambientales por hidrocarburos",
