@@ -75,6 +75,11 @@ if __name__ == '__main__':
         if(geoFormat == "PRUEBA"):            
             response = dict()
             item = geoLayer.split(",")
+            descGDB = arcpy.Describe(arcpy.env.workspace)
+            response["GDB_PATH"] = { "path": arcpy.env.workspace }
+            response["GDB_NAME"] = { "name": descGDB.name }
+            response["GDB_DATATYPE"] = { "datatype": descGDB.dataType }
+            response["GDB_CATALOG"] = { "catalog": descGDB.catalogPath }            
             for layer in item:
                 if(arcpy.Exists(layer)):
                     response[layer] = {"layer": layer, "exit": "SI"}
