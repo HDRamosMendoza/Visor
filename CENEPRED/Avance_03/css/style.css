@@ -755,8 +755,9 @@ a:hover {
 .report-main .column_02 label {
   display: none;
 }
-
+/*
 .report-main .column_02 .row-excel,
 .report-main .row-excel #ID_Diagnosis_Format {
   display: none;
 }
+*/
