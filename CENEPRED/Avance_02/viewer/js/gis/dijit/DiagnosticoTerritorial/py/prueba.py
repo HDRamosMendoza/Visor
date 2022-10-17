@@ -7,7 +7,6 @@ import json
 
 def _nameAlone(_name):
     _name = _name.replace(".", "")
-    _name = _name.replace("/", "")
     if('/' in _name):
         return _name[_name.rfind('/')+1:] 
     else:
