@@ -6,6 +6,7 @@ import random
 import time
 import arcpy
 import json
+from os.path import basename
 
 # Default Folder
 scratch_Folder = arcpy.env.scratchFolder
@@ -104,9 +105,10 @@ if __name__ == '__main__':
                 if(arcpy.Exists(layer)):
                     # Add name
                     layer_temp = 'lyr' + layer + time_file
+                    layer_temp = nameAlone(layer_temp)
                     #Se crear un Layer para su uso
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
-                    layer = layer.replace(".", "")
+                    layer = nameAlone(layer)
                     # Nombre del KMZ
                     name_KMZ = "SIGRID_KMZ_" + layer + "_" + time_file
                     # Selección por localización
@@ -123,7 +125,9 @@ if __name__ == '__main__':
             files = os.listdir(os.path.join(scratch_Folder,nameFileKMZ))
             for f in files:
                 if f.endswith(".kmz"):
-                    zfile.write(os.path.join(scratch_Folder,nameFileKMZ,f))
+                    _pathFile = os.path.join(scratch_Folder,nameFileKMZ,f)
+                    zfile.write(_pathFile,basename(_pathFile))
+                    
             zfile.close()
             # Response KMZ
             arcpy.SetParameterAsText(3, _pathZip)
@@ -154,7 +158,8 @@ if __name__ == '__main__':
             files = os.listdir(os.path.join(scratch_Folder,nameFileSHP))
             for f in files:
                 if f.endswith("shp") or f.endswith("dbf") or f.endswith("shx") or f.endswith("cpg") or f.endswith("prj") or f.endswith("sbn") or f.endswith("sbx") or f.endswith("xml"):
-                    zfile.write(os.path.join(scratch_Folder,nameFileSHP,f))
+                    _pathFile = os.path.join(scratch_Folder,nameFileSHP,f)
+                    zfile.write(_pathFile,basename(_pathFile))
             zfile.close()
             # Response KMZ
             arcpy.SetParameterAsText(3, _pathZip)
@@ -168,10 +173,11 @@ if __name__ == '__main__':
             for layer in item:
                 if(arcpy.Exists(layer)):
                     # Add name GDB
-                    layer_temp = 'lyrGDB' + layer + time_file
+                    layer_temp = 'GDB' + layer + time_file
+                    layer_temp = nameAlone(layer_temp)
                     #Se crear un Layer para su uso
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
-                    layer = layer.replace(".", "")
+                    layer_temp = nameAlone(layer_temp)
                     # Nombre del GDB
                     name_GDB = "SIGRID_GDB_" + layer + "_" + time_file
                     # Selección por localización
@@ -186,7 +192,8 @@ if __name__ == '__main__':
             for root, dirs, files in os.walk(os.path.join(scratch_Folder,nameFileGDB)):
                 if root == _GDB:
                     for f in files:
-                        zfile.write(os.path.join(root, f))
+                        _pathFile = os.path.join(root, f)
+                        zfile.write(_pathFile,basename(_pathFile))
             zfile.close()
             # Response GDB
             arcpy.SetParameterAsText(3, _pathZip)
