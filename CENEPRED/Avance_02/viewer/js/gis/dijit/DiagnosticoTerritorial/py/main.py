@@ -47,16 +47,17 @@ geojson_polygon = arcpy.GetParameterAsText(1)
 # Formato a descargar
 geoFormat = arcpy.GetParameterAsText(2)
 
-geoLayer = 'ZRMN,EVAR,planes_PPRRD'
-geoFormat = "SHP" #"GDB" || "SHP" || "GDB" || "PRUEBA"
+#geoLayer = 'ZRMN,EVAR,planes_PPRRD'
+#geoFormat = "GDB" || "SHP" || "GDB" || "PRUEBA"
 
-geojson_polygon = '''{ 
+'''geojson_polygon = { 
                     "type": "Polygon", 
                     "coordinates": [
                         [[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]
                     ],
                     "spatialReference" : { "wkid" : 4326 }
-                }'''
+                }
+'''
 
 arcpy.AddMessage("Parametro 1: " + geoLayer)
 arcpy.AddMessage("Parametro 2: " + geoFormat)
