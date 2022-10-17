@@ -65,7 +65,6 @@ arcpy.AddMessage("Ruta scratch : " + scratch_GDB)
 
 def nameAlone(_name):
     _name = _name.replace(".", "")
-    _name = _name.replace("/", "")
     if('/' in _name):
         return _name[_name.rfind('/')+1:] 
     else:
@@ -143,8 +142,7 @@ if __name__ == '__main__':
                     arcpy.AddMessage("layer_temp {}".format(layer_temp))
                     #Se crear un Layer para su uso
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
-                    layer = layer.replace(".", "")
-                    layer = layer.replace("/", "")
+                    layer = nameAlone(layer)
                     # Nombre del SHP
                     name_SHP = "SIGRID_CENEPRED_SHP_" + layer + "_" + time_file
                     # Selección por localización
