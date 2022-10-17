@@ -99,9 +99,7 @@ if __name__ == '__main__':
 
         # Download KMZ
         if(geoFormat == "KMZ"):
-            if not arcpy.Exists(nameFileKMZ):
-                os.mkdir(os.path.join(scratch_Folder,nameFileKMZ))
-           
+            os.mkdir(os.path.join(scratch_Folder,nameFileKMZ))           
             for layer in item:
                 if(arcpy.Exists(layer)):
                     # Add name
@@ -110,7 +108,7 @@ if __name__ == '__main__':
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
                     layer = layer.replace(".", "")
                     # Nombre del KMZ
-                    name_KMZ = "SIGRID_CENEPRED_KMZ_" + layer + "_" + time_file
+                    name_KMZ = "SIGRID_KMZ_" + layer + "_" + time_file
                     # Selección por localización
                     arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
                     # Ruta de destino de la conversion de un KMZ
@@ -132,9 +130,7 @@ if __name__ == '__main__':
         
         # Download SHP
         if(geoFormat == "SHP"):
-            if not arcpy.Exists(nameFileSHP):
-                os.mkdir(os.path.join(scratch_Folder,nameFileSHP))
-
+            os.mkdir(os.path.join(scratch_Folder,nameFileSHP))
             for layer in item:
                 if(arcpy.Exists(layer)):
                     # Add name SHP
@@ -145,7 +141,7 @@ if __name__ == '__main__':
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
                     layer = nameAlone(layer)
                     # Nombre del SHP
-                    name_SHP = "SIGRID_CENEPRED_SHP_" + layer + "_" + time_file
+                    name_SHP = "SIGRID_SHP_" + layer + "_" + time_file
                     # Selección por localización
                     arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
                     # Ruta de destino de la conversion de un SHP
@@ -165,9 +161,7 @@ if __name__ == '__main__':
         
         # Download GDB
         if(geoFormat == "GDB"):
-            if not arcpy.Exists(nameFileGDB):
-                os.mkdir(os.path.join(scratch_Folder,nameFileGDB))
-
+            os.mkdir(os.path.join(scratch_Folder,nameFileGDB))
             arcpy.CreateFileGDB_management(os.path.join(scratch_Folder,nameFileGDB), "SIGRID_GDB.gdb")
             _GDB = os.path.join(scratch_Folder,nameFileGDB,"SIGRID_GDB.gdb")
             print(_GDB)
@@ -179,7 +173,7 @@ if __name__ == '__main__':
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
                     layer = layer.replace(".", "")
                     # Nombre del GDB
-                    name_GDB = "SIGRID_CENEPRED_GDB_" + layer + "_" + time_file
+                    name_GDB = "SIGRID_GDB_" + layer + "_" + time_file
                     # Selección por localización
                     arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
                     # Ruta de destino de la conversion de un GDB
