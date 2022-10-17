@@ -9,6 +9,7 @@ import json
 
 # Default Folder
 scratch_Folder = arcpy.env.scratchFolder
+arcpy.AddMessage("Scracth {}".format(scratch_Folder))
 
 # Default GDB
 scratch_GDB = arcpy.env.scratchGDB
@@ -46,21 +47,29 @@ geojson_polygon = arcpy.GetParameterAsText(1)
 # Formato a descargar
 geoFormat = arcpy.GetParameterAsText(2)
 
-#geoLayer = 'ZRMN,EVAR,planes_PPRRD'
-#geoFormat = "GDB" || "SHP" || "GDB" || "PRUEBA"
-'''
-geojson_polygon ={ 
+geoLayer = 'ZRMN,EVAR,planes_PPRRD'
+geoFormat = "SHP" #"GDB" || "SHP" || "GDB" || "PRUEBA"
+
+geojson_polygon = '''{ 
                     "type": "Polygon", 
                     "coordinates": [
                         [[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]
                     ],
                     "spatialReference" : { "wkid" : 4326 }
-                }
-'''
+                }'''
+
 arcpy.AddMessage("Parametro 1: " + geoLayer)
 arcpy.AddMessage("Parametro 2: " + geoFormat)
 arcpy.AddMessage("Parametro 3: " + geojson_polygon)
 arcpy.AddMessage("Ruta scratch : " + scratch_GDB)
+
+def nameAlone(_name):
+    _name = _name.replace(".", "")
+    _name = _name.replace("/", "")
+    if('/' in _name):
+        return _name[_name.rfind('/')+1:] 
+    else:
+        return _name
 
 if __name__ == '__main__':
     if len(geoLayer) > 0 and len(geojson_polygon) > 0:
@@ -109,7 +118,7 @@ if __name__ == '__main__':
                     # Conversión de LAYER a KML
                     arcpy.LayerToKML_conversion(layer_temp, saveKmzURL)
                 else:
-                    print("Not exist: {}".format(layer))                        
+                    arcpy.AddMessage("Not exist: {}".format(layer))                        
             
             _pathZip = os.path.join(scratch_Folder,nameFileKMZ,nameFileKMZ_Zip + ".zip")
             zfile = zipfile.ZipFile(_pathZip, "w")
@@ -129,10 +138,13 @@ if __name__ == '__main__':
             for layer in item:
                 if(arcpy.Exists(layer)):
                     # Add name SHP
-                    layer_temp = 'lyrSHP' + layer + time_file
+                    layer_temp = 'shp' + layer + time_file
+                    layer_temp = nameAlone(layer_temp)
+                    arcpy.AddMessage("layer_temp {}".format(layer_temp))
                     #Se crear un Layer para su uso
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
                     layer = layer.replace(".", "")
+                    layer = layer.replace("/", "")
                     # Nombre del SHP
                     name_SHP = "SIGRID_CENEPRED_SHP_" + layer + "_" + time_file
                     # Selección por localización
@@ -140,7 +152,7 @@ if __name__ == '__main__':
                     # Ruta de destino de la conversion de un SHP
                     arcpy.CopyFeatures_management(layer_temp, os.path.join(scratch_Folder,nameFileSHP, name_SHP + ".shp"))
                 else:
-                    print("Not exist: {}".format(layer))                        
+                    arcpy.AddMessage("Not exist: {}".format(layer))                        
             
             _pathZip = os.path.join(scratch_Folder,nameFileSHP,nameFileSHP_Zip + ".zip")
             zfile = zipfile.ZipFile(_pathZip, "w", zipfile.ZIP_STORED)
@@ -174,7 +186,7 @@ if __name__ == '__main__':
                     # Ruta de destino de la conversion de un GDB
                     arcpy.CopyFeatures_management(layer_temp, os.path.join(_GDB, name_GDB))
                 else:
-                    print("Not exist: {}".format(layer))
+                    arcpy.AddMessage("Not exist: {}".format(layer))
             
             _pathZip = os.path.join(scratch_Folder,nameFileGDB,nameFileGDB_Zip + ".zip")
             zfile = zipfile.ZipFile(_pathZip, "w", zipfile.ZIP_DEFLATED)
