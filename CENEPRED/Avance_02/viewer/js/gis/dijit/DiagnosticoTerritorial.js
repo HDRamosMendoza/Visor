@@ -496,8 +496,6 @@ define([
                                 return;
                             }
                             /* Extraer data */
-                            console.log(this._listLayer.toString());
-                            console.log(this._listLayer);
                             this.gpExtractData.submitJob (
                                 {
                                     "Layers_to_Clip": this._listLayer.toString(),
