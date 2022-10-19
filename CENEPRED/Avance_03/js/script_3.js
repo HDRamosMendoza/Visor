@@ -48,8 +48,7 @@ require([
     esriConfig.defaults.io.proxyUrl = 'https://sigrid.cenepred.gob.pe/sigridv3/php/proxy.php';
     esriConfig.defaults.io.alwaysUseProxy = false;
     esriConfig.defaults.io.timeout = 120000;
-    esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-    
+    esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");    
     this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
     this._pathDownload = "https://sigrid.cenepred.gob.pe/arcgis/rest/directories/";
 
@@ -73,12 +72,9 @@ require([
     this.analysisTotal = 0;
     this.diagnosisTotal = 0;
     this.diagnosisCount = 1;
-
     this.summaryTotal = 0;
     this.summaryCount = 0;
-
     this._listLayer = [];
-
     let _cssLoad = "<div class='lds-ellipsis'><div></div><div></div><div></div><div></div></div>";
     
     map = new Map("map", { center: [-76, -10], zoom: 6, basemap: "topo" });
@@ -138,10 +134,10 @@ require([
     let _sortJSON = function(data, key, orden) {
         try { /* Ordenando el json de capas */
             return data.sort(function (a, b) {
-                var x = a[key], y = b[key];        
+                let x = a[key], y = b[key];
                 if (orden === 'asc') { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
-        
-                if (orden === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }                
+                
+                if (orden === 'desc') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
             });
         } catch (error) { 
             console.error(`Error: _sortJSON => ${error.name} - ${error.message}`); 
@@ -162,12 +158,7 @@ require([
         try {
             let selectItem = "";
             let htmlID = formatId.getAttribute("id");
-            let container = domConstruct.create("div", {
-                    id: `DIV_${htmlID}`,
-                    style: {width:'96.5%',color:"#555555"}
-                }, htmlID
-            );
-            
+            let container = domConstruct.create("div", { id: `DIV_${htmlID}`, style: {width:'96.5%',color:"#555555"} }, htmlID );            
             let buttonDownload = new Button({
                 id: `Button_${htmlID}`,
                 label: "Descargar",
