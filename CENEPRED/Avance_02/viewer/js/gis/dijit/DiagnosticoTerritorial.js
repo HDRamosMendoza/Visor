@@ -143,7 +143,6 @@ define([
      
         postCreate: function () {
             this.inherited(arguments);
-            console.log("in postCreate");
             this._pathDownload = "https://sigrid.cenepred.gob.pe/arcgis/rest/directories/";
             //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
             /* Servicio de Geometria */
@@ -388,7 +387,6 @@ define([
             /*this.own(on(this.ID_Diagnosis_Download, 'click', lang.hitch(this, () => {
                 // Button (click) - ID_Diagnosis_Download. Descargar información de DIAGNOSTICO
                 try {
-                    console.log("DESCARGANDO");
                 } catch (error) {
                     console.error(`Error: button/ID_Analisis (click) => ${error.name} - ${error.message}`);
                 }
@@ -397,7 +395,6 @@ define([
             /*this.own(on(this.ID_Analysis_Download, 'click', lang.hitch(this, () => {
                 // Button (click) - ID_Analysis_Download. Descargar información de ANALISIS
                 try {
-                    console.log("DESCARGANDO");
                 } catch (error) {
                     console.error(`Error: button/ID_Analisis (click) => ${error.name} - ${error.message}`);
                 }
@@ -436,9 +433,7 @@ define([
                 }
             })));
         },
-        startup: function() {
-            console.log("in startup");
-        },
+        startup: function() {},
         _activedLayer(_this) {
             try {
                 return this.map.layerIds.map(function(item) { 
@@ -453,11 +448,7 @@ define([
         _loadSelect(formatOption, formatId) {
             try {
                 let htmlID = formatId.getAttribute("data-dojo-attach-point");
-                let container = domConstruct.create("div", {
-                        id: `DIV_${htmlID}`,
-                        style: {width:'96.5%',color:"#555555"}
-                    }, formatId
-                );
+                let container = domConstruct.create("div", { id: `DIV_${htmlID}`, style: {width:'96.5%',color:"#555555"} }, formatId );
                 
                 let buttonDownload = new Button({
                     id: `Button_${htmlID}`,
@@ -512,31 +503,31 @@ define([
                                                     let _URL_Temp = _URL.substring(_URL.indexOf("arcgisjobs"), _URL.length);
                                                     window.location = this._pathDownload + _URL_Temp;
                                                 } catch (error) {
-                                                    console.log("Error: _downloadFile " + error.message);
+                                                    console.error("Error: _downloadFile " + error.message);
                                                 }
                                             }.bind(this));
                                         }
                                     } catch (error) {
-                                      console.log("Error: _completeCallback " + error.message);
+                                      console.error("Error: _completeCallback " + error.message);
                                     }
                                 }.bind(this),      
                                 _statusCallback = function(jobInfo) {
                                     try {
-                                        var status = jobInfo.jobStatus;
+                                        let status = jobInfo.jobStatus;
                                         if ( status === "esriJobFailed" ) {
                                             this.ID_Load_Download.style.display = "none";
                                         } else if (status === "esriJobSucceeded"){
                                             this.ID_Load_Download.style.display = "none";
                                         }
                                     } catch (error) {
-                                        console.log("Error: _statusCallback " + error.message);
+                                        console.error("Error: _statusCallback " + error.message);
                                     }
                                 }.bind(this),    
                                 _errorCallback = function(jobInfo) {
                                     try {
                                         this.ID_Load_Download.style.display = "none";
                                     } catch (error) {
-                                        console.log("Error: _errorCallback " + error.message);
+                                        console.error("Error: _errorCallback " + error.message);
                                     }
                                 }.bind(this)
                             );
@@ -544,20 +535,14 @@ define([
                         } else {
                             _alert.innerHTML = "Seleccione un <strong>FORMATO</strong>";
                             _alert.style.display = "block";
-                            setTimeout(()=> {
-                                _alert.style.display = "none";
-                            }, 2000);
+                            setTimeout(() => { _alert.style.display = "none"; }, 2000);
                             return;
                         }
                     }.bind(this)
                 });
 
-                let tableContainer = new TableContainer({
-                    cols: 2, labelWidth: "0%",
-                    customClass: "labelsAndValues", /*class: "form-labels"*/
-                }, container);
-                let options = [];
-                let booleanButton = false;
+                let tableContainer = new TableContainer({ cols: 2, labelWidth: "0%", customClass: "labelsAndValues" }, container);
+                let options = []; let booleanButton = false;
                 formatOption.map(function(item, index) {
                     /* let fragment = document.createDocumentFragment();
                     let row = document.createElement("option");
@@ -838,12 +823,9 @@ define([
                 let queryTask = new QueryTask(_lyr.url);
                 let query = new Query();
                 query.outFields = _lyr.fields.map(x => x.field);
-                //console.log(_lyr.name);
-                //console.log(new Polygon(this.geometryIntersect));
                 query.geometry = new Polygon(this.geometryIntersect);
                 query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                 query.outStatistics = [ diagnosisCOUNT ];
-                //console.log(query);
                 this.deferredDiagnosis = queryTask.execute(query);
                 this.deferredDiagnosis.then(
                     (response) => {
@@ -1105,11 +1087,8 @@ define([
                                 query_1k.num = 500;
                                 query_1k.start = (H*500);
                                 query_1k.returnGeometry = true;
-                                //console.log(query_1k);
                                 queryTask_1k.execute(query_1k).then(
                                     (result_geo) => {
-                                        console.log("===> " + result_geo.features.length);
-                                        console.log(result_geo.features.length);
                                         result_geo.features.map(function(feature) {
                                             this.bufferCount = this.bufferCount + 1;
                                             console.log(this.bufferCount);
