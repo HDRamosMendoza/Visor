@@ -856,7 +856,7 @@ define([
                                         let row = document.createElement("tr");
                                         let cell_0 = document.createElement("td");                                        
                                         let cell_0_input = document.createElement("input");
-                                        cell_0_input.style.display = "none";
+                                        /*cell_0_input.style.display = "none";*/
                                         cell_0_input.setAttribute("type", "checkbox");
                                         cell_0_input.setAttribute("data-idName", current.id);
                                         cell_0_input.setAttribute("data-idLayer", current.position);
@@ -868,14 +868,52 @@ define([
                                                         this._validatedGroupLayer(this.groupActived,_ds.idname,_ds.idlayer,true);
                                                     } else {
                                                         this._validatedGroupLayer(this.groupActived,_ds.idname,_ds.idlayer,false);
-                                                    }                                                    
-                                                    this.groupLayer.forEach(element => {
+                                                    }
+                                                    this.groupLayer.forEach(element => {                                                        
                                                         if(element.group.name == _ds.idname) {
-                                                            element.group.lyr().setLayerDefinitions(element.group.lyrDefinitions);
+                                                            let _temp = [];
+                                                            this._idLayer(this.groupActived,_ds.idname).forEach(_id => {
+                                                                _temp[_id] = element.group.lyrDefinitions[_id];
+                                                            });
+                                                            element.group.lyr().setLayerDefinitions(_temp);
                                                             element.group.lyr().setVisibleLayers(this._idLayer(this.groupActived,_ds.idname));
-                                                            element.group.lyr().refresh();
+                                                        }
+                                                    });                                                  
+                                                    /*
+                                                    this.groupLayer.forEach(element => {                                                        
+                                                        if(element.group.name == _ds.idname) {
+                                                            console.log(element.group.name);
+                                                            console.log(_ds.idlayer);
+                                                            console.log(this.groupActived,_ds.idname);
+                                                            console.log(element.group.lyr);
+                                                            console.log(element.group.lyrDefinitions);
+                                                            let _temp = [];
+                                                            
+                                                            //this._idLayer(this.groupActived,_ds.idname).forEach(_id => {_temp[_id] = element.group.lyrDefinitions[_id];});
+                                                            
+                                                            console.log(_temp);
+                                                            //_temp[_ds.idlayer] = element.group.lyrDefinitions[_ds.idlayer];
+                                                            _temp[5010200] = "objectid_12 IN (29127,33466,31894,31900,29040,30601,29038,29037,4232,4233,29039,29036,4235,29134,4237,4236,4234,4238,29044,9830,30574,29043,9831,33473,33474,33949,33950,33472,30572,30573,29035,29041,31893,30599,30600,31899,22184,33948,38886,38887,38888,38889,38890,38891,38892,38893,22183,32124,29137,25982,7472,7470,30570,25105,32322,7471,2002,7469,634,7473,29131,31481,29130,25110,29136,25108,5205,25106,31482,29135,25112,29138,7474,33476,33470,33471,25107,25109,25111,30571,30597,30598,9833,5211,29128,33475,25971,5178,969,1692,1673,1611,352,2218,696,41,2137,2293,2339,597,1674,1694,9832,546,1632,1555,8686,8683,8684,30297,13997,35934,17722,32236,17282,1524,665,29972,29129,32238,29971,32237,29133,29970,745,2509,5183,29979,32123,1876,33946,33947,32122,4219,5202,4228,4222,4223,4218,4221,4225,30568,30595,4227,4226,5201,33469,990,29132,4220,4217,30596,5204,4224,35931,35933,35932,33468,31013,30569,29976,32121,1652,173,5182,15610,15607,15604,15608,247,15603,2071,32120,15609,15606,57,103,646,5180,2399,611,1672,1963,29978,29974,9693,29977,33945,33944,2580,1518,2577,1822,2578,909,2576,2575,5203,2579,2581,691,984,29975,473,2042,323,747,927,514,804,2542,987,1565,261,466,1649,1638,5181,2107,1587,5184,29973,35980)";
+                                                            _temp[5010300] = "objectid IN (681,5619,22578,7046,7043,7045,674,675,7042,5618,7048,24581,7047,7044)";
+                                                            //_temp[5010400] = "objectid IN (3254)";
+                                                            //_temp[5020200] = "objectid IN (59802,61107,61113,61106,61118,61114,61119,61123,61105,61120,61122,61115,61121,61110,61116,61117,61109,61111,61112,61108,46993,46992,46990,50420,52620,50412,57669,1061,57675,57670,52619,1059,52595,51817,57681,63814,63822,63830,63838,52593,63836,63824,63835,52592,63841,63829,63820,63816,63812,63811,63831,63815,63840,63834,52594,63823,63833,63818,61569,63810,63826,63839,63837,63813,63827,63821,63817,63832,63825,63828,63819,1058,52612,52615,52617,60221,60220,52618,53062,52628,52616,55604,73272,60209,1060,60210,60211,60213,60212,73274,73271,73273,53059,53058,74077,55603,57687,64664,64665,64666,50418,57678,50411,46991,52610,52611,53061,72815,72816,72817,72818,52597,52599,52629,59803,61568,62468,68735,68738,68739,68734,68737,68736,62526,62527,63344,63345,63346)";
+                                                            //_temp[5020500] = "objectid_1 IN (172,173,174,102,144,145,170,171,175,176,177,178,204,205,206,207,208,209,210,211,239,240,241,242,243,244,245,246,272,297,298,300,301,302,303,304,305,332,333,335,336,337,338,339,340,341,368,372,437,460,461,463,5,35,36,37,38,39,40,41,42,43,69,70,71,72,73,74,75,76,77,103,104,105,106,107,108,109,110,111,137,138,139,140,141,142,143,299,369,370,371,373,374,375,376,400,401,402,403,404,405,406,407,408,431,432,433,434,435,436,458,459,462,464,488,681)";
+                                                            //_temp[5080200] = "objectid IN (6828,12441,7037,7469,7546,7556,7720,7792,7827,7977,8063,8212,8216,8265,8275,8303,8316,8410,8415,6827,6826,8673,8675,7423)";
+                                                            //_temp[5090100] = "objectid IN (5526,5528,5529,5532,5533,5539,5524,5525,5531,5537,5538,1773,1774,1775,1776,1809,1810,1812,1813,1817,1818,1819,1820,1821,1860,1861,1862,1863,1864,1865,1866,1877,1878,1879,1880,1881,1882,1883,1885,1887,1927,1935,1936,1937,1951,1960,1961,1962,1963,1964,1965,1966,1967,1968,1971,1975,1976,1977,1978,7551,1811,1814,1815,1816,1915,1921,1922,1923,1924,1925,1926,1928,1929,1930,1931,1932,1933,1934,1942,1943,1944,1945,1946,1947,1948,1949,1950,1954,1970,1822,1823,1867,1868,1869,1870,1871,1872,1873,1874,1875,1876,1896,1897,1898,1899,1900,1901,1902,1903,1904,1905,1906,1907,1908,1909,1910,1911,1912,1913,1914,1916,1917,1918,1919,1920,1938,1939,1940,1941,1952,1953,1955,1956,1957,1958,1959,1969,1972,1973,1974,1979,5527,5530,5534,5535,5536)";
+                                                            //_temp[5090200] = "objectid IN (522)";
+
+                                                            element.group.lyr().setLayerDefinitions(_temp);
+                                                            console.log(this._idLayer(this.groupActived,_ds.idname));
+                                                            element.group.lyr().setVisibleLayers([5090013,5010200,5010300]);
+                                                            //element.group.lyr().setVisibleLayers([5010200,5010300,5010400,5020200,5020500,5080200,5090100,5090200]);
+                                                            //element.group.lyr().setVisibleLayers([5010400,5090200]);
+                                                            //element.group.lyr().setVisibleLayers(this._idLayer(this.groupActived,_ds.idname));
+                                                            element.group.lyr().setVisibleLayers([_ds.idlayer]);
+                                                            //element.group.lyr().setVisibleLayers(this._idLayer(this.groupActived,_ds.idname), true);
+                                                            //element.group.lyr().refresh();   
                                                         }
                                                     });
+                                                    */
                                                 }
                                             } catch (error) {
                                                 console.error(`Error: _queryTask RESPONSE => ${error.name} - ${error.message}`);
@@ -941,7 +979,8 @@ define([
                 ).always(lang.hitch(this, () => {
                     if ((this.diagnosisRandom == _random) && (this.groupLayer_count == this.diagnosisTotal)) {
                         this.groupLayer.forEach(element => {
-                            if(element.group.name == _lyr.id) {
+                            //if(element.group.name == _lyr.id) {
+                            if(element.group.lyrDefinitions.length > 0) {
                                 //element.group.lyr().setLayerDefinitions(element.group.lyrDefinitions);
                                 /*element.group.lyr().setVisibleLayers(element.group.id);
                                 element.group.lyr().refresh();*/
