@@ -856,7 +856,7 @@ define([
                                         let row = document.createElement("tr");
                                         let cell_0 = document.createElement("td");                                        
                                         let cell_0_input = document.createElement("input");
-                                        /*cell_0_input.style.display = "none";*/
+                                        cell_0_input.style.display = "none";
                                         cell_0_input.setAttribute("type", "checkbox");
                                         cell_0_input.setAttribute("data-idName", current.id);
                                         cell_0_input.setAttribute("data-idLayer", current.position);
