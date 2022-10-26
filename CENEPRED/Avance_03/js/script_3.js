@@ -161,9 +161,9 @@ require([
             let container = domConstruct.create("div", { id: `DIV_${htmlID}`, style: {width:'96.5%',color:"#555555"} }, htmlID );            
             let buttonDownload = new Button({
                 id: `Button_${htmlID}`,
-                label: "Descargar",
+                label: "Descargar Datos Espaciales",
                 iconClass: 'fa fa-download',
-                style: { width:'120px' },
+                style: { width:'180px'},
                 onClick: function() {
                     console.log("Le dio click");
                     let ID_Load_Download = _elementById("ID_Load_Download");
@@ -791,8 +791,9 @@ require([
         return _text.split('').map( letra => acentos[letra] || letra).join('').toString();
     };
     
-    let _featureTable = function(srv,objectid,fields) {
+    let _featureTable = function(_name,srv,objectid,fields) {
         try {
+            console.log(fields);
             let idTable = _elementById("ID_TableDetail");
             let tbl = document.createElement("div");
             tbl.id = "ID_TableDynamic";
@@ -842,9 +843,11 @@ require([
                         showColumnHeaderTooltips: false,
                         showGridMenu: false,
                         showRelatedRecords: false,
-                        showStatistics: false,
+                        showStatistics: true,
+                        zoomToSelection:  false,
                         syncSelection: false,
                         dateOptions: {
+                            noDataMessage: "No existe coincidencias",
                             datePattern: 'M/d/y', 
                             timeEnabled: true,
                             timePattern: 'H:mm',
@@ -874,6 +877,19 @@ require([
                             }
                         }]
                     }, _idTable);            
+                    featureTable.on("refresh", function (evt) {
+                        document.querySelectorAll('.esri-feature-table-title').forEach(function (element, index, arr) {
+                            try {
+                                let countFeature = element.innerText.substring(
+                                    element.innerText.indexOf("Entidades"),
+                                    element.innerText.length
+                                ).replace(", Seleccionado: 0)","");
+                                element.innerText = `${_name} - ${countFeature}`;
+                            } catch(error) { 
+                                console.error(`ERROR: .esri-feature-table-title => ${error.name} - ${error.message}`);
+                            }
+                        });
+                    });
                     featureTable.startup();
                 } catch (error) {
                     console.error(`Error: _queryTask/queryTask always => ${error.name} - ${error.message}`);
@@ -1002,14 +1018,13 @@ require([
                         document.getElementById(ContentID).style.display = "block"; /* CONTENT */
                         document.getElementById(ContentID).classList.add("active"); /* CONTENT */                        
                         
-                        if(featureTable !== null) { 
-                            featureTable.destroy();
-                        }
+                        if(featureTable !== null) { featureTable.destroy(); }
                         
                         _tabName = nodeHeader.innerText.split("/").join(''); 
                         _tabName = _tabName.split(" ").join(''); 
                         
                         _featureTable(
+                            nodeHeader.innerText,
                             nodeHeader.getAttribute("data-url"),
                             nodeHeader.getAttribute("data-objectid"),
                             JSON.parse(nodeHeader.getAttribute("data-fields"))
@@ -1058,7 +1073,7 @@ require([
                                             if(_boolean) {
                                                 _note.className = "sect-nota-warning";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                                _img.setAttribute("src", `./images/documento.png`);
+                                                _img.setAttribute("src", `./images/PPRRD.png`);
                                             }                                            
                                         } catch (error) {
                                             console.error(`Count: PPRRD => ${error.name} - ${error.message}`);
@@ -1135,7 +1150,7 @@ require([
                                             }
 
                                             if(_boolean) {
-                                                _img.setAttribute("src", `./images/documento.png`);
+                                                _img.setAttribute("src", `./images/EVARD.png`);
                                             }                                         
                                         } catch (error) {
                                             console.error(`Count: EVAR => ${error.name} - ${error.message}`);
@@ -1213,6 +1228,16 @@ require([
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
                                 divColumn_01.appendChild(divNota); 
+
+                                const divNota_2 = document.createElement("p");
+                                divNota_2.className = "sect-nota";
+                                divNota_2.innerHTML = _version.nota_2;
+                                divColumn_01.appendChild(divNota_2);
+
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
 
                                 const divImg = document.createElement("img");
                                 divImg.id = `IDImg_${lyr.tag}`;
@@ -1333,7 +1358,9 @@ require([
                                     divMain.appendChild(label);                            
                                 }.bind(this));
                                 /* CONTENT */
-                                lyr.content[0].version_03[0].fields.map(function(current) {
+                                lyr.content[0].version_03[0].fields.map(function(current,index) {
+                                    console.log(current);
+                                    console.log(index);
                                     const sect = document.createElement("section");
                                     sect.id = `content${lyr.tag}${current.name}`;
                                     const div = document.createElement("div");
@@ -1356,8 +1383,12 @@ require([
                                     const divTable = document.createElement("div");
                                     divTable.id = `TBcontent${lyr.tag}${current.name}`;
                                     div.appendChild(divTable);
-
-                                    sect.appendChild(div);                            
+                                    
+                                    /*  Base de datos. Mapeo de procesos
+                                        Concimiento de programacion de visual basic
+                                        Concmiento referenciales de desarrollo
+                                        Conocimiento en GIS */
+                                    sect.appendChild(div);              
                                     divMain.appendChild(sect);                            
                                 }.bind(this));
                                 
@@ -1384,6 +1415,16 @@ require([
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
                                 divColumn_01.appendChild(divNota);
+
+                                const divNota_2 = document.createElement("p");
+                                divNota_2.className = "sect-nota";
+                                divNota_2.innerHTML = _version.nota_2;
+                                divColumn_01.appendChild(divNota_2);
+
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
 
                                 const divRow = document.createElement("div");
                                 divRow.className = "row-excel";
@@ -3919,9 +3960,9 @@ require([
                                                 _note.className = "sect-nota-info";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
 
-                                                _features.forEach(function(_item) {
+                                                _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
-                                                        "item": `${_item.attributes[_version.static]}`,
+                                                        "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
                                                     _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
@@ -3972,8 +4013,22 @@ require([
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
                                 divNota.style.textAlign = "left";
-                                divNota.style.marginTop = "15px";
-                                divColumn_01.appendChild(divNota);                              
+                                divNota.style.marginTop = "7px";
+                                divColumn_01.appendChild(divNota);
+                                /* Nota 2 */                              
+                                const divNota2 = document.createElement("p");
+                                divNota2.className = "sect-nota";
+                                divNota2.innerHTML = _version.nota_2;
+                                divNota2.style.textAlign = "left";
+                                divNota2.style.marginTop = "7px";
+                                divColumn_01.appendChild(divNota2);
+                                /* Fuente */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divFuente.style.textAlign = "left";
+                                divColumn_01.appendChild(divFuente);
+
                                 divColumn_01.appendChild(divMain);
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
@@ -4001,6 +4056,7 @@ require([
                 divContent.id = `Content_${lyr.tag}`;
                 /*divContent.className = !lyr.default || "active"; */
                 const divTitle = document.createElement("section");
+                divTitle.style.padding = "5px 5px 0 5px";
                 divTitle.innerHTML = lyr.name;
                 const divHR = document.createElement("section");
                 divHR.className = "div-hr";
