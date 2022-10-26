@@ -151,7 +151,8 @@ define([
             /* Servicio de Geoproceso */
             this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
             
-            const config = JSON.parse(configJSON);            
+            const config = JSON.parse(configJSON);     
+            this.ID_Nota.innerHTML = config.nota;
             this._htmlTable(this.ID_Table_Count);
             this._htmlTableAnalysis(this.ID_Table_Buffer);
             this._htmlTable(this.ID_Table_Analysis);
@@ -282,7 +283,7 @@ define([
                     this.map.setZoom(6);
                     this.map.centerAt(new Point(-75.015152, -9.189967));
                     /* Limpiando pestaña RESULTADO */
-                    this.ID_Count.innerHTML  = 0;
+                    /*this.ID_Count.innerHTML  = 0;*/
                     this.ID_CountText.innerHTML  = this.textAmbito = "";
                     this.ID_Table_Count.innerHTML = '';
                     this._htmlTable(this.ID_Table_Count);
@@ -299,7 +300,7 @@ define([
             })));
 
             this.own(on(this.ID_Report, 'click', lang.hitch(this, () => {
-                /* Button (click) - ID_Report */
+                // Button (click) - ID_Report
                 try {
                     let disp = this.ID_Alert;
                     let objectLiteral = false == this._validateSelect(selDis) ? [selDis.get('value'),srvDis.url] :
@@ -314,13 +315,13 @@ define([
                     }
                     let _textAmbito = "";
                     let _textAmbito_request = [];
-                    /* Texto de Ámbito */
+                    // Texto de Ámbito
                     _textAmbito = _textAmbito.concat(`${selDep.get('displayedValue')} (departamento)`);
                     _textAmbito = this._validateSelect(selPro) ? _textAmbito.concat("") : _textAmbito.concat(`/${selPro.get('displayedValue')} (provincia)`);
                     _textAmbito = this._validateSelect(selDis) ? _textAmbito.concat("") : _textAmbito.concat(`/${selDis.get('displayedValue')} (distrito)`);
                     let textAmbito_Temp = _textAmbito.split("/");
                     textAmbito_Temp[textAmbito_Temp.length-1] = `${textAmbito_Temp[textAmbito_Temp.length-1]}`;
-                    _textAmbito_request = textAmbito_Temp.reverse().join(", ");/* Busqueda */
+                    _textAmbito_request = textAmbito_Temp.reverse().join(", ");// Busqueda
                     textAmbito_Temp = textAmbito_Temp.join(" / ");                    
                     _textAmbito = `${textAmbito_Temp}`;
                     localStorage.clear();
@@ -328,7 +329,7 @@ define([
                     localStorage.setItem("reportTitle", JSON.stringify(_textAmbito));
                     localStorage.setItem("reportAmbito", JSON.stringify(objectLiteral));
                     localStorage.setItem("reportGeometry", JSON.stringify(this.reportGeometry));                    
-                    /* Open TAB - REPORT */
+                    // Open TAB - REPORT
                     window.open('../../Avance_03/', '_blank');
                 } catch (error) {
                     console.error(`Error: button/ID_Report (click) => ${error.name} - ${error.message}`);
@@ -448,13 +449,13 @@ define([
         _loadSelect(formatOption, formatId) {
             try {
                 let htmlID = formatId.getAttribute("data-dojo-attach-point");
-                let container = domConstruct.create("div", { id: `DIV_${htmlID}`, style: {width:'96.5%',color:"#555555"} }, formatId );
+                let container = domConstruct.create("div", { id: `DIV_${htmlID}`, style: {width:'65%',color:"#555555"} }, formatId );
                 
                 let buttonDownload = new Button({
                     id: `Button_${htmlID}`,
                     label: "Descargar",
                     iconClass: 'fa fa-download',
-                    style: { width:'120px' },
+                    style: { width:'115px', fontSize: '12px'},
                     onClick: function() {
                         let _alert = this.ID_Select_Alert;
                         if(this.selectItem ?? false) {
@@ -541,7 +542,13 @@ define([
                     }.bind(this)
                 });
 
-                let tableContainer = new TableContainer({ cols: 2, labelWidth: "0%", customClass: "labelsAndValues" }, container);
+               
+                /*<div class="form-count" style="position: relative; height:25px;">
+                    <button type="button" data-dojo-attach-point="ID_Report" style="position:absolute; left:0; top:5px; height:25px;font-size: 14px !important;">
+                        <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp; Reporte
+                    </button>
+                </div>*/
+                let tableContainer = new TableContainer({ cols: 3, labelWidth: "0%", customClass: "labelsAndValues" }, container);
                 let options = []; let booleanButton = false;
                 formatOption.map(function(item, index) {
                     /* let fragment = document.createDocumentFragment();
@@ -576,7 +583,7 @@ define([
                     store: stateStore,
                     autoComplete: false,
                     searchAttr: "name",
-                    style: { width:'100%', fontSize:'13px' }
+                    style: { width:'100%'}
                 });
             
                 tableContainer.addChild(filteringSelect);
@@ -772,7 +779,7 @@ define([
                 query.objectIds = [id];
                 const lyr = new FeatureLayer(srv, { mode: FeatureLayer.MODE_SELECTION });
                 let itemRandom = this._getRandom();
-                this.diagnosisRandom = itemRandom;                
+                this.diagnosisRandom = itemRandom;
                 
                 if(this.deferredDiagnosis && (this.deferredDiagnosis > 0)) { this.deferredDiagnosis.cancel(); }
 
@@ -832,8 +839,10 @@ define([
                         try {
                             if (this.diagnosisRandom == _random) {
                                 this.groupActived = [];
+                                console.log(response);
                                 let _attr = response.features[0].attributes;
-                                this.ID_Count.innerText = this.diagnosisResult = this.diagnosisResult + _attr.cantidad;
+                                this.diagnosisResult = this.diagnosisResult + _attr.cantidad;
+                                /*this.ID_Count.innerText = this.diagnosisResult = this.diagnosisResult + _attr.cantidad;*/
                                 this.ID_CountText.innerHTML = this.textAmbito;
                                 this._elementById(`${_id}_Total`).innerText = this.diagnosisResult;
                                 this.ID_Percentage.innerHTML = this._loadTime(this.diagnosisCount, _total);
@@ -845,8 +854,9 @@ define([
                                 /* Delete Tbody */
                                 this._elementById(`${_id}_Tbody`).innerHTML = "";
                                 /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
-                                this._sortJSON(_temp, 'cantidad','desc');                            
-                                
+                                console.log(_temp)
+                                this._sortJSON(_temp, 'cantidad','desc');
+                                console.log(_temp)
                                 /*  let cell_0 = document.createElement("td");let cell_0_input = document.createElement("input");cell_0_input.setAttribute("type", "checkbox");cell_0.appendChild(cell_0_input); */
 
                                 /* Inserta a la tabla */
@@ -1423,7 +1433,7 @@ define([
                 const rowHeadTH_Item = document.createElement("th");
                 //const rowHeadTH_ItemNode = document.createTextNode("#");
                 //rowHeadTH_Item.appendChild(rowHeadTH_ItemNode);
-                rowHeadTH_Item.innerHTML = "<i class='fa fa-check-square' style='margin-right:-10px'></i>";
+                rowHeadTH_Item.innerHTML = "<i class='fa fa-check-square' style='margin-right:-10px; display:none;'></i>";
                 const rowHeadTH_Name = document.createElement("th");
                 const rowHeadTH_NameNode = document.createTextNode("Información");
                 rowHeadTH_Name.appendChild(rowHeadTH_NameNode);

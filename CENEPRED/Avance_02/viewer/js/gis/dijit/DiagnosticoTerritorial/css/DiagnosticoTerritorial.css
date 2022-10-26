@@ -339,7 +339,7 @@
 }
 /* Botones de resultado */
 .hdrm_dt .form-result-button {
-  height: 30px;
+  height: 35px;
 }
 .hdrm_dt .form-result-button span {
   float: right;
@@ -347,7 +347,7 @@
 .hdrm_dt .form-result-button span select { 
   height: 30px;
   margin-top: 7px;
-  width: 80px;
+  width: 70px;
 }  
 /* Analisis */
 .hdrm_dt .buffer {

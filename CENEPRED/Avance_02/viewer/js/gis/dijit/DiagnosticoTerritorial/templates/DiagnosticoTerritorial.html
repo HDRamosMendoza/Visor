@@ -26,7 +26,8 @@
                     </div>
                     <br>
                     <div class="form-filter action-btn">
-                        <button type="button" class="btn-float" data-dojo-attach-point="ID_Clear">
+                        <!-- class="btn-float" -->
+                        <button type="button" data-dojo-attach-point="ID_Clear">
                             <i class="fa fa-eraser" aria-hidden="true"></i> Limpiar
                         </button>
                         <button type="button" data-dojo-attach-point="ID_Diagnosis">
@@ -40,16 +41,12 @@
             <section id="content2">
                 <div class="tab-content">
                     <div class="form-count">
-                        <div class="form-count-count" data-dojo-attach-point="ID_Count">0</div>
-                        <div class="form-count-title">Coincidencia(s) de registro(s)</div>
+                        <div class="form-count-count" data-dojo-attach-point="ID_Count" style="display: none;">0</div>
+                        <div class="form-count-title" data-dojo-attach-point="ID_Nota"  style="text-align: justify;">Coincidencia(s) de registro(s)</div>
                         <div class="form-count-title" data-dojo-attach-point="ID_CountText"></div>
                     </div>
                     <div class="form-count" style="position: relative;">
                         <label class="subTitle">Resumen de Diagnóstico:</label>
-                        <button type="button" data-dojo-attach-point="ID_Report" style="position:absolute; right:0; top:-5px; height:25px;">
-                            <!-- class="btn-float" -->
-                            <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp; Reporte
-                        </button>
                     </div>
                     
                     <div class="lds-facebook" data-dojo-attach-point="ID_Load"><div></div><div></div><div></div></div>
@@ -58,14 +55,25 @@
 
                     <div class="load-time" data-dojo-attach-point="ID_Percentage"></div>
 
-                    <div class="form-result-button" style="height: 40px;">
+                    <div class="form-result-button">
+                        <div class="form-count" style="position: relative; float: right; right: 105px;">
+                            <button type="button" data-dojo-attach-point="ID_Report" style="position:absolute; left:0; top:4px; height:28px;font-size: 12px !important;">
+                                <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp; Reporte
+                            </button>
+                        </div>
                         <span>
                             <div data-dojo-attach-point="ID_Diagnosis_Format"></div>
-                            <button type="button" data-dojo-attach-point="ID_Diagnosis_Download" style="display: none;">
-                                <i class="fa fa-download" aria-hidden="true"></i> Descargar
+                            <!--
+                            <button type="button" data-dojo-attach-point="ID_Diagnosis_Download">
+                                <i class="fa fa-download" aria-hidden="true"></i> Descargarsss
                             </button>    
+                            -->
+                            
                         </span>                    
                     </div>
+
+                    
+                    
 
                     <div class="lds-facebook" data-dojo-attach-point="ID_Load_Download"><div></div><div></div><div></div></div>
 

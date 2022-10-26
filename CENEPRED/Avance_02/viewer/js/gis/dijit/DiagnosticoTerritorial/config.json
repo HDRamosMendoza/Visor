@@ -1,4 +1,5 @@
 {
+    "nota": "Los resultados obtenidos corresponden a la información de peligros y/o riesgos existentes en el ámbito seleccionado, la cual esta representada en forma de polígono, punto o línea. La carencia de información no quiere decir la inexistencia de peligros, por lo que se recomienda consultar directamente a otras fuentes de información o en su defecto elaborar evaluaciones de riesgo.",
     "lyrGroup": [
         "cartografiaPeligros",
         "cartografiaRiesgos",
