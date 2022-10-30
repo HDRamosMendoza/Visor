@@ -234,6 +234,7 @@ body { background-color: #f6f6f6; position: relative;}
   font-weight: normal;
   margin-right: 10px;
 }
+/*
 .report-main main label[for*='1']:before {
   content: '\f080';
 }
@@ -242,7 +243,7 @@ body { background-color: #f6f6f6; position: relative;}
 }
 .report-main main label[for*='3']:before {
   content: '\f080';
-}
+}*/
 .report-main main label:hover {
   color: #888;
   cursor: pointer;
@@ -317,7 +318,7 @@ input.tabs-horiz:checked + label {
 .tabs { 
   position: relative;
   width: 100%;
-  height: 560px;
+  height: 570px;
   padding: 0px;
   /*background-color: #F5F5F5;*/
   margin-top: 10px;
@@ -545,7 +546,9 @@ input.tabs-horiz:checked + label {
 }
 .column_01 {
   text-align: left;
+  position: relative;
   width: 60%;
+  height: 515px;
 }
 .column_02 {
   width: 33%;
@@ -553,38 +556,54 @@ input.tabs-horiz:checked + label {
 .column_02 img {
   width: 100%;
 }
-
 .column_01 p.sect-nota-info {
   font-size : 14px;
   line-height : 1.4;
+  text-align: justify;
   background-color : #d9edf7;
   border-color : #bce8f1;
   color : #31708f;
-  padding : 10px;
-  margin : 0px 0px 15px 0px;
+  padding : 0px 10px 10px 10px;
+  margin : 0px 0px 5px 0px;
 }
 .column_01 p.sect-nota-warning {
   font-size : 14px;
   line-height : 1.4;
+  text-align: justify;
   background-color : #fff3cd;
   border-color : #fff3cd;
   color : #856404;
   padding : 10px;
   margin : 0px 0px 15px 0px;
 }
+.column_01 p.sect-detalle,
+.column_02 p.sect-detalle {
+  font-size : 14px;
+  text-align: justify;
+  padding : 0px 5px;
+  margin : 10px 0px;
+  border-left : 3px solid #555555;
+}
 .column_01 p.sect-nota,
 .column_02 p.sect-nota {
-  font-size : 13px;
+  font-size : 14px;
+  text-align: justify;
   padding : 0px 5px 0px 5px;
-  margin : 5px 0px 0px 0px;
+  margin : 10px 0px;
   border-left : 3px solid #555555;
 }
 .column_01 p.sect-fuente,
 .column_02 p.sect-fuente {
   background-color: #FFF9C4;
-  font-size : 13px;
+  font-size : 14px;
   padding : 5px;
   margin : 5px 0px 0px 0px !important;
+  bottom: 0;
+  box-sizing: border-box;
+  left: 0;
+  width: 100%;
+  text-align: justify;
+  position: absolute;
 }
 
 /* ACORDEON */
@@ -594,10 +613,10 @@ input.tabs-horiz:checked + label {
   color: #FFFFFF !important;
   font-weight: 780 !important;
   cursor: pointer;
-  padding: 15px 10px;  
-  text-align: left;
+  padding: 20px 10px 10px 10px;  
+  /*text-align: left;*/
   outline: none;
-  font-size: 13px;
+  font-size: 17px;
   transition: 0.4s;
   width: 100%;
 }
@@ -609,7 +628,9 @@ input.tabs-horiz:checked + label {
   color: #FFFFFF;
   font-weight: bold;
   float: right;
-  margin-left: 5px;
+  margin-top: -5px;
+  font-size: 25px;
+  padding-top: -20px !important;
 }
 .report-main button.active:after {
   content: "\2212";
@@ -718,14 +739,14 @@ a:hover {
   float: right;
   font-size: 12px;
   height: 35px;
-  width: 190px;  
+  /*width: 190px;*/
 }
 .report-main .row-excel .btn-excel:hover {
   color: #0a2605;
   background-color: #CDE0C9;  
   border-top: 4px solid #D68910;
   font-weight: 700;
-  width: 200px;  
+  /*width: 200px;*/
 }
 .report-main .row-excel table#ID_BTN_EXCEL_TB{
   display: none;
@@ -769,3 +790,6 @@ a:hover {
   display: none;
 }
 */
+.labelsAndValues-labelCell {
+  display: none !important;
+}

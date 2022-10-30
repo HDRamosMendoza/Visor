@@ -3,6 +3,7 @@ require([
     'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js',
     'dijit/form/FilteringSelect',
     'dijit/form/Button',
+    'dijit/registry',
     'esri/SpatialReference',
     'esri/layers/FeatureLayer',
     'esri/dijit/FeatureTable',
@@ -26,6 +27,7 @@ require([
     Chart,
     FilteringSelect,
     Button,
+    registry,
     SpatialReference,
     FeatureLayer,
     FeatureTable,
@@ -147,7 +149,7 @@ require([
     let _title = function(_title) {
         try {
             _elementById("ID_ReportTitle").innerHTML = "";
-            _elementById("ID_ReportTitle").innerHTML = `<i class="fa fa-line-chart" aria-hidden="true"></i>&nbsp; ${_title || ''}`;
+            _elementById("ID_ReportTitle").innerHTML = `<i class="fa fa-pie-chart"></i>&nbsp; ${_title || ''} - CUADRO DE RESUMEN`;
         } catch (error) {
             console.error(`Error: _title => ${error.name} - ${error.message}`);
         }
@@ -158,12 +160,23 @@ require([
         try {
             let selectItem = "";
             let htmlID = formatId.getAttribute("id");
-            let container = domConstruct.create("div", { id: `DIV_${htmlID}`, style: {width:'96.5%',color:"#555555"} }, htmlID );            
+            let container = domConstruct.create("div", {
+                id: `DIV_${htmlID}`, style: {width:'96.5%',color:"#555555"}
+            }, htmlID);
+            
+            if(registry.byId(`Button_${htmlID}`)) {
+                registry.byId(`Button_${htmlID}`).destroyRecursive();
+            }
+
+            if(registry.byId(`DIV_${htmlID}`)) {
+                registry.byId(`DIV_${htmlID}`).destroyRecursive();
+            }
+
             let buttonDownload = new Button({
                 id: `Button_${htmlID}`,
                 label: "Descargar Datos Espaciales",
                 iconClass: 'fa fa-download',
-                style: { width:'180px'},
+               
                 onClick: function() {
                     console.log("Le dio click");
                     let ID_Load_Download = _elementById("ID_Load_Download");
@@ -297,6 +310,7 @@ require([
                     }]
                 },
                 options: {
+                    /*locale: "es-ES",*/
                     indexAxis: 'y',
                     responsive: false,
                     plugins: {
@@ -494,7 +508,7 @@ require([
             const rowHead = document.createElement("tr");
             const rowHeadTH_Name = document.createElement("th");
             rowHeadTH_Name.style.textAlign = "center";
-            rowHeadTH_Name.style.width = "60%";
+            rowHeadTH_Name.style.width = "70%";
             const rowHeadTH_NameNode = document.createTextNode(_header01);
             rowHeadTH_Name.appendChild(rowHeadTH_NameNode);
             const rowHeadTH_Count = document.createElement("th");
@@ -793,7 +807,6 @@ require([
     
     let _featureTable = function(_name,srv,objectid,fields) {
         try {
-            console.log(fields);
             let idTable = _elementById("ID_TableDetail");
             let tbl = document.createElement("div");
             tbl.id = "ID_TableDynamic";
@@ -884,7 +897,7 @@ require([
                                     element.innerText.indexOf("Entidades"),
                                     element.innerText.length
                                 ).replace(", Seleccionado: 0)","");
-                                element.innerText = `${_name} - ${countFeature}`;
+                                element.innerText = `${_name} - ${countFeature}`.replace("Entidades","Registros");
                             } catch(error) { 
                                 console.error(`ERROR: .esri-feature-table-title => ${error.name} - ${error.message}`);
                             }
@@ -1021,6 +1034,7 @@ require([
                         if(featureTable !== null) { featureTable.destroy(); }
                         
                         _tabName = nodeHeader.innerText.split("/").join(''); 
+                        _elementById("ID_BTN_EXCEL").innerHTML = `<i class="fa fa-download"></i>&nbsp; Descargar tabla - ${_tabName}`;
                         _tabName = _tabName.split(" ").join(''); 
                         
                         _featureTable(
@@ -1094,6 +1108,11 @@ require([
                                 divNota.innerHTML = _version.nota;
                                 divColumn_01.appendChild(divNota); 
                                 
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente); 
+
                                 const divImg = document.createElement("img");
                                 divImg.id = `IDImg_${lyr.tag}`;
                                 divColumn_02.appendChild(divImg);
@@ -1160,7 +1179,12 @@ require([
                                         console.error(`Error: EVAR => ${error.name} - ${error.message}`);
                                     }
                                 );
-                                
+
+                                const divDetalle = document.createElement("p");
+                                divDetalle.className = "sect-detalle";
+                                divDetalle.innerHTML = _version.detalle;
+                                divColumn_01.appendChild(divDetalle); 
+
                                 /* HEADER */
                                 lyr.content[0].version_02[0].fields.map(function(current) {
                                     const inputText = document.createElement("input");
@@ -1228,11 +1252,6 @@ require([
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
                                 divColumn_01.appendChild(divNota); 
-
-                                const divNota_2 = document.createElement("p");
-                                divNota_2.className = "sect-nota";
-                                divNota_2.innerHTML = _version.nota_2;
-                                divColumn_01.appendChild(divNota_2);
 
                                 const divFuente = document.createElement("p");
                                 divFuente.className = "sect-fuente";
@@ -1335,19 +1354,32 @@ require([
                                 const divColumn_02 = document.createElement("section");
                                 divColumn_02.className = "column_02";                                
                                 const divMain = document.createElement("main");
-                                                  
+                                
+                                /*
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable);
+                                divColumn_02.appendChild(divTable);*/
 
+                                const divDetalle = document.createElement("p");
+                                divDetalle.className = "sect-detalle";
+                                divDetalle.innerHTML = _version.detalle;
+                                divColumn_01.appendChild(divDetalle);
+                                
                                 /* HEADER */
-                                lyr.content[0].version_03[0].fields.map(function(current) {
+                                lyr.content[0].version_03[0].fields.map(function(current,index) {
                                     const inputText = document.createElement("input");
                                     inputText.type = "radio";
                                     inputText.className = "tabs-horiz";
                                     inputText.id = `tab${lyr.tag}${current.name}`;
                                     inputText.name = `tabs-2${lyr.tag}`;
+                                    inputText.onclick = function() {
+                                        if(index == 0 || index == 1) {
+                                            _elementById("DOW_3").style.display = "none";
+                                        } else {
+                                            _elementById("DOW_3").style.display = "block";
+                                        }
+                                    }
                                     if(typeof current.default !== "undefined") {
                                         inputText.setAttribute("checked","");
                                     }
@@ -1359,8 +1391,6 @@ require([
                                 }.bind(this));
                                 /* CONTENT */
                                 lyr.content[0].version_03[0].fields.map(function(current,index) {
-                                    console.log(current);
-                                    console.log(index);
                                     const sect = document.createElement("section");
                                     sect.id = `content${lyr.tag}${current.name}`;
                                     const div = document.createElement("div");
@@ -1372,22 +1402,23 @@ require([
                                     divCenter.appendChild(divOBS);
                                     div.appendChild(divCenter);
 
-                                    const divCenterTotal = document.createElement("center");
-                                    const divTotal = document.createElement("p");
-                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
-                                    divTotal.style.fontSize = "65px";
-                                    divTotal.style.margin = "5px 0px";
-                                    divTotal.innerHTML = _cssLoad;
-                                    divCenterTotal.appendChild(divTotal);
-                                    div.appendChild(divCenterTotal);
+                                    if(index != 2) {
+                                        const divCenterTotal = document.createElement("center");
+                                        const divTotal = document.createElement("p");
+                                        divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                        divTotal.style.fontSize = "65px";
+                                        divTotal.style.margin = "5px 0px";
+                                        divTotal.innerHTML = _cssLoad;
+                                        divCenterTotal.appendChild(divTotal);
+                                        div.appendChild(divCenterTotal);    
+                                    }
+                                    
                                     const divTable = document.createElement("div");
                                     divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    divTable.classList = "form-scroll-tab";
+                                    divTable.style.maxHeight = "215px";
                                     div.appendChild(divTable);
-                                    
-                                    /*  Base de datos. Mapeo de procesos
-                                        Concimiento de programacion de visual basic
-                                        Concmiento referenciales de desarrollo
-                                        Conocimiento en GIS */
+
                                     sect.appendChild(div);              
                                     divMain.appendChild(sect);                            
                                 }.bind(this));
@@ -1414,12 +1445,7 @@ require([
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divColumn_01.appendChild(divNota);
-
-                                const divNota_2 = document.createElement("p");
-                                divNota_2.className = "sect-nota";
-                                divNota_2.innerHTML = _version.nota_2;
-                                divColumn_01.appendChild(divNota_2);
+                                divColumn_02.appendChild(divNota);
 
                                 const divFuente = document.createElement("p");
                                 divFuente.className = "sect-fuente";
@@ -1430,14 +1456,15 @@ require([
                                 divRow.className = "row-excel";
                                 const divDownload = document.createElement("div");
                                 divDownload.id = `DOW_${lyr.tag}`;
+                                divDownload.style.display = "none";
                                 divRow.appendChild(divDownload);
-                                divColumn_02.appendChild(divRow);
+                                divColumn_01.appendChild(divRow);
 
                                 const divLOAD = document.createElement("div");
                                 divLOAD.id = `IDLOAD_${lyr.tag}`;
                                 divLOAD.innerHTML = _cssLoad;
-                                divColumn_02.appendChild(divLOAD);
-
+                                divColumn_01.appendChild(divLOAD);
+                                
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
@@ -1445,7 +1472,8 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Zona de Riesgo", "Vivienda");
                                 
                                 /*_htmlTable(_elementById(`ID_TBcontent${lyr.tag}`)); */
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
+                                /* _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"OTROS EE","CANTIDAD"); */
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
 
                                 let queryTask_ZRNM = new QueryTask(lyr.url);
                                 let query_ZRNM = new Query();  
@@ -1483,6 +1511,7 @@ require([
                                     /* Union Geometry */
                                     let _geometry = geometryEngine.union(unionGeometry);
                                     if(_geometry ?? false) {
+                                        
                                         _loadSelect(
                                             config.download,
                                             this[`DOW_${lyr.tag}`],
@@ -1556,7 +1585,8 @@ require([
                                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                             this._listLayerAnalysis.push(cValue.table);
                                                              let _contentTab = [];
-                                                             let _id = `ID_TBcontent${lyr.tag}`;
+                                                             /*let _id = `ID_TBcontent${lyr.tag}`;*/
+                                                             let _id = `TBcontent${lyr.tag}${_version.fields[2].name}`;
                                                              _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
                                                              _htmlTableTAB_ADD(`${_id}`,_contentTab);
                                                              _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
@@ -1580,7 +1610,7 @@ require([
                                             }.bind(this)));
                                          });
                                     }                                  
-                                    _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                    _elementById(`TBcontent${lyr.tag}${_version.fields[2].name}_Tbody`).innerHTML = "";
                                     
                                 }));
                             }
@@ -1657,11 +1687,15 @@ require([
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
+                                /* Detalle */
+                                const divDetalle = document.createElement("p");
+                                divDetalle.className = "sect-detalle";
+                                divDetalle.innerHTML = _version.detalle;
+                                divColumn_01.appendChild(divDetalle);
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divNota.style.textAlign = "left";
                                 divColumn_02.appendChild(divNota);                                
                                 /* HEADER */
                                 lyr.content[0].version_04[0].fields.map(function(current) {
@@ -1710,7 +1744,7 @@ require([
                                 }.bind(this));
                                 
                                 const tagStyle = document.createElement("style"); let _css = "";
-                            
+                                
                                 lyr.content[0].version_04[0].fields.map(function(current) {
                                     _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;  
                                 }.bind(this));
@@ -1720,12 +1754,24 @@ require([
                                     tagStyle.textContent = _cssStyle.concat("{display: block;};");
                                     divMain.appendChild(tagStyle);
                                 } 
+                                
                                 divColumn_01.appendChild(divMain);
+
+                                const divNota_2 = document.createElement("p");
+                                divNota_2.className = "sect-nota";
+                                divNota_2.innerHTML = _version.nota_2;
+                                divColumn_01.appendChild(divNota_2);
+
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
+                                
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "N° Puntos Críticos", "Familias Expuestas");
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "N° Puntos Críticos", "Viviendas Expuestas");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Puntos Críticos", "Familias");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Puntos Críticos", "Viviendas");
                             }
                             /* </PCI> */
 
@@ -1742,10 +1788,11 @@ require([
                                 divColumn_02.className = "column_02";                                
                                 const divMain = document.createElement("main");
                                 
+                                /*
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable);
+                                divColumn_02.appendChild(divTable);*/
 
                                 const divOBS = document.createElement("p");
                                 divOBS.id = `IDNote_${lyr.tag}`;
@@ -1753,12 +1800,20 @@ require([
                                 divColumn_01.prepend(divOBS);
                                 
                                 /* HEADER */
-                                lyr.content[0].version_05[0].fields.map(function(current) {
+                                lyr.content[0].version_05[0].fields.map(function(current,index) {
                                     const inputText = document.createElement("input");
                                     inputText.type = "radio";
                                     inputText.className = "tabs-horiz";
                                     inputText.id = `tab${lyr.tag}${current.name}`;
                                     inputText.name = `tabs-2${lyr.tag}`;
+                                    inputText.onclick = function() {
+                                        if(index == 0 || index == 1) {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "none";
+                                        } else {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "block";
+                                        }
+                                    }
+
                                     if(typeof current.default !== "undefined") {
                                         inputText.setAttribute("checked","");
                                     }
@@ -1769,7 +1824,7 @@ require([
                                     divMain.appendChild(label);                            
                                 }.bind(this));
                                 /* CONTENT */
-                                lyr.content[0].version_05[0].fields.map(function(current) {
+                                lyr.content[0].version_05[0].fields.map(function(current,index) {
                                     const sect = document.createElement("section");
                                     sect.id = `content${lyr.tag}${current.name}`;
                                     const div = document.createElement("div");
@@ -1781,16 +1836,21 @@ require([
                                     divCenter.appendChild(divOBS);
                                     div.appendChild(divCenter);
 
-                                    const divCenterTotal = document.createElement("center");
-                                    const divTotal = document.createElement("p");
-                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
-                                    divTotal.style.fontSize = "65px";
-                                    divTotal.style.margin = "5px 0px";
-                                    divTotal.innerHTML = _cssLoad;
-                                    divCenterTotal.appendChild(divTotal);
-                                    div.appendChild(divCenterTotal);
+                                    if(index != 2) {
+                                        const divCenterTotal = document.createElement("center");
+                                        const divTotal = document.createElement("p");
+                                        divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                        divTotal.style.fontSize = "65px";
+                                        divTotal.style.margin = "5px 0px";
+                                        divTotal.innerHTML = _cssLoad;
+                                        divCenterTotal.appendChild(divTotal);
+                                        div.appendChild(divCenterTotal);    
+                                    }
+
                                     const divTable = document.createElement("div");
                                     divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    divTable.classList = "form-scroll-tab";
+                                    divTable.style.maxHeight = "212px";
                                     div.appendChild(divTable);
 
                                     sect.appendChild(div);                            
@@ -1814,27 +1874,34 @@ require([
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divColumn_01.appendChild(divNota);
+                                divColumn_02.appendChild(divNota);
+
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
 
                                 const divRow = document.createElement("div");
                                 divRow.className = "row-excel";
                                 const divDownload = document.createElement("div");
                                 divDownload.id = `DOW_${lyr.tag}`;
+                                divDownload.style.display = "none";
                                 divRow.appendChild(divDownload);
-                                divColumn_02.appendChild(divRow);
+                                divColumn_01.appendChild(divRow);
 
                                 const divLOAD = document.createElement("div");
                                 divLOAD.id = `IDLOAD_${lyr.tag}`;
                                 divLOAD.innerHTML = _cssLoad;
-                                divColumn_02.appendChild(divLOAD);
+                                divColumn_01.appendChild(divLOAD);
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Inundación", "Población Expuesta");
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Inundación", "Viviendas Expuestas");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición", "Población");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición", "Viviendas");
 
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
+                                /*_htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"OTROS EE","CANTIDAD");*/
                                 
                                 let queryTask_AEI = new QueryTask(lyr.url);
                                 let query_AEI = new Query();
@@ -1919,7 +1986,8 @@ require([
                                                 console.error(`Error: Statistic AEI => ${error.name}`);
                                             }
                                         );                                    
-                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        /*_elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";*/
+                                        _elementById(`TBcontent${lyr.tag}${_version.fields[2].name}_Tbody`).innerHTML = "";
                                         configAnalysis_Temp.forEach(function(cValue) {
                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                             /* Statistic Analysis */
@@ -1943,7 +2011,8 @@ require([
                                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                             this._listLayerAnalysis.push(cValue.table);
                                                             let _contentTab = [];
-                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            /*let _id = `ID_TBcontent${lyr.tag}`;*/
+                                                            let _id = `TBcontent${lyr.tag}${_version.fields[2].name}`;
                                                             _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad });
                                                             _htmlTableTAB_ADD(`${_id}`,_contentTab);
                                                             _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad;
@@ -1988,19 +2057,22 @@ require([
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
-                                
-                                const divTable = document.createElement("div");
-                                divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable);
-                                
+                                                                
                                 /* HEADER */
-                                lyr.content[0].version_06[0].fields.map(function(current) {
+                                lyr.content[0].version_06[0].fields.map(function(current,index) {
                                     const inputText = document.createElement("input");
                                     inputText.type = "radio";
                                     inputText.className = "tabs-horiz";
                                     inputText.id = `tab${lyr.tag}${current.name}`;
                                     inputText.name = `tabs-2${lyr.tag}`;
+                                    inputText.onclick = function() {
+                                        if(index == 0 || index == 1) {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "none";
+                                        } else {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "block";
+                                        }
+                                    }
+
                                     if(typeof current.default !== "undefined") {
                                         inputText.setAttribute("checked","");
                                     }
@@ -2011,7 +2083,7 @@ require([
                                     divMain.appendChild(label);                            
                                 }.bind(this));
                                 /* CONTENT */
-                                lyr.content[0].version_06[0].fields.map(function(current) {
+                                lyr.content[0].version_06[0].fields.map(function(current,index) {
                                     const sect = document.createElement("section");
                                     sect.id = `content${lyr.tag}${current.name}`;
                                     const div = document.createElement("div");
@@ -2023,16 +2095,21 @@ require([
                                     divCenter.appendChild(divOBS);
                                     div.appendChild(divCenter);
 
-                                    const divCenterTotal = document.createElement("center");
-                                    const divTotal = document.createElement("p");
-                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
-                                    divTotal.style.fontSize = "65px";
-                                    divTotal.style.margin = "5px 0px";
-                                    divTotal.innerHTML = _cssLoad;
-                                    divCenterTotal.appendChild(divTotal);
-                                    div.appendChild(divCenterTotal);
+                                    if(index != 2) {
+                                        const divCenterTotal = document.createElement("center");
+                                        const divTotal = document.createElement("p");
+                                        divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                        divTotal.style.fontSize = "65px";
+                                        divTotal.style.margin = "5px 0px";
+                                        divTotal.innerHTML = _cssLoad;
+                                        divCenterTotal.appendChild(divTotal);
+                                        div.appendChild(divCenterTotal);    
+                                    }
+                                    
                                     const divTable = document.createElement("div");
                                     divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    divTable.classList = "form-scroll-tab";
+                                    divTable.style.maxHeight = "215px";
                                     div.appendChild(divTable);
 
                                     sect.appendChild(div);                            
@@ -2055,27 +2132,32 @@ require([
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divColumn_01.appendChild(divNota);
+                                divColumn_02.appendChild(divNota);
+
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
 
                                 const divRow = document.createElement("div");
                                 divRow.className = "row-excel";
                                 const divDownload = document.createElement("div");
                                 divDownload.id = `DOW_${lyr.tag}`;
+                                divDownload.style.display = "none";
                                 divRow.appendChild(divDownload);
-                                divColumn_02.appendChild(divRow);
+                                divColumn_01.appendChild(divRow);
 
                                 const divLOAD = document.createElement("div");
                                 divLOAD.id = `IDLOAD_${lyr.tag}`;
                                 divLOAD.innerHTML = _cssLoad;
-                                divColumn_02.appendChild(divLOAD);
+                                divColumn_01.appendChild(divLOAD);
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Fajas marginales", "Población");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Fajas marginales", "Viviendas");
-
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
 
                                 let queryTask_FM = new QueryTask(lyr.url);
                                 let query_FM = new Query();
@@ -2122,15 +2204,12 @@ require([
                                         poblacionSUM.statisticType = "sum";
                                         poblacionSUM.onStatisticField = _version.fields[0].name;
                                         poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                        console.log(_version.fields[0].name);
                                         /* Statistic Vivienda */
                                         let viviendaSUM = new StatisticDefinition();
                                         viviendaSUM.statisticType = "sum";
                                         viviendaSUM.onStatisticField = _version.fields[1].name;
                                         viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                        console.log(_version.fields[1].name);
                                         /* Statistic Response */
-                                        console.log(_version.url);
                                         let queryTask_Engine = new QueryTask(_version.url);
                                         let query_Engine = new Query();
                                         //query_Engine.outFields = _version.fields.map(x => x.name);
@@ -2163,8 +2242,9 @@ require([
                                             (error) => {
                                                 console.error(`Error: Statistic FM => ${error.name}`);
                                             }
-                                        );                                    
-                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        );   
+                                        
+                                        _elementById(`TBcontent${lyr.tag}${_version.fields[2].name}_Tbody`).innerHTML = "";
                                         configAnalysis_Temp.forEach(function(cValue) {
                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                             /* Statistic Analysis */
@@ -2188,7 +2268,7 @@ require([
                                                             this._listLayerAnalysis.push(cValue.table);
                                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                             let _contentTab = [];
-                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            let _id = `TBcontent${lyr.tag}${_version.fields[2].name}`;
                                                             _contentTab.push({"item":cValue.name, "val":_attr.cantidad ?? 0 });
                                                             _htmlTableTAB_ADD(`${_id}`,_contentTab);
                                                             _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
@@ -2216,7 +2296,7 @@ require([
                             }
                             /* </FM> */
 
-                            /* <MM> */
+                            /* <ZC> */
                             if(typeof lyr.content[0].version_07 !== "undefined") {
                                 _elementById(`IDTable_${lyr.tag}`).innerHTML = ""; 
                                 let _version = lyr.content[0].version_07[0];
@@ -2249,8 +2329,11 @@ require([
                                                 _note.className = "sect-nota-info";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
 
-                                                _features.forEach(function(_item) {
-                                                    _contentTab.push({"item": _item.attributes[_version.static],"val": _item.attributes["cantidad"]});
+                                                _features.forEach(function(_item,_index) {
+                                                    _contentTab.push({
+                                                        "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
+                                                        "val": _item.attributes["cantidad"]
+                                                    });
                                                     _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
                                                     _chartData.push(_item.attributes["cantidad"]);
                                                     _chartLabel.push(_item.attributes[_version.static]);
@@ -2295,18 +2378,25 @@ require([
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 
+                                /* TABLA */
                                 const divTable = document.createElement("div");
                                 divTable.id = `TB_content${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable);
+                                divTable.style.maxHeight = "130px";
+                                divTable.style.marginTop = "5px";
+                                divColumn_01.appendChild(divTable);
                                 
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divNota.style.textAlign = "left";
-                                divNota.style.marginTop = "15px";
-                                divColumn_01.appendChild(divNota);                                
+                                divColumn_02.appendChild(divNota);
+
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
                               
                                 divColumn_01.appendChild(divMain);
 
@@ -2315,7 +2405,7 @@ require([
 
                                 _htmlTableTAB(_elementById(`TB_content${lyr.tag}`), "Peligro", "Cantidad");
                             }
-                            /* </MM> */
+                            /* </ZC> */
 
                             /* <AE> */
                             if(typeof lyr.content[0].version_08 !== "undefined") {
@@ -2575,19 +2665,22 @@ require([
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS); 
-                                
-                                const divTable = document.createElement("div");
-                                divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable);
-                                
+                                                                
                                 /* HEADER */
-                                lyr.content[0].version_09[0].fields.map(function(current) {
+                                lyr.content[0].version_09[0].fields.map(function(current,index) {
                                     const inputText = document.createElement("input");
                                     inputText.type = "radio";
                                     inputText.className = "tabs-horiz";
                                     inputText.id = `tab${lyr.tag}${current.name}`;
                                     inputText.name = `tabs-2${lyr.tag}`;
+                                    inputText.onclick = function() {
+                                        if(index == 0 || index == 1) {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "none";
+                                        } else {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "block";
+                                        }
+                                    }
+
                                     if(typeof current.default !== "undefined") {
                                         inputText.setAttribute("checked","");
                                     }
@@ -2598,7 +2691,7 @@ require([
                                     divMain.appendChild(label);                            
                                 }.bind(this));
                                 /* CONTENT */
-                                lyr.content[0].version_09[0].fields.map(function(current) {
+                                lyr.content[0].version_09[0].fields.map(function(current,index) {
                                     const sect = document.createElement("section");
                                     sect.id = `content${lyr.tag}${current.name}`;
                                     const div = document.createElement("div");
@@ -2610,16 +2703,21 @@ require([
                                     divCenter.appendChild(divOBS);
                                     div.appendChild(divCenter);
 
-                                    const divCenterTotal = document.createElement("center");
-                                    const divTotal = document.createElement("p");
-                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
-                                    divTotal.style.fontSize = "65px";
-                                    divTotal.style.margin = "5px 0px";
-                                    divTotal.innerHTML = _cssLoad;
-                                    divCenterTotal.appendChild(divTotal);
-                                    div.appendChild(divCenterTotal);
+                                    if(index != 2) {
+                                        const divCenterTotal = document.createElement("center");
+                                        const divTotal = document.createElement("p");
+                                        divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                        divTotal.style.fontSize = "65px";
+                                        divTotal.style.margin = "5px 0px";
+                                        divTotal.innerHTML = _cssLoad;
+                                        divCenterTotal.appendChild(divTotal);
+                                        div.appendChild(divCenterTotal);    
+                                    }
+                                    
                                     const divTable = document.createElement("div");
                                     divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    divTable.classList = "form-scroll-tab";
+                                    divTable.style.maxHeight = "195px";
                                     div.appendChild(divTable);
 
                                     sect.appendChild(div);                            
@@ -2640,30 +2738,39 @@ require([
 
                                 divColumn_01.appendChild(divMain);
 
+                                /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divColumn_01.appendChild(divNota);
+                                divColumn_02.appendChild(divNota);
+
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
 
                                 const divRow = document.createElement("div");
                                 divRow.className = "row-excel";
                                 const divDownload = document.createElement("div");
                                 divDownload.id = `DOW_${lyr.tag}`;
+                                divDownload.style.display = "none";
                                 divRow.appendChild(divDownload);
-                                divColumn_02.appendChild(divRow);
+
+                                divColumn_01.appendChild(divRow);
 
                                 const divLOAD = document.createElement("div");
                                 divLOAD.id = `IDLOAD_${lyr.tag}`;
                                 divLOAD.innerHTML = _cssLoad;
-                                divColumn_02.appendChild(divLOAD);
+                                divColumn_01.appendChild(divLOAD);
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de exposicion al tsunami", "Población");
-                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Areas de exposicion al tsunami", "Vivienda");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de exposición a tsunami", "Población");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de exposición a tsunami", "Vivienda");
 
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
 
                                 let queryTask_AET = new QueryTask(lyr.url);
                                 let query_AET = new Query();
@@ -2748,7 +2855,7 @@ require([
                                                 console.error(`Error: Statistic FM => ${error.name}`);
                                             }
                                         );                                    
-                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        _elementById(`TBcontent${lyr.tag}${_version.fields[2].name}_Tbody`).innerHTML = "";
                                         configAnalysis_Temp.forEach(function(cValue) {
                                             /* Statistic Analysis */
                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
@@ -2772,8 +2879,8 @@ require([
                                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                             this._listLayerAnalysis.push(cValue.table);
                                                             let _contentTab = [];
-                                                            let _id = `ID_TBcontent${lyr.tag}`;
-                                                            _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
+                                                            let _id = `TBcontent${lyr.tag}${_version.fields[2].name}`;
+                                                            _contentTab.push({"index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
                                                             _htmlTableTAB_ADD(`${_id}`,_contentTab);
                                                             _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
                                                         }
@@ -2887,10 +2994,17 @@ require([
 
                                 divColumn_01.appendChild(divMain);
 
+                                /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divColumn_01.appendChild(divNota);
+                                divColumn_02.appendChild(divNota);
+
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
 
                                 const divRow = document.createElement("div");
                                 divRow.className = "row-excel";
@@ -3152,10 +3266,17 @@ require([
 
                                 divColumn_01.appendChild(divMain);
 
+                                /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divColumn_01.appendChild(divNota);
+                                divColumn_02.appendChild(divNota);
+
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
 
                                 const divRow = document.createElement("div");
                                 divRow.className = "row-excel";
@@ -3347,8 +3468,11 @@ require([
                                                 _note.className = "sect-nota-info";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
 
-                                                _features.forEach(function(_item) {
-                                                    _contentTab.push({"item": _item.attributes[_version.static],"val": _item.attributes["cantidad"]});
+                                                _features.forEach(function(_item,_index) {
+                                                    _contentTab.push({
+                                                        "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
+                                                        "val": _item.attributes["cantidad"]
+                                                    });
                                                     _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
                                                     _chartData.push(_item.attributes["cantidad"]);
                                                     _chartLabel.push(_item.attributes[_version.static]);
@@ -3387,24 +3511,31 @@ require([
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
-                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("height","180");
                                 divCanvasGraphic.setAttribute("width","370");
                                 _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 
+                                /* TABLA */
                                 const divTable = document.createElement("div");
                                 divTable.id = `TB_content${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable); 
+                                divTable.style.maxHeight = "215px";
+                                divTable.style.marginTop = "5px";
+                                divColumn_01.appendChild(divTable); 
 
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divNota.style.textAlign = "left";
-                                divNota.style.marginTop = "15px";
-                                divColumn_01.appendChild(divNota);                                
+                                divColumn_02.appendChild(divNota);
+                                
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
                               
                                 divColumn_01.appendChild(divMain);
 
@@ -3517,19 +3648,26 @@ require([
                                 _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
-
+                                
+                                /* TABLA */
                                 const divTable = document.createElement("div");
                                 divTable.id = `TB_content${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable); 
+                                divTable.style.maxHeight = "150px";
+                                divTable.style.marginTop = "5px";
+                                divColumn_01.appendChild(divTable); 
 
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divNota.style.textAlign = "left";
-                                divNota.style.marginTop = "15px";
-                                divColumn_01.appendChild(divNota);                                
+                                divColumn_02.appendChild(divNota); 
+                                
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
                               
                                 divColumn_01.appendChild(divMain);
 
@@ -3614,18 +3752,25 @@ require([
                                 divCenterTotal.appendChild(divTotal);
                                 divColumn_01.appendChild(divCenterTotal);
                                 
+                                /* TABLA */
                                 const divTable = document.createElement("div");
                                 divTable.id = `TB_content${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
+                                divTable.style.maxHeight = "150px";
+                                divTable.style.marginTop = "5px";
                                 divColumn_01.appendChild(divTable); 
 
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divNota.style.textAlign = "left";
-                                divNota.style.marginTop = "15px";
                                 divColumn_02.appendChild(divNota);
+
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
                               
                                 divColumn_01.appendChild(divMain);
 
@@ -3669,9 +3814,9 @@ require([
                                             if(_features.length > 0) {                                                
                                                 _note.className = "sect-nota-info";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
-                                                _features.forEach(function(_item) {
+                                                _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
-                                                        "item": `${_item.attributes[_version.static]}`,
+                                                        "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
                                                     _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
@@ -3714,15 +3859,21 @@ require([
                                 const divTable = document.createElement("div");
                                 divTable.id = `TB_content${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable); 
+                                divTable.style.maxHeight = "150px";
+                                divTable.style.marginTop = "5px";
+                                divColumn_01.appendChild(divTable); 
 
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divNota.style.textAlign = "left";
-                                divNota.style.marginTop = "15px";
-                                divColumn_01.appendChild(divNota);                                
+                                divColumn_02.appendChild(divNota);
+                                
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
                               
                                 divColumn_01.appendChild(divMain);
 
@@ -3766,9 +3917,9 @@ require([
                                             if(_features.length > 0) {
                                                 _note.className = "sect-nota-info";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
-                                                _features.forEach(function(_item) {
+                                                _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
-                                                        "item": `${_item.attributes[_version.static]}`,
+                                                        "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
                                                     _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
@@ -3808,18 +3959,25 @@ require([
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
 
+                                /* TABLA */
                                 const divTable = document.createElement("div");
                                 divTable.id = `TB_content${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable); 
+                                divTable.style.maxHeight = "150px";
+                                divTable.style.marginTop = "5px";
+                                divColumn_01.appendChild(divTable); 
 
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divNota.style.textAlign = "left";
-                                divNota.style.marginTop = "15px";
-                                divColumn_01.appendChild(divNota);                                
+                                divColumn_02.appendChild(divNota);
+                                
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente); 
                               
                                 divColumn_01.appendChild(divMain);
 
@@ -3863,9 +4021,9 @@ require([
                                             if(_features.length > 0) {
                                                 _note.className = "sect-nota-info";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
-                                                _features.forEach(function(_item) {
+                                                _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
-                                                        "item": `${_item.attributes[_version.static]}`,
+                                                        "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
                                                     _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
@@ -3899,24 +4057,33 @@ require([
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
-                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("height","180");
                                 divCanvasGraphic.setAttribute("width","370");
                                 _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
-
+                                
+                                /* TABLA */
                                 const divTable = document.createElement("div");
                                 divTable.id = `TB_content${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable); 
+                                divTable.style.maxHeight = "150px";
+                                divTable.style.marginTop = "5px";
+                                divColumn_01.appendChild(divTable); 
 
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divNota.style.textAlign = "left";
-                                divNota.style.marginTop = "15px";
-                                divColumn_01.appendChild(divNota);
+                                divColumn_02.appendChild(divNota);
+
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divFuente.style.bottom = "20px";
+                                divColumn_01.appendChild(divFuente);
+
                                 divColumn_01.appendChild(divMain);
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
@@ -3997,36 +4164,31 @@ require([
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
-                                divCanvasGraphic.setAttribute("height","190");
+                                divCanvasGraphic.setAttribute("height","180");
                                 divCanvasGraphic.setAttribute("width","370");
                                 _graphicPie(divCanvasGraphic);
                                 divCenterGraphic.appendChild(divCanvasGraphic);
                                 divColumn_01.appendChild(divCenterGraphic);
-
+                                
+                                /* TABLA */
                                 const divTable = document.createElement("div");
                                 divTable.id = `TB_content${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable); 
+                                divTable.style.maxHeight = "150px";  
+                                divTable.style.marginTop = "5px";                              
+                                divColumn_01.appendChild(divTable); 
 
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
-                                divNota.style.textAlign = "left";
-                                divNota.style.marginTop = "7px";
-                                divColumn_01.appendChild(divNota);
-                                /* Nota 2 */                              
-                                const divNota2 = document.createElement("p");
-                                divNota2.className = "sect-nota";
-                                divNota2.innerHTML = _version.nota_2;
-                                divNota2.style.textAlign = "left";
-                                divNota2.style.marginTop = "7px";
-                                divColumn_01.appendChild(divNota2);
-                                /* Fuente */
+                                divColumn_02.appendChild(divNota);
+                                
+                                /* FUENTE */
                                 const divFuente = document.createElement("p");
                                 divFuente.className = "sect-fuente";
                                 divFuente.innerHTML = _version.fuente;
-                                divFuente.style.textAlign = "left";
+                                divFuente.style.bottom = "20px";
                                 divColumn_01.appendChild(divFuente);
 
                                 divColumn_01.appendChild(divMain);
