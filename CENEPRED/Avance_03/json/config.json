@@ -93,6 +93,23 @@
             "boolean": false
         }
     ],
+    "lyrFilter": [
+        {
+            "dep": "nombdpto",
+            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6020100"
+        },
+        {
+            "dep": "nomdpto",
+            "pro": "nombprov",
+            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6020200"
+        },
+        {
+            "dep": "nombdpto",
+            "pro": "nombprov",
+            "dis": "nombdist",
+            "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6020300"
+        }
+    ],
     "lyrDiagnosis" : [
         { 
             "name": "INFORMACIÓN CENEPRED",
@@ -113,8 +130,16 @@
                             "name": "nombre"
                         },
                         {
+                            "alias": "Ubigeo",
+                            "name": "ubigeo",
+                            "visible": false
+                        },
+                        {
                             "alias": "Año de Publicación",
-                            "name": "anio"
+                            "name": "anio",
+                            "format": {
+                                "places": 0
+                            }
                         },
                         {
                             "alias": "Autor Corporativo",
@@ -139,6 +164,12 @@
                                     "fuente": "<strong>Fuente</strong>: Cenepred, 2022",
                                     "field": "ambito",
                                     "documento": "id_documento",
+                                    "title":  [
+                                        {
+                                            "departamento": "<strong>Porcentaje de Provincias del Departamento Seleccionado que Cuentan con PPRRD</strong>",
+                                            "provincia": "<strong>Porcentaje de Distritos de la Provincia Seleccionada que Cuentan con PPRRD</strong>"
+                                        }
+                                    ],
                                     "cuenta": [
                                         {
                                             "afirmacion": "seleccionado <strong>CUENTA</strong> con su <strong>Plan de Prevención y Reducción del Riesgo de Desastres (PPRRD).</strong>",
@@ -483,12 +514,12 @@
                                 {
                                     "version_05": [
                                         {
-                                            "nota": "Las <strong>áreas de exposición</strong> por inundación: Son ámbitos  identificados como propensos a inundaciones debido a que fueron reportadas históricamente o que han sido identificadas mediante informes y/o estudios por las diferentes entidades técnicas científicas.",
+                                            "nota": "Las <strong>Áreas De Exposición</strong> por inundación: Son ámbitos  identificados como propensos a inundaciones debido a que fueron reportadas históricamente o que han sido identificadas mediante informes y/o estudios por las diferentes entidades técnicas científicas.",
                                             "fuente": "<strong>Fuente</strong>: Elaborado por el Cenepred con datos proporcionados por las entidades técnicas. Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de exposición a inundaciones. El geoproceso utilizado por el sistema es la intersección de las capas áreas de exposición a inundaciones y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE. La data espacial de áreas de exposición tiene geometría tipo polígono.",
                                             "cuenta": [
                                                 {
-                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> áreas de exposición por inundación. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Áreas De Exposición Por Inundación disponibles.",
-                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con áreas de exposición por inundación"
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición por inundación. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Áreas De Exposición Por Inundación disponibles.",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con Áreas De Exposición por inundación"
                                                 }
                                             ],
                                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
@@ -496,15 +527,15 @@
                                                 {
                                                     "alias": "Población",
                                                     "name": "pob_total",
-                                                    "note": "Población expuesta en áreas de exposición por inundación",
-                                                    "td": "Áreas de Exposición por Inundación",
+                                                    "note": "Población expuesta en Áreas De Exposición por inundación",
+                                                    "td": "Áreas De Exposiciónpor Inundación",
                                                     "default": true                    
                                                 },
                                                 {
                                                     "alias": "Vivienda",
                                                     "name": "num_viv_part",
-                                                    "note": "Viviendas expuesta en áreas de exposición por inundación",
-                                                    "td": "Áreas de Exposición por Inundación"
+                                                    "note": "Viviendas expuesta en Áreas De Exposición por inundación",
+                                                    "td": "Áreas De Exposición por Inundación"
                                                 },
                                                 {
                                                     "alias": "Otros EE",
@@ -749,8 +780,8 @@
                                             "fuente": "<strong>Fuente</strong>:",
                                             "cuenta": [
                                                 {
-                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> áreas de exposición por movimientos en masa",
-                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con áreas de exposición por movimientos en masa"
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición por movimientos en masa",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con Áreas De Exposición por movimientos en masa"
                                                 }
                                             ],
                                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
@@ -758,14 +789,14 @@
                                                 {
                                                     "alias": "Población",
                                                     "name": "pob_total",
-                                                    "note": "Población expuesta en áreas de exposición por movimiento en masa",
+                                                    "note": "Población expuesta en Áreas De Exposición por movimiento en masa",
                                                     "td": "Expuesto",
                                                     "default": true                    
                                                 },
                                                 {
                                                     "alias": "Vivienda",
                                                     "name": "num_viv_part",
-                                                    "note": "Viviendas expuestas en áreas de exposición por movimiento en masa",
+                                                    "note": "Viviendas expuestas en Áreas De Exposición por movimiento en masa",
                                                     "td": "Expuesto"
                                                 }
                                             ],
@@ -840,8 +871,8 @@
                                             "fuente": "<strong>Fuente</strong>: Elaborado por el Cenepred con datos proporcionados por la Dirección de Hidrografía y Navegación de la Marina de Guerra del Perú (HIDRONAV, 2022). Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de exposición a tsunami. El geoproceso utilizado por el sistema es la intersección de las áreas de exposición a tsunami y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE. La data espacial de áreas de exposición a tsunami tiene geometría tipo polígono.",
                                             "cuenta": [
                                                 {
-                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> áreas de exposición al peligro de tsunami. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las áreas de exposición a tsunami disponibles.",
-                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con áreas de exposición al peligro de tsunami"
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición al peligro de tsunami. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Áreas De Exposición a tsunami disponibles.",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con Áreas De Exposición al peligro de tsunami"
                                                 }
                                             ],
                                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
@@ -849,14 +880,14 @@
                                                 {
                                                     "alias": "Población",
                                                     "name": "pob_total",
-                                                    "note": "Población expuesta en área de exposición a tsunami",
+                                                    "note": "Población expuesta en Áreas De Exposición a tsunami",
                                                     "td": "Expuesto",
                                                     "default": true                    
                                                 },
                                                 {
                                                     "alias": "Vivienda",
                                                     "name": "num_viv_part",
-                                                    "note": "Viviendas expuestas en áreas de exposición a tsunami",
+                                                    "note": "Viviendas expuestas en Áreas De Exposición a tsunami",
                                                     "td": "Expuesto"
                                                 },
                                                 {
@@ -1012,8 +1043,8 @@
                                             "fuente": "<strong>Fuente</strong>: ",
                                             "cuenta": [
                                                 {
-                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> áreas de exposición por otros peligros geológicos",
-                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con áreas de exposición por otros peligros geológicos"
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición por otros peligros geológicos",
+                                                    "negacion": "seleccionado <strong>NO CUENTA</strong> con Áreas De Exposición por otros peligros geológicos"
                                                 }
                                             ],
                                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
@@ -1021,14 +1052,14 @@
                                                 {
                                                     "alias": "Población",
                                                     "name": "pob_total",
-                                                    "note": "Población expuesta en áreas de exposición por otros peligros geológicos",
+                                                    "note": "Población expuesta en Áreas De Exposición por otros peligros geológicos",
                                                     "td": "Expuesto",
                                                     "default": true                    
                                                 },
                                                 {
                                                     "alias": "Vivienda",
                                                     "name": "num_viv_part",
-                                                    "note": "Viviendas expuestas en áreas de exposición por otros peligros geológicos",
+                                                    "note": "Viviendas expuestas en Áreas De Exposición por otros peligros geológicos",
                                                     "td": "Expuesto"
                                                 }
                                             ],
@@ -1095,7 +1126,7 @@
                                                     "negacion": "seleccionado <strong>NO CUENTA</strong> con pasivos ambientales mineros"
                                                 }
                                             ],
-                                            "title" : "<strong>Pasivos ambientales mineros</strong>",
+                                            "title" : "<strong>Pasivos Ambientales Mineros</strong>",
                                             "static": "tipo"
                                         }
                                     ]

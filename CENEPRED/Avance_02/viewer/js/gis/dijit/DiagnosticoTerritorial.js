@@ -128,6 +128,7 @@ define([
         bufferSelect_geometry: null,
         countAnalysis_Cantidad: 0,
         countAnalysis_Km: [],
+        countAmbito: 0,
         textAmbito: "",
         geometryIntersect: "",
         geometrySRV: null,
@@ -140,6 +141,7 @@ define([
         groupActived: [],
         selectItem: null,
         _listLayer: [],
+        
      
         postCreate: function () {
             this.inherited(arguments);
@@ -339,6 +341,8 @@ define([
             this.own(on(this.ID_Diagnosis, 'click', lang.hitch(this, () => {
                 /* Button (click) - ID_Diagnosis */
                 try {
+                    console.log("this.countAmbito");
+                    console.log(this.countAmbito);
                     let disp = this.ID_Alert;
                     this.textAmbito = "";
                     let objectLiteral = false == this._validateSelect(selDis) ? [selDis.get('value'),srvDis.url] :
@@ -676,6 +680,7 @@ define([
                 queryTask.execute(querySQL, function(results) {
                     try {
                         results.features.length > 0 ? options.unshift({ name:`- TODOS -`,id:'00' }) : options.push({ name:`- ${htmlPHAlter} -`,id:'000' });
+                        
                         results.features.map(function (cValue) {
                             const name = cValue.attributes[item];
                             const id = cValue.attributes[oID];
@@ -684,7 +689,7 @@ define([
                     } catch (error) {
                         console.error(`Error: _ambitoUpdate/queryTask execute => ${error.name} - ${error.message}`);
                     }
-                });                
+                }.bind(this));                
                 return new Memory({ data:options });
             } catch (error) {
                 console.error(`Error: _ambitoUpdate => ${error.name} - ${error.message}`);

@@ -105,7 +105,7 @@ require([
         } catch(error) {
             _elementById("ID_Alert").style.display = "block";
         }
-    };    
+    };
     _validatedStorage(JSON.parse(localStorage.getItem("reportTitle_request")));
     _validatedStorage(JSON.parse(localStorage.getItem("reportTitle")));
 
@@ -116,10 +116,13 @@ require([
     _ambitoLS = _ambitoLS.replace(" (departamento)", "");
     /* Create QUERY */
     let _ambitoName = JSON.parse(localStorage.getItem("reportTitle"));
-    let _ambitoArr = _ambitoLS.split(",");
-    let _ambitoQuery =  _ambitoArr.length == 3 ? `DEPA = '${_ambitoArr[2].trim()}' AND PROV = '${_ambitoArr[1].trim()}' AND DIST = '${_ambitoArr[0].trim()}'`: 
+    let _ambitoArr = _ambitoLS.split(",");    
+    /*let _ambitoQuery =  _ambitoArr.length == 3 ? `DEPA = '${_ambitoArr[2].trim()}' AND PROV = '${_ambitoArr[1].trim()}' AND DIST = '${_ambitoArr[0].trim()}'`: 
                         _ambitoArr.length == 2 ? `DEPA = '${_ambitoArr[1].trim()}' AND PROV = '${_ambitoArr[0].trim()}' AND DIST IS NULL`: 
-                        `DEPA = '${_ambitoArr[0].trim()}' AND PROV IS NULL AND DIST IS NULL`;
+                        `DEPA = '${_ambitoArr[0].trim()}' AND PROV IS NULL AND DIST IS NULL`;*/   
+    let _ambitoQueryAmbito =    _ambitoArr.length == 3 ? false: 
+                                _ambitoArr.length == 2 ? `UPPER(${config.lyrFilter[2].dep}) = UPPER('${_ambitoArr[1].trim()}') AND UPPER(${config.lyrFilter[2].pro}) = UPPER('${_ambitoArr[0].trim()}')`:
+                                `UPPER(${config.lyrFilter[1].dep}) = UPPER('${_ambitoArr[0].trim()}')`;
     /* Generate Array 0 */
     let _generateArray = function(_length) {
         try {
@@ -155,6 +158,34 @@ require([
         }
     };
     _title(_ambitoName);
+
+    let _ambitoPie = function(lyr,_url,_where, _cantidad) {
+        try {
+            let queryTask = new QueryTask(_url);
+            let query = new Query();
+            query.where = _where;
+            query.outFields = ["*"];
+            query.returnGeometry = false;
+            queryTask.executeForCount(query).then(
+                (response) => {
+                    try {
+                        let _porcentaje = (_cantidad/response)*100;
+                        let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
+                        chart.data.datasets[0].data = [_porcentaje,(100-_porcentaje)];
+                        chart.data.labels = ["Cuenta con PPRRD (%)","NO cuenta con PPRRD (%)"];
+                        chart.update();
+                    } catch (error) {
+                        console.error(`Count: PPRRD => ${error.name} - ${error.message}`);
+                    }                  
+                },
+                (error) => {  
+                    console.error(`Error: PPRRD => ${error.name} - ${error.message}`);
+                }
+            );
+        } catch (error) {
+            console.error(`Error: _ambitoPie => ${error.name} - ${error.message}`);
+        }
+    };
 
     let _loadSelect = (formatOption, formatId, _Layers, _area) => {
         try {
@@ -194,7 +225,6 @@ require([
                         },
                         _completeCallback = function(jobInfo) {
                             try {
-                                console.log("ESTA TRAENDO LOS DATOS");
                                 if ( jobInfo.jobStatus !== "esriJobFailed" ) {
                                     this.gpExtractData.getResultData(jobInfo.jobId, "Result", function(outputFile) {
                                         try {
@@ -292,6 +322,18 @@ require([
 
     _loadSelect(config.download, this.ID_Diagnosis_Format, this._listLayer, _geometryAmbito);
 
+    /* Number Formatter */
+    let _numberFormatter = function (value) {
+        try {
+            value = value.toString();
+            value = value.split(/(?=(?:...)*$)/);
+            value = value.join(',');
+            return value;
+        } catch (error) {
+            console.error(`Error: _numberFormatter => ${error.name} - ${error.message}`);
+        }
+    };
+
     /* Create graphic BAR */
     let _graphicChartBar = function(_node, _label, _data/*, _backgroundColor = null, _borderColor = null*/ ) {
         try {
@@ -310,14 +352,14 @@ require([
                     }]
                 },
                 options: {
-                    /*locale: "es-ES",*/
+                    locale: "en-ES",
                     indexAxis: 'y',
                     responsive: false,
                     plugins: {
                         legend: { display:false, position:'bottom' },
                         title: { display:false, text:'GRÁFICO DE RESUMEN' }
                     }
-                }
+                }              
             });
         } catch(error) {
             console.error(`_graphicChartBar: ${error.name} - ${error.message}`);
@@ -396,17 +438,7 @@ require([
             configAnalysis_Temp.splice(index, 1);
         }
     });
-    /* Number Formatter */
-    let _numberFormatter = function (value) {
-        try {
-            value = value.toString();
-            value = value.split(/(?=(?:...)*$)/);
-            value = value.join(',');
-            return value;
-        } catch (error) {
-            console.error(`Error: _numberFormatter => ${error.name} - ${error.message}`);
-        }
-    };
+    
     /* Crear Table */
     let _htmlTable = function(ID_Table, _lyrTitle = "Elementos Expuestos") {
         try { /* Se crea la tabla de resumen */
@@ -827,13 +859,13 @@ require([
             /*console.log(_fields);
             console.log(srv);*/
             let _idQueryTask = null;
-            let query = new Query();
-            query.outFields = _fields;
-            query.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
-            query.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-            query.returnGeometry = false;
+            let queryFT = new Query();
+            queryFT.outFields = _fields;
+            queryFT.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")));
+            queryFT.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+            queryFT.returnGeometry = false;
             /*query.where = "1=1";*/
-            queryTask.executeForIds(query).then(
+            queryTask.executeForIds(queryFT).then(
                 (response) => {
                     try {
                         _idQueryTask = response.toString();
@@ -911,7 +943,7 @@ require([
 
             /* Export EXCEL */
             const _documento = "https://sigrid.cenepred.gob.pe/sigridv3/documento/";
-            queryTask.execute(query).then(
+            queryTask.execute(queryFT).then(
                 (response) => {
                     try {
                         _elementById(`ID_BTN_EXCEL_TB`).innerHTML = "";
@@ -1031,7 +1063,10 @@ require([
                         document.getElementById(ContentID).style.display = "block"; /* CONTENT */
                         document.getElementById(ContentID).classList.add("active"); /* CONTENT */                        
                         
-                        if(featureTable !== null) { featureTable.destroy(); }
+                        /*if(featureTable !== null) { featureTable.destroy(); }*/
+                        if(registry.byId(`ID_TableDynamic`)) {
+                            registry.byId(`ID_TableDynamic`).destroyRecursive();
+                        }
                         
                         _tabName = nodeHeader.innerText.split("/").join(''); 
                         _elementById("ID_BTN_EXCEL").innerHTML = `<i class="fa fa-download"></i>&nbsp; Descargar tabla - ${_tabName}`;
@@ -1053,11 +1088,12 @@ require([
                                 const divColumn_01 = document.createElement("section");
                                 divColumn_01.className = "column_01";
                                 const divColumn_02 = document.createElement("section");
-                                divColumn_02.className = "column_02";                                
+                                divColumn_02.className = "column_02";
                                 let queryTask_PPRD = new QueryTask(lyr.url);
                                 let query_PPRD = new Query();
-                                query_PPRD.outFields = ["*"];
-                                query_PPRD.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")))
+                                /*query_PPRD.outFields = ["*"];*/
+                                query_PPRD.outFields = lyr.fields.map(x => x.name);
+                                query_PPRD.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")));
                                 query_PPRD.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_PPRD.returnGeometry = false;
                                 queryTask_PPRD.execute(query_PPRD).then(
@@ -1067,31 +1103,50 @@ require([
                                             let _length = response.features.length;
                                             let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _img = _elementById(`IDImg_${lyr.tag}`);
-                                            for (let i = 0; i < _length; i++) {
+                                            let _countAmbito = 0;
+                                            for (let i = 0; i < _length; i++) {                                                
                                                 _features = response.features[i];
-                                                _ambito = _features.attributes[_version.field];                                        
+                                                _ambito = _features.attributes[_version.field];    
+                                                if(_ambito.split(",").length == (_ambitoArr.length + 1)) {
+                                                    _countAmbito = _countAmbito + 1;
+                                                }
+                                                //
                                                 _ambito = _ambito.replace("DISTRITO ","");
                                                 _ambito = _ambito.replace("PROVINCIA ","");
                                                 _ambito = _ambito.replace("DEPARTAMENTO ","");
-                                                if(_ambito == _ambitoLS) {                                                    
+                                                if(_ambito == _ambitoLS) {
                                                     _note.className = "sect-nota-info";
-                                                    _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion}`;                                                                                              
+                                                    _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion}`;
                                                     _img.className = "sect-nota-info";
                                                     _img.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
                                                     _boolean = false;
-                                                    break;
                                                 }
-                                                _boolean = true;                                                
+                                                _boolean = true;                                           
                                             }
-
+                                            
                                             if(_boolean) {
                                                 _note.className = "sect-nota-warning";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                                 _img.setAttribute("src", `./images/PPRRD.png`);
-                                            }                                            
+                                            }   
+
+                                            let _queryFilter =  _ambitoArr.length == 3 ? config.lyrFilter[2]:
+                                                                _ambitoArr.length == 2 ? config.lyrFilter[2]:
+                                                                config.lyrFilter[1];
+
+                                            if(_ambitoQueryAmbito != false){
+                                                _ambitoPie(lyr,_queryFilter.url,_ambitoQueryAmbito,_countAmbito);
+                                            }
+
+                                            if(litAmbito == "DEPARTAMENTO") {   
+                                                _elementById(`IDTitle_${lyr.tag}`).innerHTML = _version.title[0].departamento;
+                                            } else if(litAmbito == "PROVINCIA") {
+                                                _elementById(`IDTitle_${lyr.tag}`).innerHTML = _version.title[0].provincia;
+                                            }
+                                            
                                         } catch (error) {
                                             console.error(`Count: PPRRD => ${error.name} - ${error.message}`);
-                                        }                    
+                                        }             
                                     },
                                     (error) => {  
                                         console.error(`Error: PPRRD => ${error.name} - ${error.message}`);
@@ -1102,21 +1157,38 @@ require([
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
+                                
+                                const divCenter = document.createElement("center");
+                                const divTitle = document.createElement("p");
+                                divTitle.style.fontSize = "16px";
+                                divTitle.id = `IDTitle_${lyr.tag}`;
+                                /*divTitle.innerHTML = _version.title;*/
+                                divCenter.appendChild(divTitle);
+                                divColumn_01.appendChild(divCenter);
+
+                                const divCenterGraphic = document.createElement("center");
+                                const divCanvasGraphic = document.createElement("canvas");
+                                divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
+                                divCanvasGraphic.setAttribute("height","180");
+                                divCanvasGraphic.setAttribute("width","370");
+                                _graphicPie(divCanvasGraphic);
+                                divCenterGraphic.appendChild(divCanvasGraphic);
+                                divColumn_01.appendChild(divCenterGraphic);
 
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
+                                divNota.style.marginTop = "20px";
                                 divNota.innerHTML = _version.nota;
-                                divColumn_01.appendChild(divNota); 
-                                
+                                divColumn_01.appendChild(divNota);
+
                                 const divFuente = document.createElement("p");
                                 divFuente.className = "sect-fuente";
                                 divFuente.innerHTML = _version.fuente;
-                                divColumn_01.appendChild(divFuente); 
-
+                                divColumn_01.appendChild(divFuente);
                                 const divImg = document.createElement("img");
                                 divImg.id = `IDImg_${lyr.tag}`;
                                 divColumn_02.appendChild(divImg);
-                                
+
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
                             }
@@ -1213,7 +1285,7 @@ require([
                                     const divCanvas = document.createElement("canvas");
                                     divCanvas.setAttribute("id",`IDcontent${lyr.tag}${current.name}`);
                                     divCanvas.setAttribute("height","120");
-                                    divCanvas.setAttribute("width","370");
+                                    divCanvas.setAttribute("width","420");
                                     _graphicChartBar(
                                         divCanvas,
                                         [current.item[0].alias,current.item[1].alias],
@@ -2511,7 +2583,7 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por Movimiento en Masa", "Población Expuesta");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Movimiento en Masa", "Viviendas Expuestas");
 
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "ELEMENTOS EXPUESTOS", "CANTIDAD");
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "OTROS EE", "CANTIDAD");
                             
                                 let queryTask_AE = new QueryTask(lyr.url);
                                 let query_AE = new Query();
@@ -3024,7 +3096,7 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Niveles de Peligro", "Población");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Niveles de Peligro", "Vivienda");
 
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"ELEMENTOS EXPUESTOS","CANTIDAD");
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"OTROS EE","CANTIDAD");
                                 
                                 let queryTask_NP = new QueryTask(lyr.url);
                                 let query_NP = new Query();
@@ -3296,7 +3368,7 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por Otros Peligros Geológicos", "Población Expuesta");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Otros Peligros Geológicos", "Viviendas Expuestas");
 
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "ELEMENTOS EXPUESTOS", "CANTIDAD");
+                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "OTROS EE", "CANTIDAD");
 
                                 let queryTask_AEE = new QueryTask(lyr.url);
                                 let query_AEE = new Query();
