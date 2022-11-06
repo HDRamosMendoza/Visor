@@ -779,11 +779,12 @@
                                 {
                                     "version_08": [
                                         {
+                                            "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Áreas De Exposición</strong>.",
                                             "nota": "Las <strong>Áreas De Exposición</strong> por movimientos en masa son aquellos ámbitos identificados como peligros geológicos: Deslizamientos, flujos, caída de rocas, reptación, propagación lateral y movimientos complejos, por diferentes entidades mediante informes y/o estudios.",
                                             "fuente": "Fuente:",
                                             "cuenta": [
                                                 {
-                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición por movimientos en masa",
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición por movimientos en masa. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Áreas De Exposición disponibles.",
                                                     "negacion": "seleccionado <strong>NO CUENTA</strong> con Áreas De Exposición por movimientos en masa"
                                                 }
                                             ],
@@ -801,6 +802,12 @@
                                                     "name": "num_viv_part",
                                                     "note": "Viviendas expuestas en Áreas De Exposición por movimiento en masa",
                                                     "td": "Expuesto"
+                                                },
+                                                {
+                                                    "alias": "Otros EE",
+                                                    "name": "OtrosEE_2",
+                                                    "note": "",
+                                                    "td": ""
                                                 }
                                             ],
                                             "analysis": [
@@ -951,11 +958,12 @@
                                         {
                                             "version_10": [
                                                 {
+                                                    "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Peligros Multiples (Zona Proximal)</strong>.",
                                                     "nota": "La zonificación de peligros del mapa proximal se realizó para peligros múltiples, es decir para el emplazamiento de flujos piroclásticos, flujos de lava y eyección de proyectiles balísticos.",
                                                     "fuente": "Fuente: ",
                                                     "cuenta": [
                                                         {
-                                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> mapas de peligros múltiples por vulcanismo.",
+                                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> mapas de peligros múltiples por vulcanismo. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> los Peligros Multiples (Zona Proximal) disponibles.",
                                                             "negacion": "seleccionado <strong>NO CUENTA</strong> con mapa de peligros múltiples por vulcanismo."
                                                         }
                                                     ],
@@ -1043,11 +1051,12 @@
                                 {
                                     "version_11": [
                                         {
+                                            "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Áreas De Exposición</strong>.",
                                             "nota": "<strong>Áreas De Exposición</strong> son aquellos ámbitos no tipificados dentro de las clasificaciones de movimientos en masa como, por ejemplo: Arenamiento, Hundimiento, erosión fluvial, erosión marina y erosión de laderas. Estos son identificados por diferentes entidades mediante informes y/o estudios.",
                                             "fuente": "Fuente: ",
                                             "cuenta": [
                                                 {
-                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición por otros peligros geológicos",
+                                                    "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición por otros peligros geológicos. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Áreas De Exposición disponibles.",
                                                     "negacion": "seleccionado <strong>NO CUENTA</strong> con Áreas De Exposición por otros peligros geológicos"
                                                 }
                                             ],
@@ -1065,6 +1074,12 @@
                                                     "name": "num_viv_part",
                                                     "note": "Viviendas expuestas en Áreas De Exposición por otros peligros geológicos",
                                                     "td": "Expuesto"
+                                                },
+                                                {
+                                                    "alias": "Otros EE",
+                                                    "name": "OtrosEE_2",
+                                                    "note": "",
+                                                    "td": ""
                                                 }
                                             ],
                                             "analysis": [
@@ -1458,7 +1473,7 @@
                                         {
                                             "title" : "<strong>Obras De Infraestructura Afectadas En El Evento El Niño 2017 Por Tipo De Peligro</strong>",
                                             "nota": "Son las obras de infraestructuras afectadas por movimientos en masa, otros peligros geológicos e inundaciones asociadas al fenómeno del niño costero presentado en el año 2017.",
-                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de las obras de infraestructura  afectadas tiene geometría tipo punto.",
+                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de las obras de infraestructura  afectadas tiene geometría tipo punto.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> obras de infraestructura afectadas en el Fenómeno El Niño 2017. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las obras de infraestructura afectadas en el evento El Niño 2017 disponibles.",

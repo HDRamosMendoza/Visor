@@ -49,7 +49,7 @@ require([
 ) {
     esriConfig.defaults.io.proxyUrl = 'https://sigrid.cenepred.gob.pe/sigridv3/php/proxy.php';
     esriConfig.defaults.io.alwaysUseProxy = false;
-    esriConfig.defaults.io.timeout = 120000;
+    esriConfig.defaults.io.timeout = 240000;
     esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");    
     this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
     this._pathDownload = "https://sigrid.cenepred.gob.pe/arcgis/rest/directories/";
@@ -1857,25 +1857,21 @@ require([
                                 divColumn_01.className = "column_01";
                                 const divColumn_02 = document.createElement("section");
                                 divColumn_02.className = "column_02";                                
-                                const divMain = document.createElement("main");
-                                
+                                const divMain = document.createElement("main");                                
                                 /*
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
                                 divColumn_02.appendChild(divTable);*/
-
                                 const divOBS = document.createElement("p");
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
-
                                 /* Detalle */
                                 const divDetalle = document.createElement("p");
                                 divDetalle.className = "sect-detalle";
                                 divDetalle.innerHTML = _version.detalle;
-                                divColumn_01.appendChild(divDetalle);
-                                
+                                divColumn_01.appendChild(divDetalle);                                
                                 /* HEADER */
                                 lyr.content[0].version_05[0].fields.map(function(current,index) {
                                     const inputText = document.createElement("input");
@@ -1890,7 +1886,6 @@ require([
                                             _elementById(`DOW_${lyr.tag}`).style.display = "block";
                                         }
                                     }
-
                                     if(typeof current.default !== "undefined") {
                                         inputText.setAttribute("checked","");
                                     }
@@ -1947,17 +1942,17 @@ require([
                                 } 
 
                                 divColumn_01.appendChild(divMain);
-
+                                /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
                                 divColumn_02.appendChild(divNota);
-
+                                /* FUENTE */
                                 const divFuente = document.createElement("p");
                                 divFuente.className = "sect-fuente";
                                 divFuente.innerHTML = _version.fuente;
                                 divColumn_01.appendChild(divFuente);
-
+                                /* TABLA */
                                 const divRow = document.createElement("div");
                                 divRow.className = "row-excel";
                                 const divDownload = document.createElement("div");
@@ -1965,7 +1960,7 @@ require([
                                 divDownload.style.display = "none";
                                 divRow.appendChild(divDownload);
                                 divColumn_01.appendChild(divRow);
-
+                                /* CARGA */
                                 const divLOAD = document.createElement("div");
                                 divLOAD.id = `IDLOAD_${lyr.tag}`;
                                 divLOAD.innerHTML = _cssLoad;
@@ -1976,7 +1971,6 @@ require([
 
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición", "Población");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición", "Viviendas");
-
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
                                 /*_htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"OTROS EE","CANTIDAD");*/
                                 
@@ -2410,17 +2404,16 @@ require([
                                             let _features = response.features; 
                                             if(_features.length > 0) {
                                                 _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
-
                                                 _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
-                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
-                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"] ?? 0;
+                                                    _chartData.push(_item.attributes["cantidad"] ?? 0);
                                                     _chartLabel.push(_item.attributes[_version.static]);
                                                 });
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _contentTotal)}`;
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
@@ -2501,25 +2494,35 @@ require([
                                 divColumn_01.className = "column_01";
                                 const divColumn_02 = document.createElement("section");
                                 divColumn_02.className = "column_02";                                
-                                const divMain = document.createElement("main");
-                                
-                                const divOBS = document.createElement("p");
-                                divOBS.id = `IDNote_${lyr.tag}`;
-                                divOBS.innerHTML = _cssLoad;
-                                divColumn_01.prepend(divOBS);
-                                
+                                const divMain = document.createElement("main");                                
+                                /*
                                 const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable);
-                                
+                                divColumn_02.appendChild(divTable);*/
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);                                                                
+                                /* Detalle */
+                                const divDetalle = document.createElement("p");
+                                divDetalle.className = "sect-detalle";
+                                divDetalle.innerHTML = _version.detalle;
+                                divColumn_01.appendChild(divDetalle);                                
                                 /* HEADER */
-                                lyr.content[0].version_08[0].fields.map(function(current) {
+                                lyr.content[0].version_08[0].fields.map(function(current,index) {
                                     const inputText = document.createElement("input");
                                     inputText.type = "radio";
                                     inputText.className = "tabs-horiz";
                                     inputText.id = `tab${lyr.tag}${current.name}`;
                                     inputText.name = `tabs-2${lyr.tag}`;
+                                    inputText.onclick = function() {
+                                        if(index == 0 || index == 1) {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "none";
+                                        } else {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "block";
+                                        }
+                                    }
                                     if(typeof current.default !== "undefined") {
                                         inputText.setAttribute("checked","");
                                     }
@@ -2530,7 +2533,7 @@ require([
                                     divMain.appendChild(label);                            
                                 }.bind(this));
                                 /* CONTENT */
-                                lyr.content[0].version_08[0].fields.map(function(current) {
+                                lyr.content[0].version_08[0].fields.map(function(current,index) {
                                     const sect = document.createElement("section");
                                     sect.id = `content${lyr.tag}${current.name}`;
                                     const div = document.createElement("div");
@@ -2542,16 +2545,21 @@ require([
                                     divCenter.appendChild(divOBS);
                                     div.appendChild(divCenter);
 
-                                    const divCenterTotal = document.createElement("center");
-                                    const divTotal = document.createElement("p");
-                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
-                                    divTotal.style.fontSize = "65px";
-                                    divTotal.style.margin = "5px 0px";
-                                    divTotal.innerHTML = _cssLoad;
-                                    divCenterTotal.appendChild(divTotal);
-                                    div.appendChild(divCenterTotal);
+                                    if(index != 2) {
+                                        const divCenterTotal = document.createElement("center");
+                                        const divTotal = document.createElement("p");
+                                        divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                        divTotal.style.fontSize = "65px";
+                                        divTotal.style.margin = "5px 0px";
+                                        divTotal.innerHTML = _cssLoad;
+                                        divCenterTotal.appendChild(divTotal);
+                                        div.appendChild(divCenterTotal);    
+                                    }
+
                                     const divTable = document.createElement("div");
                                     divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    divTable.classList = "form-scroll-tab";
+                                    divTable.style.maxHeight = "212px";
                                     div.appendChild(divTable);
 
                                     sect.appendChild(div);                            
@@ -2569,32 +2577,38 @@ require([
                                     tagStyle.textContent = _cssStyle.concat("{display: block;};");
                                     divMain.appendChild(tagStyle);
                                 } 
-                                divColumn_01.appendChild(divMain);
-
+                                divColumn_01.appendChild(divMain);                                                                
+                                /* NOTA */
+                                const divNota = document.createElement("p");
+                                divNota.className = "sect-nota";
+                                divNota.innerHTML = _version.nota;
+                                divColumn_02.appendChild(divNota);
+                                /* FUENTE */
+                                const divFuente = document.createElement("p");
+                                divFuente.className = "sect-fuente";
+                                divFuente.innerHTML = _version.fuente;
+                                divColumn_01.appendChild(divFuente);
+                                /* TABLA */
                                 const divRow = document.createElement("div");
                                 divRow.className = "row-excel";
                                 const divDownload = document.createElement("div");
                                 divDownload.id = `DOW_${lyr.tag}`;
+                                divDownload.style.display = "none";
                                 divRow.appendChild(divDownload);
-                                divColumn_02.appendChild(divRow);
-
+                                divColumn_01.appendChild(divRow);
+                                /* CARGA */
                                 const divLOAD = document.createElement("div");
                                 divLOAD.id = `IDLOAD_${lyr.tag}`;
                                 divLOAD.innerHTML = _cssLoad;
-                                divColumn_02.appendChild(divLOAD);
-
-                                const divNota = document.createElement("p");
-                                divNota.className = "sect-nota";
-                                divNota.innerHTML = _version.nota;
-                                divColumn_01.appendChild(divNota);
+                                divColumn_01.appendChild(divLOAD);
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por Movimiento en Masa", "Población Expuesta");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Movimiento en Masa", "Viviendas Expuestas");
-
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "OTROS EE", "CANTIDAD");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
+                                /*_htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "OTROS EE", "CANTIDAD");*/
                             
                                 let queryTask_AE = new QueryTask(lyr.url);
                                 let query_AE = new Query();
@@ -2604,8 +2618,8 @@ require([
                                 queryTask_AE.execute(query_AE).then(
                                     (response) => {
                                         try {
-                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _length = response.features.length;
+                                            let _note = _elementById(`IDNote_${lyr.tag}`);
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
@@ -2618,11 +2632,11 @@ require([
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
                                             }                   
                                         } catch (error) {
-                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
+                                            console.error(`Count: AE => ${error.name} - ${error.message}`);
                                         }                    
                                     },
                                     (error) => {  
-                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
+                                        console.error(`Error: AE => ${error.name} - ${error.message}`);
                                     }
                                 ).always(lang.hitch(this, () => { 
                                     let countTabItem = 1;
@@ -2672,14 +2686,15 @@ require([
                                                     _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
                                                     _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
                                                 } catch (error) {
-                                                    console.error(`Count: Statistic FM => ${error.name}`);
+                                                    console.error(`Count: Statistic AE => ${error.name}`);
                                                 }                    
                                             },
                                             (error) => {
-                                                console.error(`Error: Statistic FM => ${error.name}`);
+                                                console.error(`Error: Statistic AE => ${error.name}`);
                                             }
                                         );                                    
-                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        /*_elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";*/
+                                        _elementById(`TBcontent${lyr.tag}${_version.fields[2].name}_Tbody`).innerHTML = "";
                                         configAnalysis_Temp.forEach(function(cValue) {
                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                             /* Statistic Analysis */
@@ -2703,7 +2718,8 @@ require([
                                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                             this._listLayerAnalysis.push(cValue.table);
                                                             let _contentTab = [];
-                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            /*let _id = `ID_TBcontent${lyr.tag}`;*/
+                                                            let _id = `TBcontent${lyr.tag}${_version.fields[2].name}`;
                                                             _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
                                                             _htmlTableTAB_ADD(`${_id}`,_contentTab);
                                                             _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
@@ -3011,51 +3027,66 @@ require([
                                 const divColumn_02 = document.createElement("section");
                                 divColumn_02.className = "column_02";                                
                                 const divMain = document.createElement("main");
-                                                                
-                                const divTable = document.createElement("div");
-                                divTable.id = `ID_TBcontent${lyr.tag}`;
-                                divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable);
                                 
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
+                                /* Detalle */
+                                const divDetalle = document.createElement("p");
+                                divDetalle.className = "sect-detalle";
+                                divDetalle.innerHTML = _version.detalle;
+                                divColumn_01.appendChild(divDetalle);                                
                                 /* HEADER */
-                                lyr.content[0].version_10[0].fields.map(function(current) {
+                                lyr.content[0].version_10[0].fields.map(function(current,index) {
                                     const inputText = document.createElement("input");
                                     inputText.type = "radio";
                                     inputText.className = "tabs-horiz";
                                     inputText.id = `tab${lyr.tag}${current.name}`;
-                                    inputText.name = `tabs-2${lyr.tag}`;
+                                    inputText.name = `tabs-2${lyr.tag}`;                                    
+                                    inputText.onclick = function() {
+                                        if(index == 0 || index == 1) {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "none";
+                                        } else {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "block";
+                                        }
+                                    }
                                     if(typeof current.default !== "undefined") {
                                         inputText.setAttribute("checked","");
                                     }
                                     const label = document.createElement("label");
                                     label.innerText = current.alias;
-                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                    
+                                    label.setAttribute("for",`tab${lyr.tag}${current.name}`);                                
                                     divMain.appendChild(inputText);
                                     divMain.appendChild(label);                            
                                 }.bind(this));
                                 /* CONTENT */
-                                lyr.content[0].version_10[0].fields.map(function(current) {
+                                lyr.content[0].version_10[0].fields.map(function(current,index) {
                                     const sect = document.createElement("section");
                                     sect.id = `content${lyr.tag}${current.name}`;
                                     const div = document.createElement("div");
-                                    
-                                    const divCenterGraphic = document.createElement("center");
-                                    const divCanvasGraphic = document.createElement("canvas");
-                                    divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}${current.name}`);
-                                    divCanvasGraphic.setAttribute("height","150");
-                                    divCanvasGraphic.setAttribute("width","380");
-                                    
-                                    _graphicChartBar(
-                                        divCanvasGraphic,
-                                        [_version.graphic[0].alias,_version.graphic[1].alias,_version.graphic[2].alias],
-                                        _generateArray(3)
-                                    );
 
-                                    divCenterGraphic.appendChild(divCanvasGraphic);
-                                    div.appendChild(divCenterGraphic);
-                                    
+                                    if(index != 2) {
+
+                                        const divCenterGraphic = document.createElement("center");
+                                        const divCanvasGraphic = document.createElement("canvas");
+                                        divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}${current.name}`);
+                                        divCanvasGraphic.setAttribute("height","150");
+                                        divCanvasGraphic.setAttribute("width","380");
+                                        _graphicChartBar(
+                                            divCanvasGraphic,
+                                            [_version.graphic[0].alias,_version.graphic[1].alias,_version.graphic[2].alias],
+                                            _generateArray(3)
+                                        );
+                                        divCenterGraphic.appendChild(divCanvasGraphic);
+                                        div.appendChild(divCenterGraphic);
+                                    }
+
                                     const divTable = document.createElement("div");
                                     divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    divTable.classList = "form-scroll-tab";
+                                    divTable.style.maxHeight = "212px";
+                                    divTable.style.marginTop = "10px";
                                     div.appendChild(divTable);
 
                                     sect.appendChild(div);                            
@@ -3064,56 +3095,47 @@ require([
                                 
                                 const tagStyle = document.createElement("style"); let _css = "";
                             
-                                lyr.content[0].version_10[0].fields.map(
-                                    function(current) {
-                                        _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;
-                                    }.bind(this)
-                                );
+                                lyr.content[0].version_10[0].fields.map(function(current) {
+                                    _css += `#tab${lyr.tag}${current.name}:checked ~ #content${lyr.tag}${current.name},`;
+                                }.bind(this));
                             
                                 if(_css !== "") {
                                     let _cssStyle = _css.substring(0, _css.length - 1);
                                     tagStyle.textContent = _cssStyle.concat("{display: block;};");
                                     divMain.appendChild(tagStyle);
                                 } 
-
-                                const divOBS = document.createElement("p");
-                                divOBS.id = `IDNote_${lyr.tag}`;
-                                divOBS.innerHTML = _cssLoad;
-                                divColumn_01.prepend(divOBS);
-
+                                
                                 divColumn_01.appendChild(divMain);
-
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
                                 divColumn_02.appendChild(divNota);
-
                                 /* FUENTE */
                                 const divFuente = document.createElement("p");
                                 divFuente.className = "sect-fuente";
                                 divFuente.innerHTML = _version.fuente;
                                 divColumn_01.appendChild(divFuente);
-
+                                /* TABLA */
                                 const divRow = document.createElement("div");
                                 divRow.className = "row-excel";
                                 const divDownload = document.createElement("div");
                                 divDownload.id = `DOW_${lyr.tag}`;
+                                divDownload.style.display = "none";
                                 divRow.appendChild(divDownload);
-                                divColumn_02.appendChild(divRow);
-
+                                divColumn_01.appendChild(divRow);
+                                /* CARGA */
                                 const divLOAD = document.createElement("div");
                                 divLOAD.id = `IDLOAD_${lyr.tag}`;
                                 divLOAD.innerHTML = _cssLoad;
-                                divColumn_02.appendChild(divLOAD);
+                                divColumn_01.appendChild(divLOAD);
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Niveles de Peligro", "Población");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Niveles de Peligro", "Vivienda");
-
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`),"OTROS EE","CANTIDAD");
+                                /*_htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");*/
                                 
                                 let queryTask_NP = new QueryTask(lyr.url);
                                 let query_NP = new Query();
@@ -3126,9 +3148,8 @@ require([
                                             let _features = response.features;
                                             let _length = _features.length;
                                             let _note = _elementById(`IDNote_${lyr.tag}`);
-                                            console.log(response.features);
                                             for (let i = 0; i < _length; i++) {
-                                                console.log(_features[i].attributes.nivel);
+                                                /*console.log(_features[i].attributes.nivel);*/
                                                 if(_features[i].attributes.nivel == 'Alto') {
                                                     unionGeometryAlto.push(_features[i].geometry);
                                                 }
@@ -3141,7 +3162,6 @@ require([
                                                     unionGeometryBajo.push(_features[i].geometry);
                                                 }
                                             }
-
                                             if(_length == 0) {
                                                 _note.className = "sect-nota-warning";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
@@ -3157,10 +3177,146 @@ require([
                                         console.error(`Error: NP => ${error.name} - ${error.message}`);
                                     }
                                 ).always(lang.hitch(this, () => { 
-                                    let countTabItem = 1;
-                                    let countTabItemTotal = 0;
-                                    /* Union Geometry */
-                                    let _geometry = geometryEngine.union(unionGeometryMedio);
+                                    let countTabItem = 1; let countTabItemTotal = 0;
+                                    let geometryAlto  = geometryEngine.union(unionGeometryAlto),
+                                        geometryMedio = geometryEngine.union(unionGeometryMedio),
+                                        geometryBajo  = geometryEngine.union(unionGeometryBajo);
+                                    let _dataPobAlto = 0, _dataPobMedio = 0, _dataPobBajo = 0;
+                                    let _dataVivAlto = 0, _dataVivMedio = 0, _dataVivBajo = 0;
+                                    
+                                    let poblacionSUM = new StatisticDefinition();
+                                    poblacionSUM.statisticType = "sum";
+                                    poblacionSUM.onStatisticField = _version.fields[0].name;
+                                    poblacionSUM.outStatisticFieldName = "sumpoblacion";
+                                        
+                                    let viviendaSUM = new StatisticDefinition();
+                                    viviendaSUM.statisticType = "sum";
+                                    viviendaSUM.onStatisticField = _version.fields[1].name;
+                                    viviendaSUM.outStatisticFieldName = "sumvivienda";
+
+                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
+                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
+
+                                    if(geometryAlto ?? false) {
+                                        this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                        let queryTask_Alto = new QueryTask(_version.url);
+                                        let query_Alto = new Query();
+                                        query_Alto.outFields = _version.fields.map(x => x.name);
+                                        query_Alto.geometry = geometryAlto;
+                                        query_Alto.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Alto.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Alto.returnGeometry = false;
+                                        queryTask_Alto.execute(query_Alto).then(
+                                            (response) => {
+                                                try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
+                                                    let _attr = response.features[0].attributes;
+                                                    _dataPobAlto = _attr.sumpoblacion ?? 0; /* Poblacion */
+                                                    _contentTab01.push({"item": _version.graphic[0].alias,"val": _dataPobAlto});                                                    
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    _dataVivAlto = _attr.sumvivienda ?? 0; /* Vivienda */
+                                                    _contentTab02.push({"item": _version.graphic[0].alias,"val": _dataVivAlto});                                                    
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);                                                   
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic geometryAlto => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic geometryAlto => ${error.name}`);
+                                            }
+                                        ).always(lang.hitch(this, () => {
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                            let chartPob = Chart.getChart(`TB_GraphicContent_${lyr.tag}${_version.fields[0].name}`);
+                                            chartPob.data.datasets[0].data = [_dataPobAlto,_dataPobMedio,_dataPobBajo];
+                                            chartPob.update();
+                                            let chartViv = Chart.getChart(`TB_GraphicContent_${lyr.tag}${_version.fields[1].name}`);
+                                            chartViv.data.datasets[0].data = [_dataVivAlto,_dataVivMedio,_dataVivBajo];
+                                            chartViv.update();
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _dataPobAlto+_dataPobMedio+_dataPobBajo;
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _dataVivAlto+_dataVivMedio+_dataVivBajo;
+                                        }));
+                                    }
+
+                                    if(geometryMedio ?? false) {
+                                        this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                        let queryTask_Medio = new QueryTask(_version.url);
+                                        let query_Medio = new Query();
+                                        query_Medio.outFields = _version.fields.map(x => x.name);
+                                        query_Medio.geometry = geometryMedio;
+                                        query_Medio.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Medio.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Medio.returnGeometry = false;
+                                        queryTask_Medio.execute(query_Medio).then(
+                                            (response) => {
+                                                try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
+                                                    let _attr = response.features[0].attributes;
+                                                    _dataPobMedio = _attr.sumpoblacion ?? 0; /* Poblacion */
+                                                    _contentTab01.push({"item": _version.graphic[1].alias,"val": _dataPobMedio});
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    _dataVivMedio = _attr.sumvivienda ?? 0; /* Vivienda */
+                                                    _contentTab02.push({"item": _version.graphic[1].alias,"val": _dataVivMedio});
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);                                                   
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic geometryMedio => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic geometryMedio => ${error.name}`);
+                                            }
+                                        ).always(lang.hitch(this, () => {
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                            let chartPob = Chart.getChart(`TB_GraphicContent_${lyr.tag}${_version.fields[0].name}`);
+                                            chartPob.data.datasets[0].data = [_dataPobAlto,_dataPobMedio,_dataPobBajo];
+                                            chartPob.update();
+                                            let chartViv = Chart.getChart(`TB_GraphicContent_${lyr.tag}${_version.fields[1].name}`);
+                                            chartViv.data.datasets[0].data = [_dataVivAlto,_dataVivMedio,_dataVivBajo];
+                                            chartViv.update();
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _dataPobAlto+_dataPobMedio+_dataPobBajo;
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _dataVivAlto+_dataVivMedio+_dataVivBajo;
+                                        }));
+                                    }
+
+                                    if(geometryBajo ?? false) {
+                                        this[`IDLOAD_${lyr.tag}`].style.display = "block";
+                                        let queryTask_Bajo = new QueryTask(_version.url);
+                                        let query_Bajo = new Query();
+                                        query_Bajo.outFields = _version.fields.map(x => x.name);
+                                        query_Bajo.geometry = geometryBajo;
+                                        query_Bajo.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                        query_Bajo.outStatistics = [ poblacionSUM, viviendaSUM ];
+                                        query_Bajo.returnGeometry = false;
+                                        queryTask_Bajo.execute(query_Bajo).then(
+                                            (response) => {
+                                                try {
+                                                    let _contentTab01 = []; let _contentTab02 = [];
+                                                    let _attr = response.features[0].attributes;
+                                                    _dataPobBajo = _attr.sumpoblacion ?? 0; /* Poblacion */
+                                                    _contentTab01.push({"item": _version.graphic[2].alias,"val": _dataPobBajo});
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
+                                                    _dataVivBajo = _attr.sumvivienda ?? 0; /* Vivienda */
+                                                    _contentTab02.push({"item": _version.graphic[2].alias,"val": _dataVivBajo});
+                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
+                                                } catch (error) {
+                                                    console.error(`Count: Statistic geometryBajo => ${error.name}`);
+                                                }                    
+                                            },
+                                            (error) => {
+                                                console.error(`Error: Statistic geometryBajo => ${error.name}`);
+                                            }
+                                        ).always(lang.hitch(this, () => {
+                                            this[`IDLOAD_${lyr.tag}`].style.display = "none";
+                                            let chartPob = Chart.getChart(`TB_GraphicContent_${lyr.tag}${_version.fields[0].name}`);
+                                            chartPob.data.datasets[0].data = [_dataPobAlto,_dataPobMedio,_dataPobBajo];
+                                            chartPob.update();
+                                            let chartViv = Chart.getChart(`TB_GraphicContent_${lyr.tag}${_version.fields[1].name}`);
+                                            chartViv.data.datasets[0].data = [_dataVivAlto,_dataVivMedio,_dataVivBajo];
+                                            chartViv.update();
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _dataPobAlto+_dataPobMedio+_dataPobBajo;
+                                            _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _dataVivAlto+_dataVivMedio+_dataVivBajo;
+                                        }));
+                                    }
+                                    /*
                                     if(_geometry ?? false) {
                                         console.log(_geometry);
                                         _loadSelect(
@@ -3168,59 +3324,8 @@ require([
                                             this[`DOW_${lyr.tag}`],
                                             this._listLayerAnalysis,
                                             _geometry
-                                        );
-                                        /* Statistic Poblacion */
-                                        let poblacionSUM = new StatisticDefinition();
-                                        poblacionSUM.statisticType = "sum";
-                                        poblacionSUM.onStatisticField = _version.fields[0].name;
-                                        poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                        /* Statistic Vivienda */
-                                        let viviendaSUM = new StatisticDefinition();
-                                        viviendaSUM.statisticType = "sum";
-                                        viviendaSUM.onStatisticField = _version.fields[1].name;
-                                        viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                        /* Statistic Response */
-                                        let queryTask_Engine = new QueryTask(_version.url);
-                                        let query_Engine = new Query();
-                                        query_Engine.outFields = _version.fields.map(x => x.name);
-                                        query_Engine.geometry = _geometry;
-                                        query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
-                                        query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
-                                        query_Engine.returnGeometry = false;
-                                        queryTask_Engine.execute(query_Engine).then(
-                                            (response) => {
-                                                try {
-                                                    console.log("RESPONDE");
-                                                    console.log(response);
-                                                    /*
-                                                    let _contentTab01 = []; let _contentTab02 = [];
-                                                    let _attr = response.features[0].attributes;
-                                                    //Poblacion
-                                                    
-                                                    _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
-                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                    // Vivienda
-                                                    
-                                                    _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
-                                                    _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Total`).innerText = _attr.sumvivienda ?? 0;
-                                                    _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[1].name}`,_contentTab02);
-                                                    */
-                                                } catch (error) {
-                                                    console.error(`Count: Statistic FM => ${error.name}`);
-                                                }                    
-                                            },
-                                            (error) => {
-                                                console.error(`Error: Statistic FM => ${error.name}`);
-                                            }
-                                        ).always(lang.hitch(this, () => { 
-                                           console.log("TERMINO EL PROCESO");
-                                            
-                                        }));;                                    
-                                        //_elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
-                                        
+                                        ); 
+                                        _elementById(`TBcontent${lyr.tag}${_version.fields[2].name}_Tbody`).innerHTML = "";
                                         configAnalysis_Temp.forEach(function(cValue) {
                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                             let analysisCOUNT = new StatisticDefinition();
@@ -3238,12 +3343,12 @@ require([
                                                 (response) => {
                                                     try {
                                                         let _attr = response.features[0].attributes;
-                                                        this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                         countLayer++;
                                                         if(_attr.cantidad > 0) {
+                                                            this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                             this._listLayerAnalysis.push(cValue.table);
                                                             let _contentTab = [];
-                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            let _id = `TBcontent${lyr.tag}${_version.fields[2].name}`;
                                                             _elementById(_id + "Tbody").innerHTML ="";
                                                             _contentTab.push({"item":cValue.name, "val":_attr.cantidad ?? 0 });
                                                             _htmlTableTAB_ADD(`${_id}`,_contentTab);
@@ -3267,8 +3372,8 @@ require([
                                                 } 
                                             }.bind(this)));
                                         });
-                                        
                                     }
+                                    */
                                 }));
                             }
                             /* </NP> */
@@ -3286,18 +3391,36 @@ require([
                                 divColumn_02.className = "column_02";                                
                                 const divMain = document.createElement("main");
                                 
-                                const divTable = document.createElement("div");
+                                /*const divTable = document.createElement("div");
                                 divTable.id = `ID_TBcontent${lyr.tag}`;
                                 divTable.className = "form-scroll-tab";
-                                divColumn_02.appendChild(divTable);
-                                
+                                divColumn_02.appendChild(divTable);*/
+
+                                const divOBS = document.createElement("p");
+                                divOBS.id = `IDNote_${lyr.tag}`;
+                                divOBS.innerHTML = _cssLoad;
+                                divColumn_01.prepend(divOBS);
+
+                                /* DETALLE */
+                                const divDetalle = document.createElement("p");
+                                divDetalle.className = "sect-detalle";
+                                divDetalle.innerHTML = _version.detalle;
+                                divColumn_01.appendChild(divDetalle);
+
                                 /* HEADER */
-                                lyr.content[0].version_11[0].fields.map(function(current) {
+                                lyr.content[0].version_11[0].fields.map(function(current,index) {
                                     const inputText = document.createElement("input");
                                     inputText.type = "radio";
                                     inputText.className = "tabs-horiz";
                                     inputText.id = `tab${lyr.tag}${current.name}`;
                                     inputText.name = `tabs-2${lyr.tag}`;
+                                    inputText.onclick = function() {
+                                        if(index == 0 || index == 1) {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "none";
+                                        } else {
+                                            _elementById(`DOW_${lyr.tag}`).style.display = "block";
+                                        }
+                                    }                                    
                                     if(typeof current.default !== "undefined") {
                                         inputText.setAttribute("checked","");
                                     }
@@ -3308,7 +3431,7 @@ require([
                                     divMain.appendChild(label);                            
                                 }.bind(this));
                                 /* CONTENT */
-                                lyr.content[0].version_11[0].fields.map(function(current) {
+                                lyr.content[0].version_11[0].fields.map(function(current,index) {
                                     const sect = document.createElement("section");
                                     sect.id = `content${lyr.tag}${current.name}`;
                                     const div = document.createElement("div");
@@ -3320,16 +3443,21 @@ require([
                                     divCenter.appendChild(divOBS);
                                     div.appendChild(divCenter);
 
-                                    const divCenterTotal = document.createElement("center");
-                                    const divTotal = document.createElement("p");
-                                    divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
-                                    divTotal.style.fontSize = "65px";
-                                    divTotal.style.margin = "5px 0px";
-                                    divTotal.innerHTML = _cssLoad;
-                                    divCenterTotal.appendChild(divTotal);
-                                    div.appendChild(divCenterTotal);
+                                    if(index != 2) {
+                                        const divCenterTotal = document.createElement("center");
+                                        const divTotal = document.createElement("p");
+                                        divTotal.id = `IDTOTALcontent${lyr.tag}${current.name}`;
+                                        divTotal.style.fontSize = "65px";
+                                        divTotal.style.margin = "5px 0px";
+                                        divTotal.innerHTML = _cssLoad;
+                                        divCenterTotal.appendChild(divTotal);
+                                        div.appendChild(divCenterTotal);    
+                                    }
+
                                     const divTable = document.createElement("div");
                                     divTable.id = `TBcontent${lyr.tag}${current.name}`;
+                                    divTable.classList = "form-scroll-tab";
+                                    divTable.style.maxHeight = "212px";
                                     div.appendChild(divTable);
 
                                     sect.appendChild(div);                            
@@ -3348,19 +3476,12 @@ require([
                                     divMain.appendChild(tagStyle);
                                 } 
 
-                                const divOBS = document.createElement("p");
-                                divOBS.id = `IDNote_${lyr.tag}`;
-                                divOBS.innerHTML = _cssLoad;
-                                divColumn_01.prepend(divOBS);
-
                                 divColumn_01.appendChild(divMain);
-
                                 /* NOTA */
                                 const divNota = document.createElement("p");
                                 divNota.className = "sect-nota";
                                 divNota.innerHTML = _version.nota;
                                 divColumn_02.appendChild(divNota);
-
                                 /* FUENTE */
                                 const divFuente = document.createElement("p");
                                 divFuente.className = "sect-fuente";
@@ -3371,21 +3492,22 @@ require([
                                 divRow.className = "row-excel";
                                 const divDownload = document.createElement("div");
                                 divDownload.id = `DOW_${lyr.tag}`;
+                                divDownload.style.display = "none";
                                 divRow.appendChild(divDownload);
-                                divColumn_02.appendChild(divRow);
+                                divColumn_01.appendChild(divRow);
 
                                 const divLOAD = document.createElement("div");
                                 divLOAD.id = `IDLOAD_${lyr.tag}`;
                                 divLOAD.innerHTML = _cssLoad;
-                                divColumn_02.appendChild(divLOAD);
+                                divColumn_01.appendChild(divLOAD);
                                 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
 
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por Otros Peligros Geológicos", "Población Expuesta");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Otros Peligros Geológicos", "Viviendas Expuestas");
-
-                                _htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "OTROS EE", "CANTIDAD");
+                                _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
+                                /*_htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "OTROS EE", "CANTIDAD");*/
 
                                 let queryTask_AEE = new QueryTask(lyr.url);
                                 let query_AEE = new Query();
@@ -3397,7 +3519,6 @@ require([
                                         try {
                                             let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _length = response.features.length;
-
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
@@ -3410,11 +3531,11 @@ require([
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
                                             }                        
                                         } catch (error) {
-                                            console.error(`Count: AEI => ${error.name} - ${error.message}`);
+                                            console.error(`Count: AEE => ${error.name} - ${error.message}`);
                                         }                    
                                     },
                                     (error) => {  
-                                        console.error(`Error: AEI => ${error.name} - ${error.message}`);
+                                        console.error(`Error: AEE => ${error.name} - ${error.message}`);
                                     }
                                 ).always(lang.hitch(this, () => { 
                                     let countTabItem = 1;
@@ -3471,7 +3592,8 @@ require([
                                                 console.error(`Error: Statistic FM => ${error.name}`);
                                             }
                                         );                                    
-                                        _elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";
+                                        /*_elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";*/
+                                        _elementById(`TBcontent${lyr.tag}${_version.fields[2].name}_Tbody`).innerHTML = "";
                                         configAnalysis_Temp.forEach(function(cValue) {                                            
                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                             /* Statistic Analysis */
@@ -3495,7 +3617,8 @@ require([
                                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                             this._listLayerAnalysis.push(cValue.table);
                                                             let _contentTab = [];
-                                                            let _id = `ID_TBcontent${lyr.tag}`;
+                                                            /*let _id = `ID_TBcontent${lyr.tag}`;*/
+                                                            let _id = `TBcontent${lyr.tag}${_version.fields[2].name}`;
                                                             _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
                                                             _htmlTableTAB_ADD(`${_id}`,_contentTab);
                                                             _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + _attr.cantidad ?? 0;
@@ -3553,19 +3676,17 @@ require([
                                             let _features = response.features;
                                             let _note = _elementById(`IDNote_${lyr.tag}`);
                                             if(_features.length > 0) {
-                                                
                                                 _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
-
                                                 _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
-                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
-                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"] ?? 0;
+                                                    _chartData.push(_item.attributes["cantidad"] ?? 0);
                                                     _chartLabel.push(_item.attributes[_version.static]);
                                                 });
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _contentTotal)}`;
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
@@ -3902,16 +4023,16 @@ require([
                                             let _features = response.features;
                                             if(_features.length > 0) {                                                
                                                 _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
                                                 _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
-                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
-                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"] ?? 0;
+                                                    _chartData.push(_item.attributes["cantidad"] ?? 0);
                                                     _chartLabel.push(_item.attributes[_version.static]);
                                                 });
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _contentTotal)}`;
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
@@ -4012,16 +4133,16 @@ require([
                                             let _features = response.features;
                                             if(_features.length > 0) {
                                                 _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
                                                 _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
-                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
-                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"] ?? 0;
+                                                    _chartData.push(_item.attributes["cantidad"] ?? 0);
                                                     _chartLabel.push(_item.attributes[_version.static]);
                                                 });
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _contentTotal)}`;
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
@@ -4122,17 +4243,17 @@ require([
                                             let _note = _elementById(`IDNote_${lyr.tag}`);
                                             let _features = response.features;
                                             if(_features.length > 0) {
-                                                _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
+                                                _note.className = "sect-nota-info";                                                
                                                 _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
-                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
-                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"] ?? 0;
+                                                    _chartData.push(_item.attributes["cantidad"] ?? 0);
                                                     _chartLabel.push(_item.attributes[_version.static]);
                                                 });
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _contentTotal)}`;
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
@@ -4235,17 +4356,16 @@ require([
                                             let _features = response.features;
                                             if(_features.length > 0) {
                                                 _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _features.length)}`;
-
                                                 _features.forEach(function(_item,_index) {
                                                     _contentTab.push({
                                                         "item": `${_item.attributes[_version.static]} <span style="font-size: 15px;color:${configBackgroundColor[_index]}">■</span>`,
                                                         "val": _item.attributes["cantidad"]
                                                     });
-                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"];
-                                                    _chartData.push(_item.attributes["cantidad"]);
+                                                    _elementById(`TB_content${lyr.tag}_Total`).innerText = _contentTotal = _contentTotal + _item.attributes["cantidad"] ?? 0;
+                                                    _chartData.push(_item.attributes["cantidad"]) ?? 0;
                                                     _chartLabel.push(_item.attributes[_version.static]);
                                                 });
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _contentTotal)}`;
                                                 _elementById(`TB_content${lyr.tag}_Tbody`).innerHTML = "";
                                                 _htmlTableTAB_ADD(`TB_content${lyr.tag}`,_contentTab);
                                                 let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
