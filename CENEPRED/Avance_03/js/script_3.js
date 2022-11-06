@@ -169,7 +169,7 @@ require([
             queryTask.executeForCount(query).then(
                 (response) => {
                     try {
-                        let _porcentaje = (_cantidad/response)*100;
+                        let _porcentaje = Math.round((_cantidad/response)*100);
                         let chart = Chart.getChart(`TB_GraphicContent_${lyr.tag}`);
                         chart.data.datasets[0].data = [_porcentaje,(100-_porcentaje)];
                         chart.data.labels = ["Cuenta con PPRRD (%)","NO cuenta con PPRRD (%)"];
@@ -1091,7 +1091,6 @@ require([
                                 divColumn_02.className = "column_02";
                                 let queryTask_PPRD = new QueryTask(lyr.url);
                                 let query_PPRD = new Query();
-                                /*query_PPRD.outFields = ["*"];*/
                                 query_PPRD.outFields = lyr.fields.map(x => x.name);
                                 query_PPRD.geometry = new Polygon(JSON.parse(localStorage.getItem("reportGeometry")));
                                 query_PPRD.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
@@ -1160,7 +1159,7 @@ require([
                                 
                                 const divCenter = document.createElement("center");
                                 const divTitle = document.createElement("p");
-                                divTitle.style.fontSize = "16px";
+                                divTitle.style.fontSize = "14px";
                                 divTitle.id = `IDTitle_${lyr.tag}`;
                                 /*divTitle.innerHTML = _version.title;*/
                                 divCenter.appendChild(divTitle);
@@ -1870,6 +1869,12 @@ require([
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
+
+                                /* Detalle */
+                                const divDetalle = document.createElement("p");
+                                divDetalle.className = "sect-detalle";
+                                divDetalle.innerHTML = _version.detalle;
+                                divColumn_01.appendChild(divDetalle);
                                 
                                 /* HEADER */
                                 lyr.content[0].version_05[0].fields.map(function(current,index) {
@@ -2129,6 +2134,12 @@ require([
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
+
+                                /* Detalle */
+                                const divDetalle = document.createElement("p");
+                                divDetalle.className = "sect-detalle";
+                                divDetalle.innerHTML = _version.detalle;
+                                divColumn_01.appendChild(divDetalle);
                                                                 
                                 /* HEADER */
                                 lyr.content[0].version_06[0].fields.map(function(current,index) {
@@ -2436,7 +2447,7 @@ require([
 
                                 const divCenter = document.createElement("center");
                                 const divOBS = document.createElement("p");
-                                divOBS.style.fontSize = "16px";
+                                divOBS.style.fontSize = "14px";
                                 divOBS.innerHTML = _version.title;
                                 divCenter.appendChild(divOBS);
                                 divColumn_01.appendChild(divCenter);
@@ -2737,6 +2748,12 @@ require([
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS); 
+
+                                /* Detalle */
+                                const divDetalle = document.createElement("p");
+                                divDetalle.className = "sect-detalle";
+                                divDetalle.innerHTML = _version.detalle;
+                                divColumn_01.appendChild(divDetalle);
                                                                 
                                 /* HEADER */
                                 lyr.content[0].version_09[0].fields.map(function(current,index) {
@@ -3575,7 +3592,7 @@ require([
                                 
                                 const divCenter = document.createElement("center");
                                 const divOBS = document.createElement("p");
-                                divOBS.style.fontSize = "16px";
+                                divOBS.style.fontSize = "14px";
                                 divOBS.innerHTML = _version.title;
                                 divCenter.appendChild(divOBS);
                                 divColumn_01.appendChild(divCenter);
@@ -3707,7 +3724,7 @@ require([
                                 
                                 const divCenter = document.createElement("center");
                                 const divOBS = document.createElement("p");
-                                divOBS.style.fontSize = "16px";
+                                divOBS.style.fontSize = "14px";
                                 divOBS.innerHTML = _version.title;
                                 divCenter.appendChild(divOBS);
                                 divColumn_01.appendChild(divCenter);
@@ -3810,7 +3827,7 @@ require([
 
                                 const divCenter = document.createElement("center");
                                 const divOBS = document.createElement("p");
-                                divOBS.style.fontSize = "16px";
+                                divOBS.style.fontSize = "14px";
                                 divOBS.innerHTML = _version.title;
                                 divCenter.appendChild(divOBS);
                                 divColumn_01.appendChild(divCenter);
@@ -3919,6 +3936,13 @@ require([
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
                                 
+                                const divCenter = document.createElement("center");
+                                const divTitle = document.createElement("p");
+                                divTitle.style.fontSize = "14px";
+                                divTitle.innerHTML = _version.title;
+                                divCenter.appendChild(divTitle);
+                                divColumn_01.appendChild(divCenter);
+
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
@@ -4022,6 +4046,13 @@ require([
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
                                 
+                                const divCenter = document.createElement("center");
+                                const divTitle = document.createElement("p");
+                                divTitle.style.fontSize = "14px";
+                                divTitle.innerHTML = _version.title;
+                                divCenter.appendChild(divTitle);
+                                divColumn_01.appendChild(divCenter);
+
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
                                 divCanvasGraphic.setAttribute("id",`TB_GraphicContent_${lyr.tag}`);
@@ -4125,6 +4156,13 @@ require([
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
+
+                                const divCenter = document.createElement("center");
+                                const divTitle = document.createElement("p");
+                                divTitle.style.fontSize = "14px";
+                                divTitle.innerHTML = _version.title;
+                                divCenter.appendChild(divTitle);
+                                divColumn_01.appendChild(divCenter);
                                 
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");
@@ -4232,6 +4270,13 @@ require([
                                 divOBS.id = `IDNote_${lyr.tag}`;
                                 divOBS.innerHTML = _cssLoad;
                                 divColumn_01.prepend(divOBS);
+
+                                const divCenter = document.createElement("center");
+                                const divTitle = document.createElement("p");
+                                divTitle.style.fontSize = "14px";
+                                divTitle.innerHTML = _version.title;
+                                divCenter.appendChild(divTitle);
+                                divColumn_01.appendChild(divCenter);
                                 
                                 const divCenterGraphic = document.createElement("center");
                                 const divCanvasGraphic = document.createElement("canvas");

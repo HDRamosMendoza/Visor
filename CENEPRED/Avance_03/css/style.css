@@ -318,7 +318,7 @@ input.tabs-horiz:checked + label {
 .tabs { 
   position: relative;
   width: 100%;
-  height: 570px;
+  height: 600px;
   padding: 0px;
   /*background-color: #F5F5F5;*/
   margin-top: 10px;
@@ -548,7 +548,7 @@ input.tabs-horiz:checked + label {
   text-align: left;
   position: relative;
   width: 60%;
-  height: 515px;
+  height: 545px;
 }
 .column_02 {
   width: 33%;
