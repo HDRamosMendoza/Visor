@@ -563,7 +563,7 @@ input.tabs-horiz:checked + label {
   background-color : #d9edf7;
   border-color : #bce8f1;
   color : #31708f;
-  padding : 0px 10px 10px 10px;
+  padding : 5px 10px 10px 10px;
   margin : 0px 0px 5px 0px;
 }
 .column_01 p.sect-nota-warning {

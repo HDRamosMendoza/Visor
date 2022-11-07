@@ -3507,8 +3507,7 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por Otros Peligros Geológicos", "Población Expuesta");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Otros Peligros Geológicos", "Viviendas Expuestas");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
-                                /*_htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "OTROS EE", "CANTIDAD");*/
-
+                                
                                 let queryTask_AEE = new QueryTask(lyr.url);
                                 let query_AEE = new Query();
                                 query_AEE.returnGeometry = true;

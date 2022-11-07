@@ -972,7 +972,7 @@
                                                         {
                                                             "alias": "Población",
                                                             "name": "pob_total",
-                                                            "default": true                    
+                                                            "default": true                 
                                                         },
                                                         {
                                                             "alias": "Vivienda",
