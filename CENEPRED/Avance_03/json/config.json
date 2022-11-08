@@ -117,7 +117,7 @@
                 { 
                     "default": "active",
                     "objectid": "id_documento",
-                    "name": "Planes Prevención y Reducción del Riesgo del Desastres (PPRRD)",
+                    "name": "Planes Prevención y Reducción del Riesgo de Desastres (PPRRD)",
                     "imagen": "https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca/11513",
                     "rgb": "rgb(88,24,69)",
                     "fields":[

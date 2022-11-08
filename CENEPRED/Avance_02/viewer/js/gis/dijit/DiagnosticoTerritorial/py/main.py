@@ -6,21 +6,15 @@ import random
 import time
 import arcpy
 import json
-from os.path import basename
-
 # Default Folder
 scratch_Folder = arcpy.env.scratchFolder
 arcpy.AddMessage("Scracth {}".format(scratch_Folder))
-
 # Default GDB
 scratch_GDB = arcpy.env.scratchGDB
-
 # Workspace - PATH .SDE
 arcpy.env.workspace = os.path.join(r"D:\RepositorioGitHub\Visor\CENEPRED\Avance_02\viewer\js\gis\dijit\DiagnosticoTerritorial\py\sigrid.gdb")
-
 # Spatial Reference
 arcpy.env.outputCoordinateSystem = arcpy.SpatialReference(4326)
-
 # Overwrite Output
 arcpy.env.overwriteOutput = True
         
@@ -28,30 +22,25 @@ arcpy.env.overwriteOutput = True
 randomBegin = 100000
 randomEnd = 999999999
 time_file = time.strftime("%d%m%Y") + "_" + str(random.randint(randomBegin,randomEnd))
-
 # Nombre de KMZ
 nameFileKMZ = str("SIGRID_KMZ_" + time_file)
 nameFileKMZ_Zip = str("SIGRID_KMZ_ZIP_" + time_file)
-
 # Nombre de SHP
 nameFileSHP = str("SIGRID_SHP_" + time_file)
 nameFileSHP_Zip = str("SIGRID_SHP_ZIP_" + time_file)
-
 # Nombre de GDB
 nameFileGDB = str("SIGRID_GDB_" + time_file)
 nameFileGDB_Zip = str("SIGRID_GDB_ZIP_" + time_file)
-
 # Lista de capas (cadena separadas por comas)
 geoLayer = arcpy.GetParameterAsText(0)
 # Poligono de intersección
 geojson_polygon = arcpy.GetParameterAsText(1)
 # Formato a descargar
 geoFormat = arcpy.GetParameterAsText(2)
-
 #geoLayer = 'ZRMN,EVAR,planes_PPRRD'
-#geoFormat = "GDB" || "SHP" || "GDB" || "PRUEBA"
-
-'''geojson_polygon = { 
+#geoFormat = "SHP" #"GDB" || "SHP" || "GDB" || "PRUEBA"
+'''
+geojson_polygon = { 
                     "type": "Polygon", 
                     "coordinates": [
                         [[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]
@@ -59,7 +48,6 @@ geoFormat = arcpy.GetParameterAsText(2)
                     "spatialReference" : { "wkid" : 4326 }
                 }
 '''
-
 arcpy.AddMessage("Parametro 1: " + geoLayer)
 arcpy.AddMessage("Parametro 2: " + geoFormat)
 arcpy.AddMessage("Parametro 3: " + geojson_polygon)
@@ -71,7 +59,6 @@ def nameAlone(_name):
         return _name[_name.rfind('/')+1:] 
     else:
         return _name
-
 if __name__ == '__main__':
     if len(geoLayer) > 0 and len(geojson_polygon) > 0:
         # Convert STRING to JSON
@@ -80,7 +67,6 @@ if __name__ == '__main__':
         polygon = arcpy.AsShape(string_to_json)
         # Bucle layer
         item = geoLayer.split(",")
-
         # Download PRUEBA
         if(geoFormat == "PRUEBA"):            
             response = dict()
@@ -97,20 +83,20 @@ if __name__ == '__main__':
                     response[layer] = {"layer": layer, "exit": "NO"}
             resp = json.dumps(response)
             arcpy.SetParameterAsText(3, resp)
-
         # Download KMZ
         if(geoFormat == "KMZ"):
-            os.mkdir(os.path.join(scratch_Folder,nameFileKMZ))           
+            if not arcpy.Exists(nameFileKMZ):
+                os.mkdir(os.path.join(scratch_Folder,nameFileKMZ))
+           
             for layer in item:
                 if(arcpy.Exists(layer)):
                     # Add name
                     layer_temp = 'lyr' + layer + time_file
-                    layer_temp = nameAlone(layer_temp)
                     #Se crear un Layer para su uso
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
-                    layer = nameAlone(layer)
+                    layer = layer.replace(".", "")
                     # Nombre del KMZ
-                    name_KMZ = "SIGRID_KMZ_" + layer + "_" + time_file
+                    name_KMZ = "SIGRID_CENEPRED_KMZ_" + layer + "_" + time_file
                     # Selección por localización
                     arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
                     # Ruta de destino de la conversion de un KMZ
@@ -125,16 +111,15 @@ if __name__ == '__main__':
             files = os.listdir(os.path.join(scratch_Folder,nameFileKMZ))
             for f in files:
                 if f.endswith(".kmz"):
-                    _pathFile = os.path.join(scratch_Folder,nameFileKMZ,f)
-                    zfile.write(_pathFile,basename(_pathFile))
-                    
+                    zfile.write(os.path.join(scratch_Folder,nameFileKMZ,f))
             zfile.close()
             # Response KMZ
             arcpy.SetParameterAsText(3, _pathZip)
         
         # Download SHP
         if(geoFormat == "SHP"):
-            os.mkdir(os.path.join(scratch_Folder,nameFileSHP))
+            if not arcpy.Exists(nameFileSHP):
+                os.mkdir(os.path.join(scratch_Folder,nameFileSHP))
             for layer in item:
                 if(arcpy.Exists(layer)):
                     # Add name SHP
@@ -145,7 +130,7 @@ if __name__ == '__main__':
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
                     layer = nameAlone(layer)
                     # Nombre del SHP
-                    name_SHP = "SIGRID_SHP_" + layer + "_" + time_file
+                    name_SHP = "SIGRID_CENEPRED_SHP_" + layer + "_" + time_file
                     # Selección por localización
                     arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
                     # Ruta de destino de la conversion de un SHP
@@ -158,28 +143,27 @@ if __name__ == '__main__':
             files = os.listdir(os.path.join(scratch_Folder,nameFileSHP))
             for f in files:
                 if f.endswith("shp") or f.endswith("dbf") or f.endswith("shx") or f.endswith("cpg") or f.endswith("prj") or f.endswith("sbn") or f.endswith("sbx") or f.endswith("xml"):
-                    _pathFile = os.path.join(scratch_Folder,nameFileSHP,f)
-                    zfile.write(_pathFile,basename(_pathFile))
+                    zfile.write(os.path.join(scratch_Folder,nameFileSHP,f))
             zfile.close()
             # Response KMZ
             arcpy.SetParameterAsText(3, _pathZip)
         
         # Download GDB
         if(geoFormat == "GDB"):
-            os.mkdir(os.path.join(scratch_Folder,nameFileGDB))
+            if not arcpy.Exists(nameFileGDB):
+                os.mkdir(os.path.join(scratch_Folder,nameFileGDB))
             arcpy.CreateFileGDB_management(os.path.join(scratch_Folder,nameFileGDB), "SIGRID_GDB.gdb")
             _GDB = os.path.join(scratch_Folder,nameFileGDB,"SIGRID_GDB.gdb")
             print(_GDB)
             for layer in item:
                 if(arcpy.Exists(layer)):
                     # Add name GDB
-                    layer_temp = 'GDB' + layer + time_file
-                    layer_temp = nameAlone(layer_temp)
+                    layer_temp = 'lyrGDB' + layer + time_file
                     #Se crear un Layer para su uso
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
-                    layer_temp = nameAlone(layer_temp)
+                    layer = layer.replace(".", "")
                     # Nombre del GDB
-                    name_GDB = "SIGRID_GDB_" + layer + "_" + time_file
+                    name_GDB = "SIGRID_CENEPRED_GDB_" + layer + "_" + time_file
                     # Selección por localización
                     arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
                     # Ruta de destino de la conversion de un GDB
@@ -192,8 +176,7 @@ if __name__ == '__main__':
             for root, dirs, files in os.walk(os.path.join(scratch_Folder,nameFileGDB)):
                 if root == _GDB:
                     for f in files:
-                        _pathFile = os.path.join(root, f)
-                        zfile.write(_pathFile,basename(_pathFile))
+                        zfile.write(os.path.join(root, f))
             zfile.close()
             # Response GDB
             arcpy.SetParameterAsText(3, _pathZip)

@@ -454,13 +454,14 @@ define([
             try {
                 let htmlID = formatId.getAttribute("data-dojo-attach-point");
                 let container = domConstruct.create("div", { id: `DIV_${htmlID}`, style: {width:'65%',color:"#555555"} }, formatId );
-                
+                console.log("CARGANDO DATA");
                 let buttonDownload = new Button({
                     id: `Button_${htmlID}`,
                     label: "Descargar",
                     iconClass: 'fa fa-download',
                     style: { width:'115px', fontSize: '12px'},
                     onClick: function() {
+                        console.log("LE DIO CLICK DESCARGAR");
                         let _alert = this.ID_Select_Alert;
                         if(this.selectItem ?? false) {
                             this.ID_Load_Download.style.display = "block";
@@ -492,11 +493,19 @@ define([
                                 return;
                             }
                             /* Extraer data */
+                            /*console.log(this._listLayer.toString());
+                            console.log(this.selectItem);*/
                             this.gpExtractData.submitJob (
                                 {
                                     "Layers_to_Clip": this._listLayer.toString(),
                                     "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(this.reportGeometry.rings)},"spatialReference":{"wkid":4326}}`,
                                     "Feature_Format": this.selectItem
+                                    /*
+                                    "Layers_to_Clip": this._listLayer.toString(),
+                                    "Area_of_Interest": `{ "type": "Polygon", "coordinates": [[[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]],"spatialReference" : { "wkid" : 4326 }}`,
+                                    "Feature_Format": this.selectItem
+                                    */
+                                    
                                 },
                                 _completeCallback = function(jobInfo) {
                                     try {
@@ -504,7 +513,9 @@ define([
                                             this.gpExtractData.getResultData(jobInfo.jobId, "Result", function(outputFile) {
                                                 try {
                                                     this.ID_Load_Download.style.display = "none";
+                                                    console.log(outputFile);
                                                     let _URL = outputFile.value;
+                                                    console.log(_URL);
                                                     let _URL_Temp = _URL.substring(_URL.indexOf("arcgisjobs"), _URL.length);
                                                     window.location = this._pathDownload + _URL_Temp;
                                                 } catch (error) {
@@ -518,6 +529,7 @@ define([
                                 }.bind(this),      
                                 _statusCallback = function(jobInfo) {
                                     try {
+                                        console.log(jobInfo);
                                         let status = jobInfo.jobStatus;
                                         if ( status === "esriJobFailed" ) {
                                             this.ID_Load_Download.style.display = "none";
@@ -530,6 +542,7 @@ define([
                                 }.bind(this),    
                                 _errorCallback = function(jobInfo) {
                                     try {
+                                        console.log(jobInfo);
                                         this.ID_Load_Download.style.display = "none";
                                     } catch (error) {
                                         console.error("Error: _errorCallback " + error.message);
@@ -844,7 +857,7 @@ define([
                         try {
                             if (this.diagnosisRandom == _random) {
                                 this.groupActived = [];
-                                console.log(response);
+                                //console.log(response);
                                 let _attr = response.features[0].attributes;
                                 this.diagnosisResult = this.diagnosisResult + _attr.cantidad;
                                 /*this.ID_Count.innerText = this.diagnosisResult = this.diagnosisResult + _attr.cantidad;*/
@@ -859,9 +872,9 @@ define([
                                 /* Delete Tbody */
                                 this._elementById(`${_id}_Tbody`).innerHTML = "";
                                 /* Ordena por cantidad en el JSON this.confDiagnosis_Temp */
-                                console.log(_temp)
+                                //console.log(_temp)
                                 this._sortJSON(_temp, 'cantidad','desc');
-                                console.log(_temp)
+                                //console.log(_temp)
                                 /*  let cell_0 = document.createElement("td");let cell_0_input = document.createElement("input");cell_0_input.setAttribute("type", "checkbox");cell_0.appendChild(cell_0_input); */
 
                                 /* Inserta a la tabla */
