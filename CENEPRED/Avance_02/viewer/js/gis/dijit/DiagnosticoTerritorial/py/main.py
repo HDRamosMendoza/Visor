@@ -92,11 +92,11 @@ if __name__ == '__main__':
                 if(arcpy.Exists(layer)):
                     # Add name
                     layer_temp = 'lyr' + layer + time_file
-                    #Se crear un Layer para su uso
+                    # Se crear un Layer para su uso
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
                     layer = layer.replace(".", "")
                     # Nombre del KMZ
-                    name_KMZ = "SIGRID_CENEPRED_KMZ_" + layer + "_" + time_file
+                    name_KMZ = "SIGRID_KMZ_" + layer + "_" + time_file
                     # Selección por localización
                     arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
                     # Ruta de destino de la conversion de un KMZ
@@ -120,6 +120,7 @@ if __name__ == '__main__':
         if(geoFormat == "SHP"):
             if not arcpy.Exists(nameFileSHP):
                 os.mkdir(os.path.join(scratch_Folder,nameFileSHP))
+            
             for layer in item:
                 if(arcpy.Exists(layer)):
                     # Add name SHP
@@ -130,11 +131,11 @@ if __name__ == '__main__':
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
                     layer = nameAlone(layer)
                     # Nombre del SHP
-                    name_SHP = "SIGRID_CENEPRED_SHP_" + layer + "_" + time_file
+                    name_SHP = "SIGRID_SHP_" + layer + "_" + time_file
                     # Selección por localización
                     arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
                     # Ruta de destino de la conversion de un SHP
-                    arcpy.CopyFeatures_management(layer_temp, os.path.join(scratch_Folder,nameFileSHP, name_SHP + ".shp"))
+                    arcpy.CopyFeatures_management(layer_temp, os.path.join(scratch_Folder, nameFileSHP, name_SHP + ".shp"))
                 else:
                     arcpy.AddMessage("Not exist: {}".format(layer))                        
             
@@ -163,7 +164,7 @@ if __name__ == '__main__':
                     arcpy.MakeFeatureLayer_management(layer, layer_temp)
                     layer = layer.replace(".", "")
                     # Nombre del GDB
-                    name_GDB = "SIGRID_CENEPRED_GDB_" + layer + "_" + time_file
+                    name_GDB = "SIGRID_GDB_" + layer + "_" + time_file
                     # Selección por localización
                     arcpy.SelectLayerByLocation_management(layer_temp,"INTERSECT", polygon)
                     # Ruta de destino de la conversion de un GDB

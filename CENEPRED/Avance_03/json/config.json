@@ -135,6 +135,11 @@
                             "visible": false
                         },
                         {
+                            "alias": "Tipo",
+                            "name": "tipo",
+                            "visible": false
+                        },
+                        {
                             "alias": "Año de Publicación",
                             "name": "anio",
                             "format": {
@@ -161,8 +166,20 @@
                                 {
                                     "imagen":"https://sigrid.cenepred.gob.pe/sigridv3/storage/biblioteca",
                                     "nota": "El <strong>Plan de Prevención y Reducción del Riesgo de Desastres (PPRRD)</strong> es un plan especifico que permite identificar medidas, programas, actividades y proyectos que eliminen o reduzcan las condiciones existentes de riesgos de desastres, y prevengan la generación de nuevas condiciones de riesgos.",
-                                    "fuente": "Fuente: Cenepred, 2022",
+                                    "fuente": "<strong>Fuente:</strong> Cenepred, 2022",
                                     "field": "ambito",
+                                    "tipo": [
+                                        {
+                                            "field": "tipo",
+                                            "type": "D"
+                                        },{
+                                            "field": "tipo",
+                                            "type": "P"
+                                        },{
+                                            "field": "tipo",
+                                            "type": "S"
+                                        }
+                                    ],
                                     "documento": "id_documento",
                                     "title":  [
                                         {
@@ -172,8 +189,8 @@
                                     ],
                                     "cuenta": [
                                         {
-                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con su <strong>Plan de Prevención y Reducción del Riesgo de Desastres (PPRRD).</strong>",
-                                            "negacion": "seleccionado <strong>NO CUENTA</strong> con su <strong>Plan de Prevención y Reducción del Riesgo de Desastres (PPRRD)</strong>. No obstante, si los gobiernos locales del departamento seleccionado cuenta con planes <strong>PPRRD</strong>, se mostraran listados en la parte inferior."
+                                            "afirmacion": "seleccionado <strong>CUENTA</strong> con su <strong>Plan de Prevención y Reducción del Riesgo de Desastres (PPRRD).</strong>.",
+                                            "negacion": "seleccionado <strong>NO CUENTA</strong> con su <strong>Plan de Prevención y Reducción del Riesgo de Desastres (PPRRD)</strong>."
                                         }
                                     ]
                                 }
@@ -222,7 +239,7 @@
                                     "field": "ambito",
                                     "detalle": "Datos del total de <strong>población</strong> y <strong>viviendas</strong> según niveles de <strong>riesgo alto</strong> y <strong>muy alto</strong>.",
                                     "nota": "La <strong>Evaluación de Riesgos (EVAR)</strong>,es un instrumento técnico que contribuye a la implementación del proceso de estimación del riesgo, que permite identificar los niveles de riesgo de desastres, previa identificación y caracterización del peligro, así como el análisis de los factores de vulnerabilidad.",
-                                    "fuente": "Fuente: Elaborado por CENEPRED con datos de las evaluaciones de riesgo remitidas por los gobiernos locales y regionales.",
+                                    "fuente": "<strong>Fuente:</strong> Elaborado por CENEPRED con datos de las evaluaciones de riesgo remitidas por los gobiernos locales y regionales.",
                                     "documento": "id_documento",
                                     "cuenta": [
                                         {
@@ -320,7 +337,7 @@
                                     "imagen": "url_img",
                                     "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Zonas De Riesgo No Mitigable</strong>.",
                                     "nota": "La <strong>Zona de Riesgo No Mitigable (ZRNM)</strong>, es aquella donde existe la probabilidad de que la población o sus medios de vida sufran daños o pérdidas a consecuencia del impacto de un peligro, y que la implementación de medidas de mitigación resultan de mayor costo y complejidad que llevar a cabo la reubicación de las viviendas y equipamiento urbano respectivo.",
-                                    "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por las entidades técnicas. Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de las zonas de riesgo no mitigable. El geoproceso utilizado por el sistema es la intersección de las capas zonas de riesgo no mitigable (MVCS) y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE.",
+                                    "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por las entidades técnicas. Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de las zonas de riesgo no mitigable. El geoproceso utilizado por el sistema es la intersección de las capas zonas de riesgo no mitigable (MVCS) y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE.",
                                     "field": "ambito",
                                     "cuenta": [
                                         {
@@ -435,7 +452,7 @@
                                             "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Puntos Críticos por Inundación</strong>.",
                                             "nota": "Los <strong>Puntos Críticos Por Inundación</strong>, son los ámbitos, en los cuales se han identificado desbordamiento de cauces por la recurrencia de fenómenos hidrometeorológicos y de eventos extremos, que hacen necesaria la ejecución de actividades permanentes de descolmatación de cauces, mantenimiento de las pendientes de equilibrio y construcción de obras permanentes de control y corrección de cauce.",
                                             "nota_2": "<strong>Nota</strong>: La cuantificación de las familias y viviendas y demás elementos expuestos, es con base en los datos consignado en las fichas técnicas de identificación de puntos críticos provistos por la ANA. La data espacial tiene geometría tipo punto.",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por la Autoridad Nacional del Agua (ANA, 2022).",                                            
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por la Autoridad Nacional del Agua (ANA, 2022).",                                            
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Puntos Críticos Por Inundación. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> los Puntos Críticos Por Inundación disponibles.",
@@ -516,7 +533,7 @@
                                         {
                                             "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Áreas de Exposición a Inundaciones</strong>.",
                                             "nota": "Las <strong>Áreas De Exposición</strong> por inundación: Son ámbitos  identificados como propensos a inundaciones debido a que fueron reportadas históricamente o que han sido identificadas mediante informes y/o estudios por las diferentes entidades técnicas científicas.",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por las entidades técnicas. Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de exposición a inundaciones. El geoproceso utilizado por el sistema es la intersección de las capas áreas de exposición a inundaciones y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE. La data espacial de áreas de exposición tiene geometría tipo polígono.",
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por las entidades técnicas. Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de exposición a inundaciones. El geoproceso utilizado por el sistema es la intersección de las capas áreas de exposición a inundaciones y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE. La data espacial de áreas de exposición tiene geometría tipo polígono.",
                                             "title": "",
                                             "cuenta": [
                                                 {
@@ -610,7 +627,7 @@
                                         {
                                             "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Fajas Marginales</strong>.",
                                             "nota": "Las <strong>fajas marginales</strong> son espacios en las riberas de las fuentes de agua delimitados por la ANA para la protección del recurso hídrico, en donde se prohíben actividades agrícolas, industriales y/o de urbanización (uso poblacional). Durante el fenómeno de El Niño Costero las mayores afectaciones se produjeron en fajas marginales ocupadas con fines de vivienda. (Según la Ley de Recursos Hídricos).",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por las Autoridad Nacional de Agua (ANA, 2022). Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de fajas marginales. El geoproceso utilizado por el sistema es la intersección de las fajas marginales y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE. La data espacial de fajas marginales tiene geometría tipo polígono.",
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por las Autoridad Nacional de Agua (ANA, 2022). Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de fajas marginales. El geoproceso utilizado por el sistema es la intersección de las fajas marginales y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE. La data espacial de fajas marginales tiene geometría tipo polígono.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> fajas marginales. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Fajas Marginales disponibles",
@@ -712,7 +729,7 @@
                                         {
                                             "nota": "Las <strong>Zonas Críticas</strong> son áreas o lugares que luego de la evaluación de las características geológicas-geotécnicas, tipo, frecuencia y daños producidos por los procesos naturales que causan desastres, entre otros factores, se consideran más proclives a ser afectadas por eventos de movimientos en masa o peligros geológicos.",
                                             "detalle": "<strong>Nota</strong>: La data espacial tiene geometría tipo punto.",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico Minero y Metalúrgico (INGEMMET, 2022).",
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico Minero y Metalúrgico (INGEMMET, 2022).",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> zonas críticas por movimientos en masa. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Zonas Críticas por movimientos en masa disponibles.",
@@ -781,7 +798,7 @@
                                         {
                                             "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Áreas De Exposición</strong>.",
                                             "nota": "Las <strong>Áreas De Exposición</strong> por movimientos en masa son aquellos ámbitos identificados como peligros geológicos: Deslizamientos, flujos, caída de rocas, reptación, propagación lateral y movimientos complejos, por diferentes entidades mediante informes y/o estudios.",
-                                            "fuente": "Fuente:",
+                                            "fuente": "<strong>Fuente:</strong>",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición por movimientos en masa. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Áreas De Exposición disponibles.",
@@ -879,7 +896,7 @@
                                         {
                                             "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Áreas De Exposición a Tsunami</strong>.",
                                             "nota": "Las <strong>Áreas De Exposición a Tsunami</strong> están determinadas por límite de máxima Inundación, se obtiene considerando aspectos oceanográficos tales como: altura y dirección de olas, además de información de las características geomorfológicas, pendiente, batimetría y topografía de las zonas de evaluación; las cartas de inundación se complementaron con información del INEI de población y viviendas de las zonas inundables ante un tsunami producido por un evento sísmico de 8.5 y 9.0 MW.(Según Sigrid).",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por la Dirección de Hidrografía y Navegación de la Marina de Guerra del Perú (HIDRONAV, 2022). Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de exposición a tsunami. El geoproceso utilizado por el sistema es la intersección de las áreas de exposición a tsunami y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE. La data espacial de áreas de exposición a tsunami tiene geometría tipo polígono.",
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por la Dirección de Hidrografía y Navegación de la Marina de Guerra del Perú (HIDRONAV, 2022). Los datos obtenidos son el resultado de la cuantificación de los elementos expuestos dentro de los ámbitos de exposición a tsunami. El geoproceso utilizado por el sistema es la intersección de las áreas de exposición a tsunami y la base gráfica de manzanas referenciales (INEI, 2017); de igual forma para el caso de Otros EE. La data espacial de áreas de exposición a tsunami tiene geometría tipo polígono.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición al peligro de tsunami. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Áreas De Exposición a tsunami disponibles.",
@@ -960,7 +977,7 @@
                                                 {
                                                     "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Peligros Multiples (Zona Proximal)</strong>.",
                                                     "nota": "La zonificación de peligros del mapa proximal se realizó para peligros múltiples, es decir para el emplazamiento de flujos piroclásticos, flujos de lava y eyección de proyectiles balísticos.",
-                                                    "fuente": "Fuente: ",
+                                                    "fuente": "<strong>Fuente:</strong> ",
                                                     "cuenta": [
                                                         {
                                                             "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> mapas de peligros múltiples por vulcanismo. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> los Peligros Multiples (Zona Proximal) disponibles.",
@@ -1053,7 +1070,7 @@
                                         {
                                             "detalle": "Elementos expuestos (<strong>EE</strong>) en <strong>Áreas De Exposición</strong>.",
                                             "nota": "<strong>Áreas De Exposición</strong> son aquellos ámbitos no tipificados dentro de las clasificaciones de movimientos en masa como, por ejemplo: Arenamiento, Hundimiento, erosión fluvial, erosión marina y erosión de laderas. Estos son identificados por diferentes entidades mediante informes y/o estudios.",
-                                            "fuente": "Fuente: ",
+                                            "fuente": "<strong>Fuente:</strong> ",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> Áreas De Exposición por otros peligros geológicos. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las Áreas De Exposición disponibles.",
@@ -1138,7 +1155,7 @@
                                     "version_12": [
                                         {
                                             "nota": "<strong>Pasivos ambientales mineros</strong> son aquellas instalaciones, efluentes, emisiones, restos o depósitos de residuos producidos por operaciones mineras, que en la actualidad están abandonadas o inactivas y constituyen un riesgo permanente y potencial para la salud de la población, el ecosistema circundante y la propiedad.",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por el Ministerio de Energía y Minas (MINEM, 2022). La data espacial de los pasivos ambientales mineros tiene geometría tipo punto.",
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por el Ministerio de Energía y Minas (MINEM, 2022). La data espacial de los pasivos ambientales mineros tiene geometría tipo punto.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> pasivos ambientales mineros. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> los pasivos ambientales mineros disponibles.",
@@ -1197,7 +1214,7 @@
                                     "version_13": [
                                         {
                                             "nota": "Se consideran <strong>pasivos ambientales</strong> en las actividades del subsector <strong>hidrocarburos</strong> a los pozos e instalaciones mal abandonados, los suelos contaminados, los efluentes, emisiones, restos o depósitos de residuos ubicados en cualquier lugar del territorio nacional, incluyendo el zócalo marino, producidos como consecuencia de operaciones en el subsector hidrocarburos, realizadas por parte de empresas que han cesado sus actividades en el área donde se produjeron dichos impactos.",
-                                            "fuente": "Fuente:",
+                                            "fuente": "<strong>Fuente:</strong>",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> pasivos ambientales por hidrocarburos",
@@ -1259,7 +1276,7 @@
                                     "version_14": [
                                         {
                                             "nota": "Son aquellos registros históricos de incendios sobre la cobertura vegetal acontecidos entre los años 2000 – 2018.",
-                                            "fuente": "Fuente:",
+                                            "fuente": "<strong>Fuente:</strong>",
                                             "title": "<strong>Inventario de incendios forestales</strong>",
                                             "cuenta": [
                                                 {
@@ -1304,7 +1321,7 @@
                                         {
                                             "title" : "<strong>Puntos De Control Geologico Por Tipo De Peligro</strong>",
                                             "nota": "Los <strong>Puntos De Control Geológico</strong> registran ocurrencias de movimientos en masa, otros peligros geológicos e inundaciones asociadas al fenómeno del niño costero presentado en el año 2017.",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de los puntos de control geológico tiene geometría tipo punto.",
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de los puntos de control geológico tiene geometría tipo punto.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> ocurrencias de movimientos en masa en el Fenómeno El Niño 2017. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> los puntos de control geológico disponibles.",
@@ -1359,7 +1376,7 @@
                                         {
                                             "title" : "<strong>Poblados Afectados En El Evento El Niño 2017 Por Tipo De Peligro</strong>",
                                             "nota": "Estos son los poblados afectados por movimientos en masa, otros peligros geológicos e inundaciones asociadas al fenómeno del niño costero presentado en el año 2017, y las acciones realizadas.",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de los poblados afectados tiene geometría tipo punto.",
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de los poblados afectados tiene geometría tipo punto.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> poblados afectados en el Fenómeno El Niño 2017. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> los Poblados Afectados en el evento El Niño 2017 disponibles.",
@@ -1414,7 +1431,7 @@
                                         {
                                             "title" : "<strong>Tramos De Carreteras Afectadas En El Evento El Niño 2017 Por Tipo De Peligro</strong>",
                                             "nota": "Son puntos que identifican los tramos de carretera afectados por movimientos en masa, otros peligros geológicos e inundaciones asociadas al fenómeno del niño costero presentado en el año 2017.",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de los tramos de carreteras afectadas tiene geometría tipo línea.",
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de los tramos de carreteras afectadas tiene geometría tipo línea.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> tramos de carretera afectada en el Fenómeno El Niño 2017. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> los tramos de carreteras afectadas en el evento El Niño 2017 disponibles.",
@@ -1473,7 +1490,7 @@
                                         {
                                             "title" : "<strong>Obras De Infraestructura Afectadas En El Evento El Niño 2017 Por Tipo De Peligro</strong>",
                                             "nota": "Son las obras de infraestructuras afectadas por movimientos en masa, otros peligros geológicos e inundaciones asociadas al fenómeno del niño costero presentado en el año 2017.",
-                                            "fuente": "Fuente: Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de las obras de infraestructura  afectadas tiene geometría tipo punto.",
+                                            "fuente": "<strong>Fuente:</strong> Elaborado por el Cenepred con datos proporcionados por el Instituto Geológico, Minero y Metalúrgico (INGEMMET, 2022). La data espacial de las obras de infraestructura  afectadas tiene geometría tipo punto.",
                                             "cuenta": [
                                                 {
                                                     "afirmacion": "seleccionado <strong>CUENTA</strong> con <strong style='font-size:28px;'>XX</strong> obras de infraestructura afectadas en el Fenómeno El Niño 2017. En la <strong>parte inferior</strong> puede <strong>acceder y descargar</strong> las obras de infraestructura afectadas en el evento El Niño 2017 disponibles.",

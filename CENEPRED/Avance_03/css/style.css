@@ -594,7 +594,7 @@ input.tabs-horiz:checked + label {
 }
 .column_01 p.sect-fuente,
 .column_02 p.sect-fuente {
-  background-color: #FFF9C4;
+  /*background-color: #FFF9C4;*/
   font-size : 14px;
   padding : 5px;
   margin : 5px 0px 0px 0px !important;
@@ -605,9 +605,23 @@ input.tabs-horiz:checked + label {
   text-align: justify;
   position: absolute;
 }
-
-/* ACORDEON */
 .report-main button.accordion {
+  background-image: url("../images/sigrid.png");
+  background-repeat: no-repeat;
+  background-size: auto 50px;
+  background-position: 25px 2px;
+}
+.report-main div.accordion {
+  background-image: url("../images/cenepred.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 50px;
+  height: 54px;
+}
+/* ACORDEON */
+.report-main div.accordion,
+.report-main button.accordion {
+  box-sizing: border-box;
   background-color: #2c6975;
   border: none;
   color: #FFFFFF !important;

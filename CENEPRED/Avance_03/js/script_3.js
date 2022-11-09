@@ -152,7 +152,7 @@ require([
     let _title = function(_title) {
         try {
             _elementById("ID_ReportTitle").innerHTML = "";
-            _elementById("ID_ReportTitle").innerHTML = `<i class="fa fa-pie-chart"></i>&nbsp; ${_title || ''} - CUADRO DE RESUMEN`;
+            _elementById("ID_ReportTitle").innerHTML = `<i class="fa fa-pie-chart"></i>&nbsp; ${_title || ''} - REPORTE`;
         } catch (error) {
             console.error(`Error: _title => ${error.name} - ${error.message}`);
         }
@@ -837,8 +837,15 @@ require([
         return _text.split('').map( letra => acentos[letra] || letra).join('').toString();
     };
     
-    let _featureTable = function(_name,srv,objectid,fields) {
-        try {
+    let _featureTable = function(lyr,_name,srv,objectid,fields) {
+        try {/*  S => Distrito, P => Provincia, D => Departamental */
+            let tipoAmbito = null;
+            if(typeof lyr.content[0].version_01 !== "undefined") { 
+                let _tipo = lyr.content[0].version_01[0].tipo;
+                tipoAmbito = _ambitoArr.length == 3 ? `and ${_tipo[2].field} = '${_tipo[2].type}'`:
+                             _ambitoArr.length == 2 ? `and (${_tipo[1].field} = '${_tipo[1].type}' or ${_tipo[2].field} = '${_tipo[2].type}')`:
+                             ``;/*and ${abc[0].field} = '${abc[0].type}'*/
+            }
             let idTable = _elementById("ID_TableDetail");
             let tbl = document.createElement("div");
             tbl.id = "ID_TableDynamic";
@@ -878,7 +885,7 @@ require([
                 }
             ).always(lang.hitch(this, function() {
                 try {
-                    featureLayer.setDefinitionExpression(`${objectid} IN (${_idQueryTask})`);
+                    featureLayer.setDefinitionExpression(`${objectid} IN (${_idQueryTask}) ${tipoAmbito ?? ""}`);
                     featureTable = new FeatureTable({
                         featureLayer : featureLayer,
                         showAttachments: false,
@@ -1073,6 +1080,7 @@ require([
                         _tabName = _tabName.split(" ").join(''); 
                         
                         _featureTable(
+                            lyr,
                             nodeHeader.innerText,
                             nodeHeader.getAttribute("data-url"),
                             nodeHeader.getAttribute("data-objectid"),
@@ -1098,40 +1106,40 @@ require([
                                 queryTask_PPRD.execute(query_PPRD).then(
                                     (response) => {
                                         try {
+                                            const _txtPlus = "Se lista Según el ámbito seleccionado que cuenta con planes PPRRD, se mostraran listados en la parte inferior.";
                                             let _features = "", _ambito = "";
                                             let _length = response.features.length;
-                                            let _note = _elementById(`IDNote_${lyr.tag}`);
-                                            let _img = _elementById(`IDImg_${lyr.tag}`);
+                                            let _note   = _elementById(`IDNote_${lyr.tag}`);
+                                            let _img    = _elementById(`IDImg_${lyr.tag}`);
                                             let _countAmbito = 0;
+                                            _boolean = true;
+                                            let _queryFilter =  _ambitoArr.length == 3 ? config.lyrFilter[2]:
+                                                                _ambitoArr.length == 2 ? config.lyrFilter[2]:
+                                                                config.lyrFilter[1];
+
                                             for (let i = 0; i < _length; i++) {                                                
                                                 _features = response.features[i];
-                                                _ambito = _features.attributes[_version.field];    
+                                                _ambito = _features.attributes[_version.field]; 
                                                 if(_ambito.split(",").length == (_ambitoArr.length + 1)) {
                                                     _countAmbito = _countAmbito + 1;
                                                 }
-                                                //
                                                 _ambito = _ambito.replace("DISTRITO ","");
                                                 _ambito = _ambito.replace("PROVINCIA ","");
-                                                _ambito = _ambito.replace("DEPARTAMENTO ","");
+                                                _ambito = _ambito.replace("DEPARTAMENTO ","");                                                
                                                 if(_ambito == _ambitoLS) {
                                                     _note.className = "sect-nota-info";
-                                                    _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion}`;
+                                                    _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion} ${_ambitoArr.length != 3? _txtPlus:""}`;
                                                     _img.className = "sect-nota-info";
                                                     _img.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
                                                     _boolean = false;
                                                 }
-                                                _boolean = true;                                           
                                             }
                                             
                                             if(_boolean) {
                                                 _note.className = "sect-nota-warning";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion} ${_ambitoArr.length != 3 ? _txtPlus : ""}`;
                                                 _img.setAttribute("src", `./images/PPRRD.png`);
-                                            }   
-
-                                            let _queryFilter =  _ambitoArr.length == 3 ? config.lyrFilter[2]:
-                                                                _ambitoArr.length == 2 ? config.lyrFilter[2]:
-                                                                config.lyrFilter[1];
+                                            }
 
                                             if(_ambitoQueryAmbito != false){
                                                 _ambitoPie(lyr,_queryFilter.url,_ambitoQueryAmbito,_countAmbito);

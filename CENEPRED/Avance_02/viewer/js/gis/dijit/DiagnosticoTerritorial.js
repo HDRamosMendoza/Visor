@@ -341,8 +341,6 @@ define([
             this.own(on(this.ID_Diagnosis, 'click', lang.hitch(this, () => {
                 /* Button (click) - ID_Diagnosis */
                 try {
-                    console.log("this.countAmbito");
-                    console.log(this.countAmbito);
                     let disp = this.ID_Alert;
                     this.textAmbito = "";
                     let objectLiteral = false == this._validateSelect(selDis) ? [selDis.get('value'),srvDis.url] :
@@ -505,7 +503,6 @@ define([
                                     "Area_of_Interest": `{ "type": "Polygon", "coordinates": [[[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]],"spatialReference" : { "wkid" : 4326 }}`,
                                     "Feature_Format": this.selectItem
                                     */
-                                    
                                 },
                                 _completeCallback = function(jobInfo) {
                                     try {
