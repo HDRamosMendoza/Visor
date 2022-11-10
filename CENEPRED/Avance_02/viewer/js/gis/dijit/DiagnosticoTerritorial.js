@@ -495,14 +495,16 @@ define([
                             console.log(this.selectItem);*/
                             this.gpExtractData.submitJob (
                                 {
+                                    /*
                                     "Layers_to_Clip": this._listLayer.toString(),
                                     "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(this.reportGeometry.rings)},"spatialReference":{"wkid":4326}}`,
                                     "Feature_Format": this.selectItem
-                                    /*
+                                    */
+                                    
                                     "Layers_to_Clip": this._listLayer.toString(),
                                     "Area_of_Interest": `{ "type": "Polygon", "coordinates": [[[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]],"spatialReference" : { "wkid" : 4326 }}`,
-                                    "Feature_Format": this.selectItem
-                                    */
+                                    "Feature_Format": "PRUEBA"
+                                    
                                 },
                                 _completeCallback = function(jobInfo) {
                                     try {

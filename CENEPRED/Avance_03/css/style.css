@@ -739,6 +739,9 @@ a:hover {
     transform: translate(24px, 0);
   }
 }
+.report-main .column_01 .row-excel {
+  display: none !important;
+}
 /* Export DATA EXCEL */
 .report-main .row-excel {
   margin-top: 10px;

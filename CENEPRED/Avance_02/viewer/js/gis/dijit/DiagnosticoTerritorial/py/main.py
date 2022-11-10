@@ -37,17 +37,17 @@ geoLayer = arcpy.GetParameterAsText(0)
 geojson_polygon = arcpy.GetParameterAsText(1)
 # Formato a descargar
 geoFormat = arcpy.GetParameterAsText(2)
-#geoLayer = 'ZRMN,EVAR,planes_PPRRD'
-#geoFormat = "SHP" #"GDB" || "SHP" || "GDB" || "PRUEBA"
-'''
-geojson_polygon = { 
+geoLayer = 'ZRMN,EVAR,planes_PPRRD'
+geoFormat = "PRUEBA" #"GDB" || "SHP" || "GDB" || "PRUEBA"
+
+geojson_polygon = '''{ 
                     "type": "Polygon", 
                     "coordinates": [
                         [[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]
                     ],
                     "spatialReference" : { "wkid" : 4326 }
-                }
-'''
+                }'''
+
 arcpy.AddMessage("Parametro 1: " + geoLayer)
 arcpy.AddMessage("Parametro 2: " + geoFormat)
 arcpy.AddMessage("Parametro 3: " + geojson_polygon)
@@ -55,10 +55,11 @@ arcpy.AddMessage("Ruta scratch : " + scratch_GDB)
 
 def nameAlone(_name):
     _name = _name.replace(".", "")
-    if('/' in _name):
+    if '/' in _name:
         return _name[_name.rfind('/')+1:] 
     else:
         return _name
+
 if __name__ == '__main__':
     if len(geoLayer) > 0 and len(geojson_polygon) > 0:
         # Convert STRING to JSON
@@ -122,6 +123,7 @@ if __name__ == '__main__':
                 os.mkdir(os.path.join(scratch_Folder,nameFileSHP))
             
             for layer in item:
+                arcpy.Exists(layer)
                 if(arcpy.Exists(layer)):
                     # Add name SHP
                     layer_temp = 'shp' + layer + time_file
@@ -137,7 +139,7 @@ if __name__ == '__main__':
                     # Ruta de destino de la conversion de un SHP
                     arcpy.CopyFeatures_management(layer_temp, os.path.join(scratch_Folder, nameFileSHP, name_SHP + ".shp"))
                 else:
-                    arcpy.AddMessage("Not exist: {}".format(layer))                        
+                    arcpy.AddMessage("Not exist: {}".format(layer))
             
             _pathZip = os.path.join(scratch_Folder,nameFileSHP,nameFileSHP_Zip + ".zip")
             zfile = zipfile.ZipFile(_pathZip, "w", zipfile.ZIP_STORED)
