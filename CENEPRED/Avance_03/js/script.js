@@ -1075,10 +1075,11 @@ require([
                             registry.byId(`ID_TableDynamic`).destroyRecursive();
                         }
                         
-                        _tabName = nodeHeader.innerText.split("/").join(''); 
-                        _elementById("ID_BTN_EXCEL").innerHTML = `<i class="fa fa-download"></i>&nbsp; Descargar tabla - ${_tabName}`;
-                        _tabName = _tabName.split(" ").join(''); 
-                        
+                        _tabName = nodeHeader.innerText;
+                        let _buttonName = _tabName.substring((_tabName.lastIndexOf("/") +1), _tabName.length);
+                        _elementById("ID_BTN_EXCEL").innerHTML = `<i class="fa fa-download"></i>&nbsp; Descargar tabla - ${_buttonName}`;
+                        _tabName = nodeHeader.innerText.split("/").join('');                        
+                        _tabName = _tabName.split(" ").join('');                         
                         _featureTable(
                             lyr,
                             nodeHeader.innerText,

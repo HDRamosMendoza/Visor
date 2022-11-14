@@ -452,14 +452,12 @@ define([
             try {
                 let htmlID = formatId.getAttribute("data-dojo-attach-point");
                 let container = domConstruct.create("div", { id: `DIV_${htmlID}`, style: {width:'65%',color:"#555555"} }, formatId );
-                console.log("CARGANDO DATA");
                 let buttonDownload = new Button({
                     id: `Button_${htmlID}`,
                     label: "Descargar",
                     iconClass: 'fa fa-download',
                     style: { width:'115px', fontSize: '12px'},
                     onClick: function() {
-                        console.log("LE DIO CLICK DESCARGAR");
                         let _alert = this.ID_Select_Alert;
                         if(this.selectItem ?? false) {
                             this.ID_Load_Download.style.display = "block";
@@ -491,20 +489,15 @@ define([
                                 return;
                             }
                             /* Extraer data */
-                            /*console.log(this._listLayer.toString());
-                            console.log(this.selectItem);*/
+                            /*console.log(this._listLayer.toString());console.log(this.selectItem);*/
                             this.gpExtractData.submitJob (
                                 {
-                                    /*
                                     "Layers_to_Clip": this._listLayer.toString(),
                                     "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(this.reportGeometry.rings)},"spatialReference":{"wkid":4326}}`,
                                     "Feature_Format": this.selectItem
-                                    */
-                                    
-                                    "Layers_to_Clip": this._listLayer.toString(),
+                                    /*"Layers_to_Clip": this._listLayer.toString(),
                                     "Area_of_Interest": `{ "type": "Polygon", "coordinates": [[[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]],"spatialReference" : { "wkid" : 4326 }}`,
-                                    "Feature_Format": "PRUEBA"
-                                    
+                                    "Feature_Format": "PRUEBA"*/
                                 },
                                 _completeCallback = function(jobInfo) {
                                     try {
@@ -512,9 +505,9 @@ define([
                                             this.gpExtractData.getResultData(jobInfo.jobId, "Result", function(outputFile) {
                                                 try {
                                                     this.ID_Load_Download.style.display = "none";
-                                                    console.log(outputFile);
                                                     let _URL = outputFile.value;
-                                                    console.log(_URL);
+                                                    /*console.log(outputFile);
+                                                    console.log(_URL);*/
                                                     let _URL_Temp = _URL.substring(_URL.indexOf("arcgisjobs"), _URL.length);
                                                     window.location = this._pathDownload + _URL_Temp;
                                                 } catch (error) {
@@ -528,7 +521,7 @@ define([
                                 }.bind(this),      
                                 _statusCallback = function(jobInfo) {
                                     try {
-                                        console.log(jobInfo);
+                                        /*console.log(jobInfo);*/
                                         let status = jobInfo.jobStatus;
                                         if ( status === "esriJobFailed" ) {
                                             this.ID_Load_Download.style.display = "none";
@@ -547,8 +540,7 @@ define([
                                         console.error("Error: _errorCallback " + error.message);
                                     }
                                 }.bind(this)
-                            );
-                            
+                            );                            
                         } else {
                             _alert.innerHTML = "Seleccione un <strong>FORMATO</strong>";
                             _alert.style.display = "block";
@@ -557,8 +549,6 @@ define([
                         }
                     }.bind(this)
                 });
-
-               
                 /*<div class="form-count" style="position: relative; height:25px;">
                     <button type="button" data-dojo-attach-point="ID_Report" style="position:absolute; left:0; top:5px; height:25px;font-size: 14px !important;">
                         <i class="fa fa-file-text" aria-hidden="true"></i>&nbsp; Reporte
