@@ -21,8 +21,8 @@ arcpy.env.outputCoordinateSystem = arcpy.SpatialReference(4326)
 arcpy.env.overwriteOutput = True
         
 # Random value
-randomBegin = 100000
-randomEnd = 999999999
+randomBegin = 1000
+randomEnd = 9999
 time_file = time.strftime("%d%m%y") + "_" + str(random.randint(randomBegin,randomEnd))
 # Nombre de KMZ
 nameFileKMZ_Zip = str("SIGRID_KMZ_" + time_file)
@@ -77,15 +77,14 @@ if __name__ == '__main__':
             response["GDB_NAME"] = { "name": descGDB.name }
             response["GDB_DATATYPE"] = { "datatype": descGDB.dataType }
             response["GDB_CATALOG"] = { "catalog": descGDB.catalogPath }
-            #if not arcpy.Exists(nameFileSHP):
-            #    os.mkdir(os.path.join(scratch_Folder,nameFileSHP))            
+                      
             for layer in item:
                 # Add name SHP
                 layer_temp = layer + time_file
                 layer_temp = nameAlone(layer_temp)
-                arcpy.MakeQueryLayer_management(cnn_sde,"Slickrock",'''select * from {0}'''.format(layer,polygon))
+                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''select * from {0}'''.format(layer,polygon))
                 # Ruta de destino de la conversion de un SHP
-                arcpy.CopyFeatures_management("Slickrock", os.path.join(scratch_Folder,"{}".format(layer.replace(".", ""))))
+                arcpy.CopyFeatures_management("lyrMake", os.path.join(scratch_Folder,"{}".format(layer.replace(".", ""))))
             
             _pathZip = os.path.join(scratch_Folder,nameFileSHP_Zip + ".zip")
             zfile = zipfile.ZipFile(_pathZip, "w", zipfile.ZIP_STORED)
