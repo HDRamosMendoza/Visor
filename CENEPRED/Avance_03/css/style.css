@@ -739,9 +739,12 @@ a:hover {
     transform: translate(24px, 0);
   }
 }
+
+/*
 .report-main .column_01 .row-excel {
   display: none !important;
-}
+}*/
+
 /* Export DATA EXCEL */
 .report-main .row-excel {
   margin-top: 10px;
@@ -765,12 +768,15 @@ a:hover {
   font-weight: 700;
   /*width: 200px;*/
 }
+
 .report-main .row-excel table#ID_BTN_EXCEL_TB{
   display: none;
 }
+
 .report-main .row-excel label[for=Button_ID_Diagnosis_Format] {
   display: none;
 }
+
 .report-main .row-excel input { 
   border-radius: 0;
   border: 1px solid rgba(0,0,0,0.3);

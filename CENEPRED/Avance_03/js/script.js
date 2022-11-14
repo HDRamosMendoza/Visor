@@ -189,8 +189,7 @@ require([
 
     let _loadSelect = (formatOption, formatId, _Layers, _area) => {
         try {
-            let selectItem = "";
-            let htmlID = formatId.getAttribute("id");
+            let selectItem = ""; let htmlID = formatId.getAttribute("id");
             let container = domConstruct.create("div", {
                 id: `DIV_${htmlID}`, style: {width:'96.5%',color:"#555555"}
             }, htmlID);
@@ -207,23 +206,14 @@ require([
                 id: `Button_${htmlID}`,
                 label: "Descargar Datos Espaciales",
                 iconClass: 'fa fa-download',
-               
                 onClick: function() {
-                    console.log("Le dio click");
                     let ID_Load_Download = _elementById("ID_Load_Download");
                     this.ID_Load_Download.style.display = "block";
-                    this.gpExtractData.submitJob(
-                        /* {
-                            "Layers_to_Clip": this._listLayer.toString(),
-                            "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(_geometryAmbito.rings)},"spatialReference":{"wkid":4326}}`,
-                            "Feature_Format": this.selectItem
-                        }, */
-                        {
+                    this.gpExtractData.submitJob({
                             "Layers_to_Clip": _Layers.toString(),
                             "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(_area.rings)},"spatialReference":{"wkid":4326}}`,
                             "Feature_Format": selectItem
-                        },
-                        _completeCallback = function(jobInfo) {
+                        }, _completeCallback = function(jobInfo) {
                             try {
                                 if ( jobInfo.jobStatus !== "esriJobFailed" ) {
                                     this.gpExtractData.getResultData(jobInfo.jobId, "Result", function(outputFile) {
@@ -320,8 +310,7 @@ require([
         }
     };
 
-    _loadSelect(config.download, this.ID_Diagnosis_Format, this._listLayer, _geometryAmbito);
-
+    
     /* Number Formatter */
     let _numberFormatter = function (value) {
         try {
@@ -1020,7 +1009,7 @@ require([
             } else {
                 _elementById("ID_Alert").style.display = "none";
                 this.diagnosisCount = 1;
-                this._listLayer =[];
+                this._listLayer = [];
                 configSummary_Temp.map(function(lyr, index) {
                     //!lyr.default || _featureTable(lyr.url,lyr.objectid,lyr.fields);
                     _queryTask(lyr, this.diagnosisTotal, _ambito, index);
@@ -4481,6 +4470,8 @@ require([
 		}
 	};
 	_jsonTravelTree(configDiagnosis_Temp);    
+
+    _loadSelect(config.download, this.ID_Diagnosis_Format, this._listLayer, _geometryAmbito);
     /*_elementById("ID_TAB_Header").childNodes[4].className += "active";
 	_elementById("ID_TAB_Content").childNodes[4].className = "active"; */
     /* _elementById("ID_TAB_Header").childNodes[4].classList.add("active");

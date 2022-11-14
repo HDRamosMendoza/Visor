@@ -475,39 +475,30 @@ define([
                                 if (typeof(geomtryPolygon) == "undefined") {
                                     _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
                                     _alert.style.display = "block";
-                                    setTimeout(()=> {
-                                        _alert.style.display = "none";
-                                    }, 2000);
+                                    setTimeout(()=> { _alert.style.display = "none"; }, 2000);
                                     return;
                                 }
                             } catch (error) {
                                 _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
                                 _alert.style.display = "block";
-                                setTimeout(()=> {
-                                    _alert.style.display = "none";
-                                }, 2000);
+                                setTimeout(()=> { _alert.style.display = "none"; }, 2000);
                                 return;
                             }
                             /* Extraer data */
-                            /*console.log(this._listLayer.toString());console.log(this.selectItem);*/
-                            this.gpExtractData.submitJob (
-                                {
+                            this.gpExtractData.submitJob ({
                                     "Layers_to_Clip": this._listLayer.toString(),
                                     "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(this.reportGeometry.rings)},"spatialReference":{"wkid":4326}}`,
                                     "Feature_Format": this.selectItem
                                     /*"Layers_to_Clip": this._listLayer.toString(),
                                     "Area_of_Interest": `{ "type": "Polygon", "coordinates": [[[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]],"spatialReference" : { "wkid" : 4326 }}`,
                                     "Feature_Format": "PRUEBA"*/
-                                },
-                                _completeCallback = function(jobInfo) {
+                                }, _completeCallback = function(jobInfo) {
                                     try {
                                         if ( jobInfo.jobStatus !== "esriJobFailed" ) {
                                             this.gpExtractData.getResultData(jobInfo.jobId, "Result", function(outputFile) {
                                                 try {
                                                     this.ID_Load_Download.style.display = "none";
                                                     let _URL = outputFile.value;
-                                                    /*console.log(outputFile);
-                                                    console.log(_URL);*/
                                                     let _URL_Temp = _URL.substring(_URL.indexOf("arcgisjobs"), _URL.length);
                                                     window.location = this._pathDownload + _URL_Temp;
                                                 } catch (error) {
@@ -521,7 +512,6 @@ define([
                                 }.bind(this),      
                                 _statusCallback = function(jobInfo) {
                                     try {
-                                        /*console.log(jobInfo);*/
                                         let status = jobInfo.jobStatus;
                                         if ( status === "esriJobFailed" ) {
                                             this.ID_Load_Download.style.display = "none";
@@ -534,7 +524,6 @@ define([
                                 }.bind(this),    
                                 _errorCallback = function(jobInfo) {
                                     try {
-                                        console.log(jobInfo);
                                         this.ID_Load_Download.style.display = "none";
                                     } catch (error) {
                                         console.error("Error: _errorCallback " + error.message);
