@@ -38,15 +38,15 @@ geojson_polygon = arcpy.GetParameterAsText(1)
 geoFormat = arcpy.GetParameterAsText(2)
 #geoLayer = 'ZRMN,EVAR,planes_PPRRD'
 #geoFormat = "SHP" #"GDB" || "SHP" || "GDB" || "PRUEBA"
-'''
-geojson_polygon = { 
+
+geojson_polygon = '''{ 
                     "type": "Polygon", 
                     "coordinates": [
                         [[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]
                     ],
                     "spatialReference" : { "wkid" : 4326 }
-                }
-'''
+                }'''
+
 arcpy.AddMessage("Parametro 1: " + geoLayer)
 arcpy.AddMessage("Parametro 2: " + geoFormat)
 arcpy.AddMessage("Parametro 3: " + geojson_polygon)
@@ -62,7 +62,7 @@ def nameAlone(_name):
 if __name__ == '__main__':
     if len(geoLayer) > 0 and len(geojson_polygon) > 0:
         # Convert STRING to JSON
-        string_to_json = json.loads(geojson_polygon)        
+        string_to_json = json.loads(geojson_polygon)   
         # Create FEATURE
         polygon = arcpy.AsShape(string_to_json)
         # Bucle layer
@@ -161,8 +161,13 @@ if __name__ == '__main__':
             # Response GDB
             arcpy.SetParameterAsText(3, _pathZip)
 '''
-Nota: 
+Nota 01: 
     Te lista los FEATURE sin embargo no te valida si existe en la base de datos o no.
-    En ocasiones aparece en la GDB sin embargo no existe. Para ello utiliza ARCPY.EXITS
+    Aparece en la GDB sin embargo no existe. Para ello utiliza ARCPY.EXITS
     https://diluvium.colorado.edu/arcgis/portalhelp/en/notebook/latest/python/linux/listfeatureclasses.htm
+
+Nota 02: 
+    Se pudo identificar y manipular las CAPAS con arcpy.MakeQueryLayer_management, sin embargo al exportar 
+    directamente de la GDB se tiene el error de precisión del dato. El problema no es de FORMA sino de FONDO.
+    El soporte de los problemas de FONDO lo tiene que dar CENEPRED - 14/11/2022.
 '''

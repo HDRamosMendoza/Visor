@@ -20,6 +20,8 @@ define([
     'esri/geometry/Polygon',
     'esri/geometry/geometryEngine',
     'esri/geometry/normalizeUtils',
+    'esri/geometry/projection',
+    'esri/geometry/webMercatorUtils',
     'esri/tasks/GeometryService',    
     'esri/tasks/BufferParameters',
     'esri/SpatialReference',
@@ -64,6 +66,8 @@ define([
     Polygon,
     geometryEngine,
     normalizeUtils,
+    projection,
+    webMercatorUtils,
     GeometryService,
     BufferParameters,
     SpatialReference,
@@ -481,17 +485,20 @@ define([
                             } catch (error) {
                                 _alert.innerHTML = "Seleccione un <strong>ÁMBITO</strong> en el <strong>FILTRO</strong>";
                                 _alert.style.display = "block";
-                                setTimeout(()=> { _alert.style.display = "none"; }, 2000);
+                                setTimeout(()=> {
+                                    _alert.style.display = "none";
+                                }, 2000);
                                 return;
                             }
                             /* Extraer data */
+                            let geometryExtracData = webMercatorUtils.webMercatorToGeographic(this.reportGeometry);                            
                             this.gpExtractData.submitJob ({
                                     "Layers_to_Clip": this._listLayer.toString(),
-                                    "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(this.reportGeometry.rings)},"spatialReference":{"wkid":4326}}`,
+                                    "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(geometryExtracData.rings)},"spatialReference":{"wkid":4326}}`,
                                     "Feature_Format": this.selectItem
                                     /*"Layers_to_Clip": this._listLayer.toString(),
                                     "Area_of_Interest": `{ "type": "Polygon", "coordinates": [[[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]],"spatialReference" : { "wkid" : 4326 }}`,
-                                    "Feature_Format": "PRUEBA"*/
+                                    "Feature_Format": this.selectItem"PRUEBA"*/
                                 }, _completeCallback = function(jobInfo) {
                                     try {
                                         if ( jobInfo.jobStatus !== "esriJobFailed" ) {
