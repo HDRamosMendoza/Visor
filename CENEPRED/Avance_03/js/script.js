@@ -8,7 +8,9 @@ require([
     'esri/layers/FeatureLayer',
     'esri/dijit/FeatureTable',
     'esri/geometry/Polygon',
-    'esri/geometry/geometryEngine',  
+    'esri/geometry/geometryEngine', 
+    'esri/geometry/projection',
+    'esri/geometry/webMercatorUtils', 
     'esri/tasks/GeometryService',
     'esri/tasks/query',
     'esri/tasks/QueryTask',
@@ -33,6 +35,8 @@ require([
     FeatureTable,
     Polygon,
     geometryEngine,
+    projection,
+    webMercatorUtils,
     GeometryService,
     Query,
     QueryTask,
@@ -47,13 +51,12 @@ require([
     Memory,
     on
 ) {
-    esriConfig.defaults.io.proxyUrl = 'https://sigrid.cenepred.gob.pe/sigridv3/php/proxy.php';
-    esriConfig.defaults.io.alwaysUseProxy = false;
-    esriConfig.defaults.io.timeout = 240000;
-    esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");    
-    this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
     this._pathDownload = "https://sigrid.cenepred.gob.pe/arcgis/rest/directories/";
-
+    esriConfig.defaults.io.proxyUrl = 'https://sigrid.cenepred.gob.pe/sigridv3/php/proxy.php';
+    /*esriConfig.defaults.io.alwaysUseProxy = false;*/
+    esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");    
+    esriConfig.defaults.io.timeout = 240000;
+    this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
     const config = JSON.parse(configJSON);
     let configBackgroundColor = config.backgroundColor;
     let configBorderColor = config.borderColor;
@@ -209,9 +212,10 @@ require([
                 onClick: function() {
                     let ID_Load_Download = _elementById("ID_Load_Download");
                     this.ID_Load_Download.style.display = "block";
+                    let geometryExtracData = webMercatorUtils.webMercatorToGeographic(new Polygon(_area));
                     this.gpExtractData.submitJob({
                             "Layers_to_Clip": _Layers.toString(),
-                            "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(_area.rings)},"spatialReference":{"wkid":4326}}`,
+                            "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(geometryExtracData.rings)},"spatialReference":{"wkid":4326}}`,
                             "Feature_Format": selectItem
                         }, _completeCallback = function(jobInfo) {
                             try {
@@ -233,7 +237,6 @@ require([
                         }.bind(this),      
                         _statusCallback = function(jobInfo) {
                             try {
-                                console.log(jobInfo);
                                 var status = jobInfo.jobStatus;
                                 if ( status === "esriJobFailed" ) {
                                     ID_Load_Download.style.display = "none";

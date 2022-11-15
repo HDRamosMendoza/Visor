@@ -153,10 +153,9 @@ define([
             //this.geometrySRV = new GeometryService("http://tasks.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
             /* Servicio de Geometria */
             esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");
-            esriConfig.defaults.io.timeout = 120000;
+            esriConfig.defaults.io.timeout = 240000;
             /* Servicio de Geoproceso */
             this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
-            
             const config = JSON.parse(configJSON);     
             this.ID_Nota.innerHTML = config.nota;
             this._htmlTable(this.ID_Table_Count);
@@ -491,7 +490,9 @@ define([
                                 return;
                             }
                             /* Extraer data */
-                            let geometryExtracData = webMercatorUtils.webMercatorToGeographic(this.reportGeometry);                            
+
+                            console.log(this.reportGeometry);
+                            let geometryExtracData = webMercatorUtils.webMercatorToGeographic(this.reportGeometry);
                             this.gpExtractData.submitJob ({
                                     "Layers_to_Clip": this._listLayer.toString(),
                                     "Area_of_Interest": `{"type": "Polygon", "coordinates":${JSON.stringify(geometryExtracData.rings)},"spatialReference":{"wkid":4326}}`,

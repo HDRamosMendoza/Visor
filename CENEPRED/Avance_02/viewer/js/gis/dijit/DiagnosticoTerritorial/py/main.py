@@ -13,13 +13,12 @@ arcpy.AddMessage("Scracth {}".format(scratch_Folder))
 # Default GDB
 scratch_GDB = arcpy.env.scratchGDB
 # Workspace - PATH .SDE
-#arcpy.env.workspace = os.path.join(r"D:\RepositorioGitHub\Visor\CENEPRED\Avance_02\viewer\js\gis\dijit\DiagnosticoTerritorial\py\sigrid.gdb")
+# arcpy.env.workspace = os.path.join(r"D:\RepositorioGitHub\Visor\CENEPRED\Avance_02\viewer\js\gis\dijit\DiagnosticoTerritorial\py\sigrid.gdb")
 cnn_sde = os.path.join(r"D:\RepositorioGitHub\Visor\CENEPRED\Avance_02\viewer\js\gis\dijit\DiagnosticoTerritorial\py\sigrid.gdb")
 # Spatial Reference
 arcpy.env.outputCoordinateSystem = arcpy.SpatialReference(4326)
 # Overwrite Output
-arcpy.env.overwriteOutput = True
-        
+arcpy.env.overwriteOutput = True        
 # Random value
 randomBegin = 1000
 randomEnd = 9999
@@ -37,9 +36,9 @@ geojson_polygon = arcpy.GetParameterAsText(1)
 # Formato a descargar
 geoFormat = arcpy.GetParameterAsText(2)
 #geoLayer = 'ZRMN,EVAR,planes_PPRRD'
-#geoFormat = "SHP" #"GDB" || "SHP" || "GDB" || "PRUEBA"
-
-geojson_polygon = '''{ 
+#geoLayer = 'bdcenepred.v3.v_documento_pprrd,bdcenepred.v3.v_documento_evar_con_indicadores,bdcenepred.informacion_complementa.zonas_riesgo_no_mitigables,bdcenepred.cartografia_peligros.Areas_expuestas_inundaciones_1,bdcenepred.cartografia_peligros.Inventario_inundacion_2,bdcenepred.informacion_complementa.Puntos_control_geologico,bdcenepred.informacion_complementa.FENC_afect_VIV,bdcenepred.informacion_complementa.FENC_afect_CARRETERA,bdcenepred.informacion_complementa.FENC_afect_OBRASINFRA,bdcenepred.cartografia_peligros.Fajas_marginales_1,bdcenepred.cartografia_peligros.Pasivos_ambientales_mineros_,bdcenepred.cartografia_peligros.zona_critica,bdcenepred.cartografia_peligros.AreaInundacionTsunami'
+#geoFormat = "GDB" #"GDB" || "SHP" || "GDB" || "PRUEBA"
+'''geojson_polygon = { 
                     "type": "Polygon", 
                     "coordinates": [
                         [[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]
@@ -62,13 +61,20 @@ def nameAlone(_name):
 if __name__ == '__main__':
     if len(geoLayer) > 0 and len(geojson_polygon) > 0:
         # Convert STRING to JSON
-        string_to_json = json.loads(geojson_polygon)   
+        string_to_json = json.loads(geojson_polygon)
+        _lyrCoord = array(string_to_json["coordinates"][0])
+        _tuplePolygon = tuple(tuple(a_m.tolist()) for a_m in _lyrCoord)
+        _stringCoord = ""
+        for long, lat in _tuplePolygon:
+            _stringCoord += "{0} {1},".format(str(long),str(lat))
+        else:
+            _stringCoord = "(("+_stringCoord[0:(len(_stringCoord)-1)]+"))"        
         # Create FEATURE
         polygon = arcpy.AsShape(string_to_json)
         # Bucle layer
         item = geoLayer.split(",")
         # Download PRUEBA
-        if(geoFormat == "PRUEBA"):            
+        if(geoFormat == "PRUEBA"):
             response = dict()
             item = geoLayer.split(",")
             descGDB = arcpy.Describe(cnn_sde)
@@ -77,14 +83,16 @@ if __name__ == '__main__':
             response["GDB_NAME"] = { "name": descGDB.name }
             response["GDB_DATATYPE"] = { "datatype": descGDB.dataType }
             response["GDB_CATALOG"] = { "catalog": descGDB.catalogPath }
-                      
+            response["GDB_tuple"] = { "tuple": _stringCoord }
+            #if not arcpy.Exists(nameFileSHP):
+            #    os.mkdir(os.path.join(scratch_Folder,nameFileSHP))            
             for layer in item:
                 # Add name SHP
                 layer_temp = layer + time_file
                 layer_temp = nameAlone(layer_temp)
-                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''select * from {0}'''.format(layer,polygon))
+                arcpy.MakeQueryLayer_management(cnn_sde,"Slickrock",'''select * from {0}'''.format(layer,polygon))
                 # Ruta de destino de la conversion de un SHP
-                arcpy.CopyFeatures_management("lyrMake", os.path.join(scratch_Folder,"{}".format(layer.replace(".", ""))))
+                arcpy.CopyFeatures_management("Slickrock", os.path.join(scratch_Folder,"{}".format(layer.replace(".", ""))))
             
             _pathZip = os.path.join(scratch_Folder,nameFileSHP_Zip + ".zip")
             zfile = zipfile.ZipFile(_pathZip, "w", zipfile.ZIP_STORED)
@@ -96,15 +104,19 @@ if __name__ == '__main__':
             zfile.close()
             arcpy.AddMessage("Ruta ZIP : " + _pathZip)
             # Response KMZ
-            arcpy.SetParameterAsText(3, _pathZip)
-            #resp = json.dumps(response)
-            #arcpy.SetParameterAsText(3, resp)
+            #arcpy.SetParameterAsText(3, _pathZip)
+            resp = json.dumps(response)
+            arcpy.SetParameterAsText(3, resp)
         # Download KMZ
         if(geoFormat == "KMZ"):
             for layer in item:
                 layer_temp = layer + time_file
                 layer_temp = nameAlone(layer_temp)
-                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''select * from {0}'''.format(layer,polygon))
+                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''
+                    SELECT * 
+                    FROM {0} lyr 
+                    WHERE sde.st_intersects(lyr.shape, sde.st_geometry('polygon {1}',4326))
+                '''.format(layer,_stringCoord))
                 # Conversión de LYR a KML
                 arcpy.LayerToKML_conversion("lyrMake",os.path.join(scratch_Folder,layer + ".kmz"))
             
@@ -124,7 +136,11 @@ if __name__ == '__main__':
             for layer in item:
                 layer_temp = layer + time_file
                 layer_temp = nameAlone(layer_temp)
-                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''select * from {0}'''.format(layer,polygon))
+                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''
+                    SELECT * 
+                    FROM {0} lyr 
+                    WHERE sde.st_intersects(lyr.shape, sde.st_geometry('polygon {1}',4326))
+                '''.format(layer,_stringCoord))
                 # Ruta destino de la conversion de un SHP
                 arcpy.CopyFeatures_management("lyrMake", os.path.join(scratch_Folder,"{}".format(layer.replace(".", ""))))
             
@@ -146,7 +162,11 @@ if __name__ == '__main__':
             for layer in item:
                 layer_temp = layer + time_file
                 layer_temp = nameAlone(layer_temp)
-                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''select * from {0}'''.format(layer,polygon))
+                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''
+                    SELECT * 
+                    FROM {0} lyr 
+                    WHERE sde.st_intersects(lyr.shape, sde.st_geometry('polygon {1}',4326))
+                '''.format(layer,_stringCoord))
                 # Ruta destino de la conversion de un SHP
                 arcpy.CopyFeatures_management("lyrMake", os.path.join(_GDB, "{}".format(layer.replace(".", ""))))
             
