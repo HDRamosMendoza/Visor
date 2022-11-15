@@ -490,8 +490,6 @@ define([
                                 return;
                             }
                             /* Extraer data */
-
-                            console.log(this.reportGeometry);
                             let geometryExtracData = webMercatorUtils.webMercatorToGeographic(this.reportGeometry);
                             this.gpExtractData.submitJob ({
                                     "Layers_to_Clip": this._listLayer.toString(),
