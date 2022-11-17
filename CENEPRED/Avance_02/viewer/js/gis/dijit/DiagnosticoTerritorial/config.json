@@ -102,7 +102,7 @@
     ],
     "lyrDiagnosis": [
         { 
-            "name": "Información CENEPRED",
+            "name": "PLANES",
             "id": "informacionCENEPRED",
             "srv": [
                 { 
@@ -155,7 +155,7 @@
             ]
         },
         { 
-            "name": "Cartografía Riesgos",
+            "name": "RIESGOS",
             "id": "cartografiaRiesgos",
             "srv": [
                 {
@@ -232,7 +232,7 @@
             ]
         },
         {
-            "name": "Cartografía de Peligros",
+            "name": "PELIGROS",
             "id": "cartografiaPeligros",
             "srv": [
                 {

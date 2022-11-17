@@ -1,12 +1,10 @@
 <div class="${baseClass}">
     <div>
-        <main>
-  
+        <main>  
             <input id="ID_Tab_Filter" type="radio" name="tabs-2" checked>
             <label for="ID_Tab_Filter">
                 <i class="fa fa-filter"></i>&nbsp; Filtro
-            </label>
-              
+            </label>              
             <input id="ID_Tab_Diagnosis" type="radio" name="tabs-2">
             <label for="ID_Tab_Diagnosis">
                 <i class="fa fa-bars"></i>&nbsp; Resultado
@@ -18,8 +16,7 @@
             <section id="content1">
                 <div class="tab-content">
                     <label class="subTitle">» Seleccionar Ámbito</label>
-                    <hr>               
-                    <!-- Departamento -->
+                    <hr>
                     <div data-dojo-attach-point="ID_HDRM"></div>
                     <div class="form-alert" data-dojo-attach-point="ID_Alert">
                         <strong>Advertencia! </strong> Seleccione Departamento
@@ -49,14 +46,12 @@
                         <label class="subTitle">Resumen de Diagnóstico:</label>
                     </div>
                     
-                    <div class="lds-facebook" data-dojo-attach-point="ID_Load"><div></div><div></div><div></div></div>
-                    
+                    <div class="lds-ellipsis" data-dojo-attach-point="ID_Load"><div></div><div></div><div></div><div></div></div>
                     <div class="form-scroll" data-dojo-attach-point="ID_Table_Count" id="ID_Table_Count"></div>
 
                     <div class="load-time" data-dojo-attach-point="ID_Percentage"></div>
                     
-                    <div class="lds-facebook" data-dojo-attach-point="ID_Load_Download"><div></div><div></div><div></div></div>
-
+                    <div class="lds-ellipsis" data-dojo-attach-point="ID_Load_Download"><div></div><div></div><div></div><div></div></div>
                     <div class="form-result-button">
                         <div class="form-count" style="position: relative; float: right; right: 105px;">
                             <button type="button" data-dojo-attach-point="ID_Report" style="position:absolute; left:0; top:4px; height:28px;font-size: 12px !important;">
@@ -70,13 +65,9 @@
                             </button>-->
                         </span>                    
                     </div>
-
-                    
-
                     <div class="form-row form-alert" data-dojo-attach-point="ID_Select_Alert">
                         <strong>Advertencia! </strong> 
-                    </div>
-                    
+                    </div>                    
                 </div>
             </section>
             
@@ -111,10 +102,8 @@
                     <div class="form-scroll" data-dojo-attach-point="ID_Table_Analysis"></div>
                     <div class="load-time" data-dojo-attach-point="ID_Percentage_analysis"></div>
                     <div class="form-row" data-dojo-attach-point="ID_Analysis_Format"></div>
-
                 </div>            
             </section>
-        </main>
-        
+        </main>        
     </div>
 </div>
