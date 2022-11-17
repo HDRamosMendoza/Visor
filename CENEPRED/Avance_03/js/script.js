@@ -55,7 +55,7 @@ require([
     esriConfig.defaults.io.proxyUrl = 'https://sigrid.cenepred.gob.pe/sigridv3/php/proxy.php';
     /*esriConfig.defaults.io.alwaysUseProxy = false;*/
     esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");    
-    esriConfig.defaults.io.timeout = 240000;
+    esriConfig.defaults.io.timeout = 2400000;
     this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
     const config = JSON.parse(configJSON);
     let configBackgroundColor = config.backgroundColor;
@@ -368,6 +368,14 @@ require([
                     plugins: {
                         legend: { display:false, position:'bottom' },
                         title: { display:false, text:'GRÁFICO DE RESUMEN' }
+                    }
+                },
+                tooltips: {
+                    callbacks: {
+                        label: (tooltipItem, data) =>{
+                            let value = data.datasets[0].data[tooltipItem.index];
+                            return `${data.datasets[0].label}: ${self._userCallback(value)}`;
+                        }
                     }
                 }
             });
@@ -1099,7 +1107,7 @@ require([
                                 queryTask_PPRD.execute(query_PPRD).then(
                                     (response) => {
                                         try {
-                                            const _txtPlus = "Se lista Según el ámbito seleccionado que cuenta con planes PPRRD, se mostraran listados en la parte inferior.";
+                                            const _txtPlus = _version.cuenta_adicional;
                                             let _features = "", _ambito = "";
                                             let _length = response.features.length;
                                             let _note   = _elementById(`IDNote_${lyr.tag}`);
@@ -1120,7 +1128,7 @@ require([
                                                 _ambito = _ambito.replace("DEPARTAMENTO ","");                                                
                                                 if(_ambito == _ambitoLS) {
                                                     _note.className = "sect-nota-info";
-                                                    _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion} ${_ambitoArr.length != 3? _txtPlus:""}`;
+                                                    _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion} ${_ambitoArr.length == 1 || _ambitoArr.length == 2? _txtPlus:""}`;
                                                     _img.className = "sect-nota-info";
                                                     _img.setAttribute("src", `${_version.imagen}/${_features.attributes[_version.documento]}_img.jpg`);
                                                     _boolean = false;
@@ -1129,7 +1137,7 @@ require([
                                             
                                             if(_boolean) {
                                                 _note.className = "sect-nota-warning";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion} ${_ambitoArr.length != 3 ? _txtPlus : ""}`;
+                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion} ${_ambitoArr.length == 1 || _ambitoArr.length == 2? _txtPlus : ""}`;
                                                 _img.setAttribute("src", `./images/PPRRD.png`);
                                             }
 
@@ -2601,33 +2609,31 @@ require([
 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_01); 
                                 _elementById(`IDTable_${lyr.tag}`).appendChild(divColumn_02); 
-
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[0].name}`), "Áreas de Exposición por Movimiento en Masa", "Población Expuesta");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Movimiento en Masa", "Viviendas Expuestas");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
-                                /*_htmlTableTAB(_elementById(`ID_TBcontent${lyr.tag}`), "OTROS EE", "CANTIDAD");*/
-                            
+                                
                                 let queryTask_AE = new QueryTask(lyr.url);
                                 let query_AE = new Query();
-                                query_AE.returnGeometry = true;
                                 query_AE.geometry = new Polygon(_geometryAmbito);
                                 query_AE.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
+                                query_AE.returnGeometry = true;
                                 queryTask_AE.execute(query_AE).then(
                                     (response) => {
                                         try {
                                             let _length = response.features.length;
                                             let _note = _elementById(`IDNote_${lyr.tag}`);
-                                            for (let i = 0; i < _length; i++) {
-                                                unionGeometry.push(response.features[i].geometry);
-                                            }
-
                                             if(_length == 0) {
                                                 _note.className = "sect-nota-warning";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
                                             } else {
                                                 _note.className = "sect-nota-info";
                                                 _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
-                                            }                   
+                                            }
+
+                                            for (let i = 0; i < _length; i++) {
+                                                unionGeometry.push(response.features[i].geometry);
+                                            }
                                         } catch (error) {
                                             console.error(`Count: AE => ${error.name} - ${error.message}`);
                                         }                    
@@ -2661,7 +2667,7 @@ require([
                                         let queryTask_Engine = new QueryTask(_version.url);
                                         let query_Engine = new Query();
                                         query_Engine.outFields = _version.fields.map(x => x.name);
-                                        query_Engine.geometry = _geometry;
+                                        query_Engine.geometry = new Polygon(_geometry);
                                         query_Engine.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                         query_Engine.outStatistics = [ poblacionSUM, viviendaSUM ];
                                         query_Engine.returnGeometry = false;
@@ -2687,6 +2693,7 @@ require([
                                                 }                    
                                             },
                                             (error) => {
+                                                this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                 console.error(`Error: Statistic AE => ${error.name}`);
                                             }
                                         );                                    
@@ -2703,9 +2710,10 @@ require([
                                             let queryTask_Analysis = new QueryTask(cValue.url);
                                             let query_Analysis = new Query();
                                             query_Analysis.outFields = cValue.fields.map(x => x.name)
-                                            query_Analysis.geometry = _geometry;
+                                            query_Analysis.geometry = new Polygon(_geometry);
                                             query_Analysis.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                             query_Analysis.outStatistics = [ analysisCOUNT ];
+                                            query_Analysis.returnGeometry = false;
                                             queryTask_Analysis.execute(query_Analysis).then(
                                                 (response) => {
                                                     try {
@@ -2715,15 +2723,15 @@ require([
                                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
                                                             this._listLayerAnalysis.push(cValue.table);
                                                             let _contentTab = [];
-                                                            /*let _id = `ID_TBcontent${lyr.tag}`;*/
                                                             let _id = `TBcontent${lyr.tag}${_version.fields[2].name}`;
                                                             _contentTab.push({ "index":countTabItem++, "item":cValue.name, "val":_attr.cantidad ?? 0 });
                                                             _htmlTableTAB_ADD(`${_id}`,_contentTab);
                                                             _elementById(`${_id}_Total`).innerText = countTabItemTotal = countTabItemTotal + (_attr.cantidad ?? 0);
                                                         }
                                                     } catch (error) {
+                                                        this[`IDLOAD_${lyr.tag}`].style.display = "none";
                                                         console.error(`Count: Statistic Analysis => ${error.name}`);
-                                                    }                    
+                                                    }
                                                 },
                                                 (error) => {
                                                     this[`IDLOAD_${lyr.tag}`].style.display = "none";
@@ -2734,7 +2742,9 @@ require([
                                                     if(this.analysisTotal == countLayer) {
                                                         this[`IDLOAD_${lyr.tag}`].style.display = "none";
                                                     }
+                                                    this[`IDLOAD_${lyr.tag}`].style.display = "none";
                                                 } catch (error) {
+                                                    this[`IDLOAD_${lyr.tag}`].style.display = "none";
                                                     console.error(`Error: configAnalysis_Temp always => ${error.name} - ${error.message}`);
                                                 } 
                                             }.bind(this)));

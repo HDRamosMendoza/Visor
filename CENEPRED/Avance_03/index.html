@@ -68,12 +68,13 @@
         <div id="ID_Diagnosis_Format"></div>
         <!-- Export Data | XLS -->
         <button type="button" class="btn-excel" id="ID_BTN_EXCEL">
-          <i class="fa fa-download"></i>&nbsp; Descargar Tabla
+          <i class="fa fa-download"></i>&nbsp; Cargando ...
         </button>
         <!-- Export Data | TABLE -->
         <table id="ID_BTN_EXCEL_TB"></table>
         <!-- Load Download -->
-        <div class="lds-facebook" id="ID_Load_Download"><div></div><div></div><div></div></div>
+        <div class="lds-ellipsis" id="ID_Load_Download" style="display: none;"><div></div><div></div><div></div><div></div></div>
+        <!--<div class="lds-facebook" id="ID_Load_Download"><div></div><div></div><div></div><div></div></div>-->
       </div>
       <div class="accordion"></div>
     </section>
@@ -81,6 +82,6 @@
     <section class="map" id="map" style="display: none;"></section>
   </body>  
   <!-- JS -->  
-  <script src="https://js.arcgis.com/3.41/"></script>
+  <script src="https://js.arcgis.com/3.41/"></script>  
   <script src="./js/script.js"></script>
 </html>

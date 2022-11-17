@@ -688,6 +688,7 @@ a:hover {
   position: relative;
   margin-left: 50% !important;
   text-align: center !important;
+  /*display: none;*/
   height: 60px;
 }
 .lds-ellipsis div {
