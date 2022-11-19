@@ -110,15 +110,16 @@ if __name__ == '__main__':
         # Download KMZ
         if(geoFormat == "KMZ"):
             for layer in item:
-                layer_temp = layer + time_file
+                lyr,alias = layer.split("|")
+                layer_temp = lyr + time_file
                 layer_temp = nameAlone(layer_temp)
-                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''
+                arcpy.MakeQueryLayer_management(cnn_sde,alias,'''
                     SELECT * 
                     FROM {0} lyr 
                     WHERE sde.st_intersects(lyr.shape, sde.st_geometry('polygon {1}',4326))
-                '''.format(layer,_stringCoord))
+                '''.format(lyr,_stringCoord))
                 # Conversión de LYR a KML
-                arcpy.LayerToKML_conversion("lyrMake",os.path.join(scratch_Folder,layer + ".kmz"))
+                arcpy.LayerToKML_conversion(alias,os.path.join(scratch_Folder,alias + ".kmz"))
             
             _pathZip = os.path.join(scratch_Folder,nameFileKMZ_Zip + ".zip")
             zfile = zipfile.ZipFile(_pathZip, "w")
@@ -134,15 +135,16 @@ if __name__ == '__main__':
         # Download SHP
         if(geoFormat == "SHP"):
             for layer in item:
-                layer_temp = layer + time_file
+                lyr,alias = layer.split("|")
+                layer_temp = lyr + time_file
                 layer_temp = nameAlone(layer_temp)
-                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''
+                arcpy.MakeQueryLayer_management(cnn_sde,alias,'''
                     SELECT * 
                     FROM {0} lyr 
                     WHERE sde.st_intersects(lyr.shape, sde.st_geometry('polygon {1}',4326))
-                '''.format(layer,_stringCoord))
+                '''.format(lyr,_stringCoord))
                 # Ruta destino de la conversion de un SHP
-                arcpy.CopyFeatures_management("lyrMake", os.path.join(scratch_Folder,"{}".format(layer.replace(".", ""))))
+                arcpy.CopyFeatures_management(alias, os.path.join(scratch_Folder,"{}".format(alias.replace(".", ""))))
             
             _pathZip = os.path.join(scratch_Folder,nameFileSHP_Zip + ".zip")
             zfile = zipfile.ZipFile(_pathZip, "w", zipfile.ZIP_STORED)
@@ -160,15 +162,16 @@ if __name__ == '__main__':
             arcpy.CreateFileGDB_management(os.path.join(scratch_Folder), "SIGRID_GDB.gdb")
             _GDB = os.path.join(scratch_Folder,"SIGRID_GDB.gdb")
             for layer in item:
-                layer_temp = layer + time_file
+                lyr,alias = layer.split("|")
+                layer_temp = lyr + time_file
                 layer_temp = nameAlone(layer_temp)
-                arcpy.MakeQueryLayer_management(cnn_sde,"lyrMake",'''
+                arcpy.MakeQueryLayer_management(cnn_sde,alias,'''
                     SELECT * 
                     FROM {0} lyr 
                     WHERE sde.st_intersects(lyr.shape, sde.st_geometry('polygon {1}',4326))
-                '''.format(layer,_stringCoord))
+                '''.format(lyr,_stringCoord))
                 # Ruta destino de la conversion de un SHP
-                arcpy.CopyFeatures_management("lyrMake", os.path.join(_GDB, "{}".format(layer.replace(".", ""))))
+                arcpy.CopyFeatures_management(alias, os.path.join(_GDB, "{}".format(alias.replace(".", ""))))
             
             _pathZip = os.path.join(scratch_Folder,nameFileGDB_Zip + ".zip")
             zfile = zipfile.ZipFile(_pathZip, "w", zipfile.ZIP_DEFLATED)
