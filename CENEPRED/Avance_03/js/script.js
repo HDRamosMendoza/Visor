@@ -1,3 +1,7 @@
+/*
+import Chart from './widgets/HDRM_BusquedaDetalle/externo/chartjs/Chart.min.js';
+import './externo/chartjs/chartjs-plugin-datalabels';
+*/
 let map; let featureTable = null;
 require([
     'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js',
