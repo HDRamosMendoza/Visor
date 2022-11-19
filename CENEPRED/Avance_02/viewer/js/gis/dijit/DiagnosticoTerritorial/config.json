@@ -425,7 +425,7 @@
                     ]
                 },
                 {
-                    "name": "Zonas afectadas por el niño costero 2017",
+                    "name": "Zonas Afectadas Por El Niño Costero 2017",
                     "srv": [
                         {
                             "position": 6010100,
@@ -443,7 +443,7 @@
                         },
                         {
                             "position": 6010200,
-                            "name": "Poblados Afectados",
+                            "name": "Poblados Afectados En El Evento El Niño 2017",
                             "objectid": "objectid_1",
                             "rgb": "rgb(41,128,185)",
                             "fields":[
@@ -453,11 +453,11 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010200",
-                            "table": "bdcenepred.informacion_complementa.FENC_afect_VIV|PobladosAfectados"
+                            "table": "bdcenepred.informacion_complementa.FENC_afect_VIV|PobladosAfectadosNino2017"
                         },
                         {
                             "position": 6010300,
-                            "name": "Tramos de Carreteras Afectadas",
+                            "name": "Tramos De Carreteras Afectadas En El Evento El Niño 2017",
                             "objectid": "objectid_1",
                             "rgb": "rgb(142,68,173)",
                             "fields":[
@@ -467,11 +467,11 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010300",
-                            "table": "bdcenepred.informacion_complementa.FENC_afect_CARRETERA|TramosCarreterasAfectadas"
+                            "table": "bdcenepred.informacion_complementa.FENC_afect_CARRETERA|TramosCarreterasAfectadasNino2017"
                         },
                         {
                             "position": 6010400,
-                            "name": "Obras de Infraestructura Afectadas",
+                            "name": "Obras De Infraestructura Afectadas En El Evento El Niño 2017",
                             "objectid": "objectid_1",
                             "rgb": "rgb(155,89,182)",
                             "fields":[
@@ -481,7 +481,7 @@
                                 }
                             ],
                             "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Informacion_Complementaria/MapServer/6010400",
-                            "table": "bdcenepred.informacion_complementa.FENC_afect_OBRASINFRA|ObrasInfraestructuraAfectadas"
+                            "table": "bdcenepred.informacion_complementa.FENC_afect_OBRASINFRA|ObrasInfraestructuraAfectadasNino2017"
                         }
                     ]
                 }
