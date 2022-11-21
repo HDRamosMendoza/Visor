@@ -1781,7 +1781,7 @@
                         }
                     ],
                     "url": "https://sigrid.cenepred.gob.pe/arcgis/rest/services/Elementos_Expuestos/MapServer/2100300",
-                    "table": "bdcenepred.elementos_expuestos.INEI_ManzanasReferenciales|PrediosUrbanosRurales"
+                    "table": "bdcenepred.elementos_expuestos.INEI_ManzanasReferenciales|ManzanasReferenciales2017"
                 }
             ]
         }

@@ -2622,19 +2622,25 @@ require([
                                 query_AE.geometry = new Polygon(_geometryAmbito);
                                 query_AE.spatialRelationship = Query.SPATIAL_REL_CONTAINS;
                                 query_AE.returnGeometry = true;
+                                queryTask_AE.executeForCount(query_AE).then(
+                                    (response) => {
+                                        let _note = _elementById(`IDNote_${lyr.tag}`);
+                                        if(response == 0) {
+                                            _note.className = "sect-nota-warning";
+                                            _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
+                                        } else {
+                                            _note.className = "sect-nota-info";
+                                            _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", response)}`;
+                                        }
+                                    },
+                                    (error) => {  
+                                        console.error(`Error: AE => ${error.name} - ${error.message}`);
+                                    }
+                                );
                                 queryTask_AE.execute(query_AE).then(
                                     (response) => {
                                         try {
                                             let _length = response.features.length;
-                                            let _note = _elementById(`IDNote_${lyr.tag}`);
-                                            if(_length == 0) {
-                                                _note.className = "sect-nota-warning";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].negacion}`;
-                                            } else {
-                                                _note.className = "sect-nota-info";
-                                                _note.innerHTML = `<strong>${litAmbito}</strong> ${_version.cuenta[0].afirmacion.replace("XX", _length)}`;
-                                            }
-
                                             for (let i = 0; i < _length; i++) {
                                                 unionGeometry.push(response.features[i].geometry);
                                             }
@@ -2721,6 +2727,8 @@ require([
                                             queryTask_Analysis.execute(query_Analysis).then(
                                                 (response) => {
                                                     try {
+                                                        console.log(cValue.url);
+                                                        console.log(response);
                                                         let _attr = response.features[0].attributes;
                                                         countLayer++;
                                                         if(_attr.cantidad > 0) {
