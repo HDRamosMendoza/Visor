@@ -61,6 +61,7 @@ require([
     esriConfig.defaults.geometryService = new GeometryService("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Utilities/Geometry/GeometryServer");    
     esriConfig.defaults.io.timeout = 2400000;
     this.gpExtractData = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ExtraerDatos/GPServer/ExtraerDatos");
+    this.gpReportAreasExposicion = new Geoprocessor("https://sigrid.cenepred.gob.pe/arcgis/rest/services/Geoprocesamiento/ReportAreasExposicion/GPServer/Script");
     const config = JSON.parse(configJSON);
     let configBackgroundColor = config.backgroundColor;
     let configBorderColor = config.borderColor;
@@ -2617,6 +2618,58 @@ require([
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[1].name}`), "Áreas de Exposición por Movimiento en Masa", "Viviendas Expuestas");
                                 _htmlTableTAB(_elementById(`TBcontent${lyr.tag}${_version.fields[2].name}`),"OTROS EE","CANTIDAD");
                                 
+                                this.gpReportAreasExposicion.submitJob({
+                                    "layer": 'bdcenepred.cartografia_peligros.AreasAfectadasFlujos',
+                                    "Area_of_Interest": `{"type": "Polygon", "coordinates":[
+                                        [[-79.8486328125,-7.1663003819031825],[-78.22265625,-8.993600464280018],[-75.52001953125,-6.271618064314864],[-79.16748046874999,-5.615985819155327],[-79.8486328125,-7.1663003819031825]]
+                                    ],"spatialReference":{"wkid":4326}}`,
+                                }, _completeCallback = function(jobInfo) {
+                                    try {
+                                        if ( jobInfo.jobStatus !== "esriJobFailed" ) {
+                                            this.gpReportAreasExposicion.getResultData(jobInfo.jobId, "Result", function(outputFile) {
+                                                try {
+                                                    console.log(outputFile)
+                                                    console.log(outputFile.value)
+                                                    /*
+                                                    ID_Load_Download.style.display = "none";
+                                                    let _URL = outputFile.value;
+                                                    let _URL_Temp = _URL.substring(_URL.indexOf("arcgisjobs"), _URL.length);
+                                                    window.location = this._pathDownload + _URL_Temp;*/
+                                                } catch (error) {
+                                                    console.log("Error: _downloadFile " + error.message);
+                                                }
+                                            }.bind(this));
+                                        }
+                                    } catch (error) {
+                                        console.log("Error: _completeCallback " + error.message);
+                                    }
+                                }.bind(this),      
+                                _statusCallback = function(jobInfo) {
+                                    try {
+                                        var status = jobInfo.jobStatus;
+                                        console.log(status);
+                                        /*
+                                        if ( status === "esriJobFailed" ) {
+                                            ID_Load_Download.style.display = "none";
+                                        } else if (status === "esriJobSucceeded"){
+                                            ID_Load_Download.style.display = "none";
+                                        }
+                                        */
+                                    } catch (error) {
+                                        console.log("Error: _statusCallback " + error.message);
+                                    }
+                                }.bind(this),    
+                                    _errorCallback = function(jobInfo) {
+                                        try {
+                                            /*ID_Load_Download.style.display = "none";*/
+                                        } catch (error) {
+                                            console.log("Error: _errorCallback " + error.message);
+                                        }
+                                    }.bind(this)
+                                );
+
+
+
                                 let queryTask_AE = new QueryTask(lyr.url);
                                 let query_AE = new Query();
                                 query_AE.geometry = new Polygon(_geometryAmbito);
@@ -2637,6 +2690,7 @@ require([
                                         console.error(`Error: AE => ${error.name} - ${error.message}`);
                                     }
                                 );
+                                /*
                                 queryTask_AE.execute(query_AE).then(
                                     (response) => {
                                         try {
@@ -2654,7 +2708,7 @@ require([
                                 ).always(lang.hitch(this, () => { 
                                     let countTabItem = 1;
                                     let countTabItemTotal = 0;
-                                    /* Union Geometry */
+                                    // Union Geometry
                                     let _geometry = geometryEngine.union(unionGeometry);
                                     if(_geometry ?? false) {
                                         _loadSelect(
@@ -2663,17 +2717,17 @@ require([
                                             this._listLayerAnalysis,
                                             _geometry
                                         );
-                                        /* Statistic Poblacion */
+                                        // Statistic Poblacion 
                                         let poblacionSUM = new StatisticDefinition();
                                         poblacionSUM.statisticType = "sum";
                                         poblacionSUM.onStatisticField = _version.fields[0].name;
                                         poblacionSUM.outStatisticFieldName = "sumpoblacion";
-                                        /* Statistic Vivienda */
+                                        // Statistic Vivienda 
                                         let viviendaSUM = new StatisticDefinition();
                                         viviendaSUM.statisticType = "sum";
                                         viviendaSUM.onStatisticField = _version.fields[1].name;
                                         viviendaSUM.outStatisticFieldName = "sumvivienda";
-                                        /* Statistic Response */
+                                        // Statistic Response 
                                         let queryTask_Engine = new QueryTask(_version.url);
                                         let query_Engine = new Query();
                                         query_Engine.outFields = _version.fields.map(x => x.name);
@@ -2686,13 +2740,13 @@ require([
                                                 try {
                                                     let _contentTab01 = []; let _contentTab02 = [];
                                                     let _attr = response.features[0].attributes;
-                                                    /* Poblacion */
+                                                    // Poblacion
                                                     _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[0].name}`).innerText = _attr.sumpoblacion ?? 0;
                                                     _contentTab01.push({"item": _version.fields[0].td,"val": _attr.sumpoblacion ?? 0});
                                                     _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Tbody`).innerHTML = "";
                                                     _elementById(`TBcontent${lyr.tag}${_version.fields[0].name}_Total`).innerText = _attr.sumpoblacion ?? 0;
                                                     _htmlTableTAB_ADD(`TBcontent${lyr.tag}${_version.fields[0].name}`,_contentTab01);
-                                                    /* Vivienda */
+                                                    // Vivienda
                                                     _elementById(`IDTOTALcontent${lyr.tag}${_version.fields[1].name}`).innerText = _attr.sumvivienda ?? 0;
                                                     _contentTab02.push({"item": _version.fields[1].td,"val": _attr.sumvivienda ?? 0});
                                                     _elementById(`TBcontent${lyr.tag}${_version.fields[1].name}_Tbody`).innerHTML = "";
@@ -2707,16 +2761,15 @@ require([
                                                 console.error(`Error: Statistic AE => ${error.name}`);
                                             }
                                         );                                    
-                                        /*_elementById(`ID_TBcontent${lyr.tag}_Tbody`).innerHTML = "";*/
                                         _elementById(`TBcontent${lyr.tag}${_version.fields[2].name}_Tbody`).innerHTML = "";
                                         configAnalysis_Temp.forEach(function(cValue) {
                                             this[`IDLOAD_${lyr.tag}`].style.display = "block";
-                                            /* Statistic Analysis */
+                                            // Statistic Analysis 
                                             let analysisCOUNT = new StatisticDefinition();
                                             analysisCOUNT.statisticType = "count";
                                             analysisCOUNT.onStatisticField = _version.analysis[0].field;
                                             analysisCOUNT.outStatisticFieldName = "cantidad";                                    
-                                            /* Statistic Analysis */
+                                            // Statistic Analysis
                                             let queryTask_Analysis = new QueryTask(cValue.url);
                                             let query_Analysis = new Query();
                                             query_Analysis.outFields = cValue.fields.map(x => x.name)
@@ -2763,6 +2816,8 @@ require([
                                         });
                                     }
                                 }));
+
+                                */
                             }
                             /* </AE> */
 

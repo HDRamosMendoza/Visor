@@ -7,6 +7,8 @@ import time
 import arcpy
 import json
 from os.path import basename
+import numpy as array
+
 # Default Folder
 scratch_Folder = arcpy.env.scratchFolder
 arcpy.AddMessage("Scracth {}".format(scratch_Folder))
