@@ -70,11 +70,12 @@ if __name__ == '__main__':
         
         arcpy.MakeQueryLayer_management(cnn_sde,alias,'''
             SELECT * 
-            FROM {0} lyr  
+            FROM {0} lyr 
+            WHERE sde.st_intersects(lyr.shape, sde.st_geometry('polygon {1}',4326)) = 1
         '''.format(lyr,_stringCoord))
 
         _aliasLyr = "INEI"
-        _manzanas = "bdcenepred.elementos_expuestos.INEI_ManzanasReferenciales"
+        _manzanas = "INEI_ManzanasReferenciales"
         arcpy.MakeQueryLayer_management(cnn_sde,_aliasLyr,'''
             SELECT * 
             FROM {0} lyrManzanas  
@@ -92,7 +93,8 @@ if __name__ == '__main__':
                     convert_AsShape = arcpy.AsShape(row[0],True)
                     arcpy.CopyFeatures_management(convert_AsShape, os.path.join(scratch_Folder,"{0}{1}".format("n_",str(_count))))
                     _arr.append(os.path.join(scratch_Folder,"{0}{1}.shp".format("n_",str(_count))))
-
+                    
+        print(scratch_GDB)
         _union = os.path.join(scratch_GDB,"{}".format("geomtry_union"))
         arcpy.Union_analysis(_arr, _union)
         
